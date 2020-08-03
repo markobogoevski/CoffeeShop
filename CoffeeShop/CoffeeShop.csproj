@@ -168,16 +168,37 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CoffeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IngredientController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Enumerations\CoffeeCosts.cs" />
+    <Compile Include="Enumerations\CoffeeDescriptions.cs" />
+    <Compile Include="Enumerations\CoffeeSize.cs" />
+    <Compile Include="Enumerations\CoffeeSizeMultiplier.cs" />
+    <Compile Include="Enumerations\IngredientsCosts.cs" />
+    <Compile Include="Enumerations\IngredientsDescriptions.cs" />
+    <Compile Include="Enumerations\OrderStatus.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\CoffeeModels\Coffee.cs" />
+    <Compile Include="Models\CoffeeDecorator\CoffeeComponentModel.cs" />
+    <Compile Include="Models\CoffeeDecorator\CoffeeIngredientDecorator.cs" />
+    <Compile Include="Models\CoffeeDecorator\CoffeeTypes\Espresso.cs" />
+    <Compile Include="Models\CoffeeDecorator\CoffeeTypes\Machiatto.cs" />
+    <Compile Include="Models\CoffeeDecorator\CoffeeTypes\Nescafe.cs" />
+    <Compile Include="Models\CoffeeDecorator\Ingredients\Mocha.cs" />
+    <Compile Include="Models\CoffeeDecorator\Ingredients\Soy.cs" />
+    <Compile Include="Models\CoffeeDecorator\Ingredients\Whip.cs" />
+    <Compile Include="Models\CoffeeDecorator\Parsers\DecoratorPrettyPrint.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Order\Order.cs" />
+    <Compile Include="Models\Order\OrderItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Repository.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -239,7 +260,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\DTO\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Models\DTOs\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
