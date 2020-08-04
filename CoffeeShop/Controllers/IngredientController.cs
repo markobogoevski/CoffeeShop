@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using CoffeeShop.Models;
-
+using CoffeeShop.Services;
 namespace CoffeeShop.Controllers
 {
     public class IngredientController : Controller
     {
+        public static bool isAscending = true;
+
+        private Repository _repository;
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Ingredient
@@ -19,7 +18,10 @@ namespace CoffeeShop.Controllers
         {
             return View(db.Ingredients.ToList());
         }
-
+        public IngredientController()
+        {
+            _repository = Repository.GetInstance();
+        }
         // GET: Ingredient/Details/5
         public ActionResult Details(Guid? id)
         {
@@ -27,12 +29,15 @@ namespace CoffeeShop.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            IngredientModel ingredientModel = db.Ingredients.Find(id);
-            if (ingredientModel == null)
+            try
+            {
+                var ingredients = _repository.GetAllIngredients();
+                return View(ingredients);
+            }
+            catch (Exception)
             {
                 return HttpNotFound();
             }
-            return View(ingredientModel);
         }
 
         // GET: Ingredient/Create
@@ -46,17 +51,15 @@ namespace CoffeeShop.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "IngredientId,Name,Price,ImgUrl,Description")] IngredientModel ingredientModel)
+        public ActionResult Create([Bind(Include = "IngredientId,Name,Price,ImgUrl,Description")] IngredientModel newIngredient)
         {
             if (ModelState.IsValid)
             {
-                ingredientModel.IngredientId = Guid.NewGuid();
-                db.Ingredients.Add(ingredientModel);
-                db.SaveChanges();
+                _repository.CreateIngredient(newIngredient);
                 return RedirectToAction("Index");
             }
 
-            return View(ingredientModel);
+            return View(newIngredient);
         }
 
         // GET: Ingredient/Edit/5
@@ -66,12 +69,15 @@ namespace CoffeeShop.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            IngredientModel ingredientModel = db.Ingredients.Find(id);
-            if (ingredientModel == null)
+            try
+            {
+                return View(db.Ingredients.Find(id));
+            }
+            catch(Exception)
             {
                 return HttpNotFound();
             }
-            return View(ingredientModel);
+            
         }
 
         // POST: Ingredient/Edit/5
@@ -79,18 +85,17 @@ namespace CoffeeShop.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "IngredientId,Name,Price,ImgUrl,Description")] IngredientModel ingredientModel)
+        public ActionResult Edit([Bind(Include = "IngredientId,Name,Price,ImgUrl,Description")] IngredientModel _ingredient)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(ingredientModel).State = EntityState.Modified;
-                db.SaveChanges();
+                _repository.UpdateIngredient(_ingredient);
                 return RedirectToAction("Index");
             }
-            return View(ingredientModel);
+            return View(_ingredient);
         }
 
-        // GET: Ingredient/Delete/5
+        /*// GET: Ingredient/Delete/5
         public ActionResult Delete(Guid? id)
         {
             if (id == null)
@@ -103,26 +108,35 @@ namespace CoffeeShop.Controllers
                 return HttpNotFound();
             }
             return View(ingredientModel);
-        }
+        }*/
 
         // POST: Ingredient/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(Guid id)
+        public ActionResult Delete(Guid id)
         {
-            IngredientModel ingredientModel = db.Ingredients.Find(id);
-            db.Ingredients.Remove(ingredientModel);
-            db.SaveChanges();
+            _repository.DeleteIngredient(id);
             return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                db.Dispose();
-            }
             base.Dispose(disposing);
+        }
+
+        public ActionResult OrderBy(string sortOrder)
+        {
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "price_desc" : "";
+            switch (sortOrder)
+            {
+                case "price_desc":
+                    ViewBag.Title = "The ingredients are displayed in descending order";
+                    return View("Index", _repository.GetSortedIngredients(!isAscending));
+
+                default:
+                    ViewBag.Title = "The ingredients are displayed in ascending order";
+                    return View("Index", _repository.GetSortedIngredients(isAscending));
+            }
         }
     }
 }
