@@ -1,7 +1,6 @@
 ﻿using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using CoffeeShop.Models.CoffeeDecorator;
 using CoffeeShop.Models.Order;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
