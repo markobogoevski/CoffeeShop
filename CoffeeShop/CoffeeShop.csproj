@@ -171,9 +171,11 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CoffeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IngredientController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Controllers\OrderItemController.cs" />
     <Compile Include="Enumerations\CoffeeCosts.cs" />
     <Compile Include="Enumerations\CoffeeDescriptions.cs" />
     <Compile Include="Enumerations\CoffeeSize.cs" />
@@ -185,17 +187,19 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202008041716596_initial.cs" />
+    <Compile Include="Migrations\202008041716596_initial.designer.cs">
+      <DependentUpon>202008041716596_initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\CoffeeDecorator\CoffeeComponentModel.cs" />
-    <Compile Include="Models\CoffeeDecorator\CoffeeConcrete.cs" />
-    <Compile Include="Models\CoffeeDecorator\DecoratorConcrete.cs" />
-    <Compile Include="Models\CoffeeDecorator\Parsers\DecoratorPrettyPrint.cs" />
+    <Compile Include="Models\CartModel.cs" />
     <Compile Include="Models\CoffeeModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\IngredientModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\Order\OrderModel.cs" />
-    <Compile Include="Models\Order\OrderItemModel.cs" />
+    <Compile Include="Models\OrderModel.cs" />
+    <Compile Include="Models\OrderItemModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Repository.cs" />
     <Compile Include="Startup.cs" />
@@ -217,6 +221,8 @@
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -256,26 +262,30 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\CoffeeComponentModels\Create.cshtml" />
-    <Content Include="Views\CoffeeComponentModels\Delete.cshtml" />
-    <Content Include="Views\CoffeeComponentModels\Details.cshtml" />
-    <Content Include="Views\CoffeeComponentModels\Edit.cshtml" />
-    <Content Include="Views\CoffeeComponentModels\Index.cshtml" />
-    <Content Include="Views\OrderItemModels\Create.cshtml" />
-    <Content Include="Views\OrderItemModels\Delete.cshtml" />
-    <Content Include="Views\OrderItemModels\Details.cshtml" />
-    <Content Include="Views\OrderItemModels\Edit.cshtml" />
-    <Content Include="Views\OrderItemModels\Index.cshtml" />
-    <Content Include="Views\OrderModels\Create.cshtml" />
-    <Content Include="Views\OrderModels\Delete.cshtml" />
-    <Content Include="Views\OrderModels\Details.cshtml" />
-    <Content Include="Views\OrderModels\Edit.cshtml" />
-    <Content Include="Views\OrderModels\Index.cshtml" />
+    <Content Include="Views\Coffee\Create.cshtml" />
+    <Content Include="Views\Coffee\Delete.cshtml" />
+    <Content Include="Views\Coffee\Details.cshtml" />
+    <Content Include="Views\Coffee\Edit.cshtml" />
+    <Content Include="Views\Coffee\Index.cshtml" />
+    <Content Include="Views\Ingredient\Create.cshtml" />
+    <Content Include="Views\Ingredient\Delete.cshtml" />
+    <Content Include="Views\Ingredient\Details.cshtml" />
+    <Content Include="Views\Ingredient\Edit.cshtml" />
+    <Content Include="Views\Ingredient\Index.cshtml" />
+    <Content Include="Views\OrderItem\Create.cshtml" />
+    <Content Include="Views\OrderItem\Delete.cshtml" />
+    <Content Include="Views\OrderItem\Details.cshtml" />
+    <Content Include="Views\OrderItem\Edit.cshtml" />
+    <Content Include="Views\OrderItem\Index.cshtml" />
+    <Content Include="Views\Order\Create.cshtml" />
+    <Content Include="Views\Order\Delete.cshtml" />
+    <Content Include="Views\Order\Details.cshtml" />
+    <Content Include="Views\Order\Edit.cshtml" />
+    <Content Include="Views\Order\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Models\DTOs\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -289,6 +299,11 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.4.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202008041716596_initial.resx">
+      <DependentUpon>202008041716596_initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

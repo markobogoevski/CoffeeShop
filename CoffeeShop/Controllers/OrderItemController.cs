@@ -7,117 +7,112 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using CoffeeShop.Models;
-using CoffeeShop.Services;
+using CoffeeShop.Models.Order;
 
 namespace CoffeeShop.Controllers
 {
-    public class CoffeeController : Controller
+    public class OrderItemController : Controller
     {
-        private Repository _repository;
-        public CoffeeController()
-        {
-            _repository = Repository.GetInstance();
-        }
+        private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: CoffeeModels
+        // GET: OrderItem
         public ActionResult Index()
         {
-            var coffee = _repository.GetAllCoffee();
-            return View(coffee);
+            return View(db.OrderItems.ToList());
         }
 
-        // GET: CoffeeModels/Details/5
+        // GET: OrderItem/Details/5
         public ActionResult Details(Guid? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            CoffeeModel coffeeModel = db.Coffee.Find(id);
-            if (coffeeModel == null)
+            OrderItemModel orderItemModel = db.OrderItems.Find(id);
+            if (orderItemModel == null)
             {
                 return HttpNotFound();
             }
-            return View(coffeeModel);
+            return View(orderItemModel);
         }
 
-        // GET: CoffeeModels/Create
+        // GET: OrderItem/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: CoffeeModels/Create
+        // POST: OrderItem/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CoffeeId,Name,Price,Size,ImgUrl,Description")] CoffeeModel coffeeModel)
+        public ActionResult Create([Bind(Include = "OrderItemId,Quantity")] OrderItemModel orderItemModel)
         {
             if (ModelState.IsValid)
             {
-                coffeeModel.CoffeeId = Guid.NewGuid();
-                db.Coffee.Add(coffeeModel);
+                orderItemModel.OrderItemId = Guid.NewGuid();
+                db.OrderItems.Add(orderItemModel);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(coffeeModel);
+            return View(orderItemModel);
         }
 
-        // GET: CoffeeModels/Edit/5
+        // GET: OrderItem/Edit/5
         public ActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            CoffeeModel coffeeModel = db.Coffee.Find(id);
-            if (coffeeModel == null)
+            OrderItemModel orderItemModel = db.OrderItems.Find(id);
+            if (orderItemModel == null)
             {
                 return HttpNotFound();
             }
-            return View(coffeeModel);
+            return View(orderItemModel);
         }
 
-        // POST: CoffeeModels/Edit/5
+        // POST: OrderItem/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CoffeeId,Name,Price,Size,ImgUrl,Description")] CoffeeModel coffeeModel)
+        public ActionResult Edit([Bind(Include = "OrderItemId,Quantity")] OrderItemModel orderItemModel)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(coffeeModel).State = EntityState.Modified;
+                db.Entry(orderItemModel).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(coffeeModel);
+            return View(orderItemModel);
         }
 
-        // GET: CoffeeModels/Delete/5
+        // GET: OrderItem/Delete/5
         public ActionResult Delete(Guid? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            CoffeeModel coffeeModel = db.Coffee.Find(id);
-            if (coffeeModel == null)
+            OrderItemModel orderItemModel = db.OrderItems.Find(id);
+            if (orderItemModel == null)
             {
                 return HttpNotFound();
             }
-            return View(coffeeModel);
+            return View(orderItemModel);
         }
 
-        // POST: CoffeeModels/Delete/5
+        // POST: OrderItem/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(Guid id)
         {
-            CoffeeModel coffeeModel = db.Coffee.Find(id);
-            db.Coffee.Remove(coffeeModel);
+            OrderItemModel orderItemModel = db.OrderItems.Find(id);
+            db.OrderItems.Remove(orderItemModel);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
