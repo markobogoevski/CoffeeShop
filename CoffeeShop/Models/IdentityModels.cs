@@ -1,6 +1,7 @@
 ﻿using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CoffeeShop.Models.Order;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -20,6 +21,13 @@ namespace CoffeeShop.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        public DbSet<CoffeeModel> Coffee { get; set; }
+
+        public DbSet<IngredientModel> Ingredients { get; set; }
+
+        public DbSet<OrderItemModel> OrderItems { get; set; }
+
+        public DbSet<OrderModel> Orders { get; set; }
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
