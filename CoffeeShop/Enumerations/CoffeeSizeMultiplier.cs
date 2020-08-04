@@ -2,10 +2,10 @@
 {
     public static class CoffeeSizeMultiplier
     {
-        public static double SmallMultipler = 1;
+        public static decimal SmallMultipler = 1m;
 
-        public static double MediumMultipler = 1.3;
+        public static decimal MediumMultipler = 1.3m;
 
-        public static double BigMultipler = 1.5;
+        public static decimal BigMultipler = 1.5m;
     }
 }

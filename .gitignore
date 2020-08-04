@@ -1,0 +1,6 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/CoffeeShop/App_Data/aspnet-CoffeeShop-20200803043421.mdf
+/CoffeeShop/App_Data/aspnet-CoffeeShop-20200803043421_log.ldf

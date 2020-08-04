@@ -2,10 +2,10 @@
 {
     public static class IngredientsCosts
     {
-        public static double Mocha = 20;
+        public static decimal Mocha = 20;
 
-        public static double Soy = 15;
+        public static decimal Soy = 15;
 
-        public static double Whip = 25;
+        public static decimal Whip = 25;
     }
 }
