@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using CoffeeShop.Models;
+using CoffeeShop.Models.ViewModels;
 using CoffeeShop.Services;
 
 namespace CoffeeShop.Controllers
@@ -19,114 +18,168 @@ namespace CoffeeShop.Controllers
             _repository = Repository.GetInstance();
         }
 
-        // GET: CoffeeModels
+        // GET: Coffee
         public ActionResult Index()
         {
+            ViewBag.Title = "Coffee shop blabla";
             var coffee = _repository.GetAllCoffee();
             return View(coffee);
         }
 
-        // GET: CoffeeModels/Details/5
-        public ActionResult Details(Guid? id)
+        // GET: Coffee/Details/5
+        public ActionResult Details(Guid id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            CoffeeModel coffeeModel = db.Coffee.Find(id);
-            if (coffeeModel == null)
+            try
+            {
+                CoffeeModel coffeeModel = _repository.FindCoffee(id);
+                return View(coffeeModel);
+
+            }
+            catch (Exception)
             {
                 return HttpNotFound();
             }
-            return View(coffeeModel);
         }
 
-        // GET: CoffeeModels/Create
+        // GET: Coffee/Create
         public ActionResult Create()
         {
-            return View();
+            try
+            {
+                return View(createCoffeeViewModel(null));
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
         }
 
-        // POST: CoffeeModels/Create
+        private CreateCoffeeViewModel createCoffeeViewModel(Guid? id)
+        {
+            var coffeeViewModel = new CreateCoffeeViewModel();
+
+            if (id != null)
+            {
+                try
+                {
+                    var coffeeToEdit = _repository.FindCoffee(id);
+                    coffeeViewModel.CoffeeId = id;
+
+                    coffeeViewModel.selectedIngredients = _repository.GetIngredientsForCoffee(id).ToList();
+                    coffeeViewModel.Name = coffeeToEdit.Name;
+                    coffeeViewModel.Size = coffeeToEdit.Size;
+                    coffeeViewModel.ImgUrl = coffeeToEdit.ImgUrl;
+                    coffeeViewModel.Price = coffeeToEdit.Price;
+                    coffeeViewModel.Description = coffeeToEdit.Description;
+                }
+                catch (Exception)
+                {
+                    throw new Exception();
+                }
+            }
+            coffeeViewModel.availableIngredients = _repository.GetIngredients()
+                                                              .ToList();
+            return coffeeViewModel;
+        }
+
+        // POST: Coffee/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CoffeeId,Name,Price,Size,ImgUrl,Description")] CoffeeModel coffeeModel)
+        public ActionResult Create(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
             {
-                coffeeModel.CoffeeId = Guid.NewGuid();
-                db.Coffee.Add(coffeeModel);
-                db.SaveChanges();
+                if (file != null)
+                {
+                    string pic = Path.GetFileName(file.FileName);
+                    string path = Path.Combine(
+                    Server.MapPath("~/Content/Images"), pic);
+                    file.SaveAs(path);
+
+                    // save the image path path to the database
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        file.InputStream.CopyTo(ms);
+                        byte[] array = ms.GetBuffer();
+                    }
+
+                    coffeeViewModel.ImgUrl = "/Content/Images/" + pic;
+                }
+                else
+                {
+                    coffeeViewModel.ImgUrl = "/Content/Images/TriviaCoffee.png";
+                }
+
+                _repository.CreateCoffee(coffeeViewModel);
+                ViewBag.Title = "Coffee Shop blabla";
                 return RedirectToAction("Index");
             }
 
-            return View(coffeeModel);
+            return View(coffeeViewModel);
         }
 
-        // GET: CoffeeModels/Edit/5
+        // GET: Coffee/Edit/5
         public ActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            CoffeeModel coffeeModel = db.Coffee.Find(id);
-            if (coffeeModel == null)
+            try
+            {
+                return View(createCoffeeViewModel(id));
+            }
+            catch (Exception)
             {
                 return HttpNotFound();
             }
-            return View(coffeeModel);
         }
 
-        // POST: CoffeeModels/Edit/5
+        // POST: Coffee/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CoffeeId,Name,Price,Size,ImgUrl,Description")] CoffeeModel coffeeModel)
+        public ActionResult Edit(CreateCoffeeViewModel coffeeViewModel)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(coffeeModel).State = EntityState.Modified;
-                db.SaveChanges();
+                _repository.EditCoffee(coffeeViewModel);
                 return RedirectToAction("Index");
             }
-            return View(coffeeModel);
+            return View(createCoffeeViewModel(coffeeViewModel.CoffeeId));
         }
 
-        // GET: CoffeeModels/Delete/5
-        public ActionResult Delete(Guid? id)
+        // Post: Coffee/Delete
+        public ActionResult Delete(Guid id)
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return HttpNotFound();
             }
-            CoffeeModel coffeeModel = db.Coffee.Find(id);
-            if (coffeeModel == null)
+
+            try
+            {
+                _repository.DeleteCoffee(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
             {
                 return HttpNotFound();
             }
-            return View(coffeeModel);
-        }
-
-        // POST: CoffeeModels/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(Guid id)
-        {
-            CoffeeModel coffeeModel = db.Coffee.Find(id);
-            db.Coffee.Remove(coffeeModel);
-            db.SaveChanges();
-            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                _repository.Dispose();
             }
             base.Dispose(disposing);
         }

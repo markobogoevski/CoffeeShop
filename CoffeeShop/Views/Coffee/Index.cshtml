@@ -1,57 +1,80 @@
 ﻿@model IEnumerable<CoffeeShop.Models.CoffeeModel>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Coffee for sale";
 }
 
-<h2>Index</h2>
+<h2>@ViewBag.Title</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create a new coffee", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Price)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Size)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ImgUrl)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Price)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Size)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ImgUrl)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.CoffeeId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.CoffeeId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.CoffeeId })
-        </td>
-    </tr>
-}
+<table class="table" id="table1">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Size)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImgUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Size)
+                </td>
+                <td>
+                    <img alt="@item.Name" src="@Url.Content(item.ImgUrl)" width="300px" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.CoffeeId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.CoffeeId }) |
+                    <button data-coffee-id="@item.CoffeeId" class="btn btn-link js-delete">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
 
 </table>
+@section scripts{
+    <script type="text/javascript">
+        var table = $("#table1").DataTable();
+        $("#table1 .js-delete").click(function () {
+            var button = $(this);
+            bootbox.confirm("Дали сакате да го избришете кафето?", function (result) {
+                if (result) {
+                    $.ajax({
+                        method: "POST",
+                        url: "/Coffee/Delete/" + button.attr("data-coffee-id"),
+                        success: function () {
+                            table.row(button.parents("tr")).remove().draw();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

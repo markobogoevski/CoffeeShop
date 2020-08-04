@@ -35,11 +35,11 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.ImgUrl)
+            Image: 
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.ImgUrl)
+            <img alt="@Model.Name" src="@Url.Content(Model.ImgUrl)" width="300px" />
         </dd>
 
         <dt>
