@@ -106,5 +106,3 @@ C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.Co
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.CopyComplete
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.dll
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.pdb
-C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.initial.resources
-C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.GenerateResource.cache

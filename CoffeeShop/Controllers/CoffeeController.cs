@@ -59,7 +59,7 @@ namespace CoffeeShop.Controllers
             {
                 // Need to use view model here and a factory to create the wanted coffee with the
                 // decorator pattern
-                coffeeComponentModel.Id = Guid.NewGuid();
+                //coffeeComponentModel. = Guid.NewGuid();
                 // Add to shopping cart here
                 return RedirectToAction("Index");
             }
@@ -94,7 +94,7 @@ namespace CoffeeShop.Controllers
         {
             if (ModelState.IsValid)
             {
-                _repository.EditCoffee(coffeeComponentModel);
+               // _repository.EditCoffee(coffeeComponentModel);
                 return RedirectToAction("Index");
             }
             return View(coffeeComponentModel);
@@ -124,8 +124,8 @@ namespace CoffeeShop.Controllers
         {
             try
             {
-                CoffeeComponentModel coffeeComponentModel = _repository.GetCoffee(id);
-                _repository.RemoveCoffee(coffeeComponentModel);
+               // CoffeeComponentModel coffeeComponentModel = _repository.GetCoffee(id);
+                //_repository.RemoveCoffee(coffeeComponentModel);
                 return RedirectToAction("Index");
             }
             catch (Exception)

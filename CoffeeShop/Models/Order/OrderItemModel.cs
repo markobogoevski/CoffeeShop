@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoffeeShop.Models.CoffeeDecorator;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace CoffeeShop.Models.Order
@@ -8,7 +9,9 @@ namespace CoffeeShop.Models.Order
         [Key]
         public Guid OrderItemId { get; set; }
 
-        public virtual CoffeeComponentModel Coffee { get; set; }
+        public virtual DecoratorConcrete Coffee { get; set; }
+
+        public virtual OrderModel Order { get; set; }
 
         public int Quantity { get; set; }
     }

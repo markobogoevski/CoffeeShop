@@ -35,18 +35,18 @@ namespace CoffeeShop.Services
 
         internal object GetAllOrdersForUser(string userId)
         {
-            var orders = _db.Orders.Where(order => order.user.Id == userId).ToList();
+            var orders = _db.Orders.Where(order => order.User.Id == userId).ToList();
             return orders;
         }
 
         // Methods here to communiciate with the database and implement logic 
-        public List<CoffeeComponentModel> GetAllCoffee()
+        public List<CoffeeModel> GetAllCoffee()
         {
             var coffee = _db.Coffee.ToList();
             return coffee;
         }
 
-        public CoffeeComponentModel GetCoffee(Guid? CoffeeId)
+        public CoffeeModel GetCoffee(Guid? CoffeeId)
         {
             var coffee = _db.Coffee.Find(CoffeeId);
             if (coffee != null)
@@ -59,15 +59,15 @@ namespace CoffeeShop.Services
             }
         }
 
-        public void EditCoffee(CoffeeComponentModel coffeeComponentModel)
+        public void EditCoffee(CoffeeModel coffeeModel)
         {
-            _db.Entry(coffeeComponentModel).State = EntityState.Modified;
+            _db.Entry(coffeeModel).State = EntityState.Modified;
             _db.SaveChanges();
         }
 
-        public void RemoveCoffee(CoffeeComponentModel coffeeComponentModel)
+        public void RemoveCoffee(CoffeeModel coffeeModel)
         {
-            _db.Coffee.Remove(coffeeComponentModel);
+            _db.Coffee.Remove(coffeeModel);
             _db.SaveChanges();
         }
 

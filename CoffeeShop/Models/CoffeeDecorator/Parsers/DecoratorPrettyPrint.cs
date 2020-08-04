@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Web;
 
 namespace CoffeeShop.Models.CoffeeDecorator.Parsers
 {
-    public class DecoratorPrettyPrint : CoffeeIngredientDecoratorModel
+    public class DecoratorPrettyPrint : CoffeeComponentModel
     {
         private CoffeeComponentModel _coffee;
 
@@ -15,27 +13,22 @@ namespace CoffeeShop.Models.CoffeeDecorator.Parsers
             _coffee = coffee;
         }
 
-        public override double Cost()
+        public override decimal Cost()
         {
             return _coffee.Cost();
         }
 
-        public override string GetSize()
-        {
-            return _coffee.Size;
-        }
-
-        public override string GetDescription()
+        public override string Description()
         {
             StringBuilder stringBuilder = new StringBuilder();
             // Parsing description so far
             Dictionary<string, int> quantityDict = new Dictionary<string, int>();
 
-            string[] parts = _coffee.Description.Split(',');
+            string[] parts = _coffee.Description().Split(',');
             string coffeeName = parts[0];
             string[] ingredients = parts.Skip(1).ToArray();
 
-            foreach(string ingredient in ingredients)
+            foreach (string ingredient in ingredients)
             {
                 if (quantityDict.ContainsKey(ingredient))
                 {
@@ -48,16 +41,21 @@ namespace CoffeeShop.Models.CoffeeDecorator.Parsers
                 }
             }
 
-            stringBuilder.Append("Serving coffee: ").Append(GetSize())
+            stringBuilder.Append("Serving coffee: ").Append(_coffee.Size())
                                                     .Append(coffeeName)
                                                     .Append(" with : ");
-            foreach(string ingredient in quantityDict.Keys)
+            foreach (string ingredient in quantityDict.Keys)
             {
                 stringBuilder.Append(ingredient).Append(" x ").Append(quantityDict[ingredient].ToString())
                     .Append(", ");
             }
             stringBuilder.Append(". Enjoy your coffee!");
             return stringBuilder.ToString();
+        }
+
+        public override string Size()
+        {
+            return _coffee.Size();
         }
     }
 }

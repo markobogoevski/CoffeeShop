@@ -22,9 +22,9 @@ namespace CoffeeShop.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public DbSet<CoffeeComponentModel> Coffee { get; set; }
+        public DbSet<CoffeeModel> Coffee { get; set; }
 
-        public DbSet<CoffeeIngredientDecoratorModel> Ingredients { get; set; }
+        public DbSet<IngredientModel> Ingredients { get; set; }
 
         public DbSet<OrderItemModel> OrderItems { get; set; }
 

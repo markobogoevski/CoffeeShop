@@ -1,37 +1,12 @@
-﻿using CoffeeShop.Enumerations;
-using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace CoffeeShop.Models
+﻿namespace CoffeeShop.Models
 {
     // Component class from the Decorator pattern
     public abstract class CoffeeComponentModel
     {
-        [Key]
-        public Guid Id { get; set; }
+        public abstract decimal Cost();
 
-        private string size;
-        
-        private string description;
+        public abstract string Description();
 
-        public string Size
-        {
-            get { return CoffeeSize.SMALL; }
-            set { size = value; }
-        }
-        public string Description
-        {
-            get { return "Unknown Coffee"; }
-            set { description = value; }
-        }
-        
-        [Required]
-        public String Name { get; set; }
-
-        public virtual ApplicationUser User { get; set; }
-
-        public string ImgUrl { get; set; }
-
-        public abstract double Cost();
+        public abstract string Size();
     }
 }
