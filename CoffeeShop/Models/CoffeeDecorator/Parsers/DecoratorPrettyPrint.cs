@@ -6,7 +6,7 @@ using System.Web;
 
 namespace CoffeeShop.Models.CoffeeDecorator.Parsers
 {
-    public class DecoratorPrettyPrint : CoffeeIngredientDecorator
+    public class DecoratorPrettyPrint : CoffeeIngredientDecoratorModel
     {
         private CoffeeComponentModel _coffee;
 

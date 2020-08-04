@@ -3,7 +3,7 @@ using System.Text;
 
 namespace CoffeeShop.Models.CoffeeDecorator.Ingredients
 {
-    public class Mocha : CoffeeIngredientDecorator
+    public class Mocha : CoffeeIngredientDecoratorModel
     {
         private CoffeeComponentModel _coffee;
 
