@@ -7,59 +7,84 @@
 <h2>@ViewBag.Title</h2>
 
 <p>
-    @Html.ActionLink("Create a new coffee", "Create")
-</p>
-<table class="table" id="table1">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Size)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImgUrl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Price)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Size)
-                </td>
-                <td>
-                    <img alt="@item.Name" src="@Url.Content(item.ImgUrl)" width="300px" />
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.CoffeeId }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.CoffeeId }) |
-                    <button data-coffee-id="@item.CoffeeId" class="btn btn-link js-delete">Delete</button>
-                </td>
-            </tr>
-        }
-    </tbody>
+    <div>
+        @Html.ActionLink("Create a new coffee", "Create", null, new { @class = "btn btn-primary" })
+    </div>
+    <br />
+    <div>
+        @Html.ActionLink("Create your own custom coffee for order!", "CreateCustom", null, new { @class = "btn btn-success" })
+    </div>
+    <br />
+    <div id="dailydeal" style="float:left;">
+        @Ajax.ActionLink("Check out the coffee of the day",
+                         "CoffeeDay",
+                         null,
+                         new AjaxOptions
+                         {
+                             UpdateTargetId = "dailydeal",
+                             InsertionMode = InsertionMode.Replace,
+                             HttpMethod = "GET"
+                         },
+                         new { @class = "btn btn-danger" })
+    </div>
 
-</table>
+</p><br>
+
+<br />
+        <table class="table" id="table1">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.TotalPrice)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Size)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ImgUrl)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Description)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TotalPrice)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Size)
+                        </td>
+                        <td>
+                            <img alt="@item.Name" src="@Url.Content(item.ImgUrl)" width="300px" />
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.CoffeeId }) |
+                            @Html.ActionLink("Details", "Details", new { id = item.CoffeeId }) |
+                            <button data-coffee-id="@item.CoffeeId" class="btn btn-danger js-delete">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+
 @section scripts{
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <script type="text/javascript">
         var table = $("#table1").DataTable();
         $("#table1 .js-delete").click(function () {

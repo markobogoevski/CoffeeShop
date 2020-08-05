@@ -195,6 +195,10 @@
     <Compile Include="Migrations\202008041838559_update1.designer.cs">
       <DependentUpon>202008041838559_update1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202008051358180_BasePrice.cs" />
+    <Compile Include="Migrations\202008051358180_BasePrice.designer.cs">
+      <DependentUpon>202008051358180_BasePrice.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CartModel.cs" />
@@ -371,6 +375,7 @@
     <Content Include="Content\DataTables\images\sort_desc.png" />
     <Content Include="Content\DataTables\images\sort_desc_disabled.png" />
     <Content Include="Content\DataTables\swf\flashExport.swf" />
+    <Content Include="Content\Images\default_coffee.JPG" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -471,6 +476,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Styles\Checkbox.css" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -506,7 +512,6 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Coffee\Create.cshtml" />
-    <Content Include="Views\Coffee\Delete.cshtml" />
     <Content Include="Views\Coffee\Details.cshtml" />
     <Content Include="Views\Coffee\Edit.cshtml" />
     <Content Include="Views\Coffee\Index.cshtml" />
@@ -525,6 +530,9 @@
     <Content Include="Views\Order\Details.cshtml" />
     <Content Include="Views\Order\Edit.cshtml" />
     <Content Include="Views\Order\Index.cshtml" />
+    <Content Include="Views\Coffee\CreateCustom.cshtml" />
+    <Content Include="Views\Coffee\_DailyDeal.cshtml" />
+    <Content Include="Views\Coffee\_HideDeal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -549,6 +557,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202008041838559_update1.resx">
       <DependentUpon>202008041838559_update1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008051358180_BasePrice.resx">
+      <DependentUpon>202008051358180_BasePrice.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

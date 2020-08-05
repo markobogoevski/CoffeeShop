@@ -11,13 +11,15 @@ namespace CoffeeShop.Models.ViewModels
         [Required]
         public string Name { set; get; }
 
-        public decimal Price { get; set; }
+        public decimal BasePrice { get; set; }
+
+        public decimal TotalPrice { get; set; }
 
         public string ImgUrl { set; get; }
 
         public string Description { get; set; }
 
-        public List<IngredientModel> selectedIngredients { set; get; }
+        public List<string> selectedIngredients { set; get; }
 
         public List<IngredientModel> availableIngredients { get; set; }
 
@@ -25,7 +27,7 @@ namespace CoffeeShop.Models.ViewModels
 
         public CreateCoffeeViewModel()
         {
-            selectedIngredients = new List<IngredientModel>();
+            selectedIngredients = new List<string>();
             availableIngredients = new List<IngredientModel>();
         }
     }

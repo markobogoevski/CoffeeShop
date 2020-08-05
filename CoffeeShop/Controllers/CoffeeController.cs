@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using CoffeeShop.Enumerations;
 using CoffeeShop.Models;
 using CoffeeShop.Models.ViewModels;
 using CoffeeShop.Services;
@@ -36,8 +39,28 @@ namespace CoffeeShop.Controllers
             try
             {
                 CoffeeModel coffeeModel = _repository.FindCoffee(id);
+                ViewBag.Ingredients = _repository.GetIngredients().ToList();
                 return View(coffeeModel);
 
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
+        // GET: Coffee/CreateCustom
+        public ActionResult CreateCustom()
+        {
+            try
+            {
+                List<string> Sizes = new List<string>();
+                Sizes = _repository.GetAllCoffeeSizes();
+                ViewBag.Sizes = Sizes;
+                List<string> CoffeeTypes = new List<string>();
+                CoffeeTypes = _repository.GetAllCoffeeTypes();
+                ViewBag.CoffeeTypes = CoffeeTypes;
+                return View(createCoffeeViewModel(null));
             }
             catch (Exception)
             {
@@ -50,6 +73,9 @@ namespace CoffeeShop.Controllers
         {
             try
             {
+                List<string> Sizes = new List<string>();
+                Sizes = _repository.GetAllCoffeeSizes();
+                ViewBag.Sizes = Sizes;
                 return View(createCoffeeViewModel(null));
             }
             catch (Exception)
@@ -69,11 +95,13 @@ namespace CoffeeShop.Controllers
                     var coffeeToEdit = _repository.FindCoffee(id);
                     coffeeViewModel.CoffeeId = id;
 
-                    coffeeViewModel.selectedIngredients = _repository.GetIngredientsForCoffee(id).ToList();
+                    coffeeViewModel.selectedIngredients = _repository.GetIngredientsForCoffee(id)
+                                                                     .Select(x => x.IngredientId.ToString())
+                                                                     .ToList();
                     coffeeViewModel.Name = coffeeToEdit.Name;
                     coffeeViewModel.Size = coffeeToEdit.Size;
                     coffeeViewModel.ImgUrl = coffeeToEdit.ImgUrl;
-                    coffeeViewModel.Price = coffeeToEdit.Price;
+                    coffeeViewModel.BasePrice = coffeeToEdit.BasePrice;
                     coffeeViewModel.Description = coffeeToEdit.Description;
                 }
                 catch (Exception)
@@ -113,14 +141,16 @@ namespace CoffeeShop.Controllers
                 }
                 else
                 {
-                    coffeeViewModel.ImgUrl = "/Content/Images/TriviaCoffee.png";
+                    coffeeViewModel.ImgUrl = "/Content/Images/default_coffee.JPG";
                 }
 
                 _repository.CreateCoffee(coffeeViewModel);
                 ViewBag.Title = "Coffee Shop blabla";
                 return RedirectToAction("Index");
             }
-
+            List<string> Sizes = new List<string>();
+            Sizes = _repository.GetAllCoffeeSizes();
+            ViewBag.Sizes = Sizes;
             return View(coffeeViewModel);
         }
 
@@ -133,6 +163,9 @@ namespace CoffeeShop.Controllers
             }
             try
             {
+                List<string> Sizes = new List<string>();
+                Sizes = _repository.GetAllCoffeeSizes();
+                ViewBag.Sizes = Sizes;
                 return View(createCoffeeViewModel(id));
             }
             catch (Exception)
@@ -153,6 +186,9 @@ namespace CoffeeShop.Controllers
                 _repository.EditCoffee(coffeeViewModel);
                 return RedirectToAction("Index");
             }
+            List<string> Sizes = new List<string>();
+            Sizes = _repository.GetAllCoffeeSizes();
+            ViewBag.Sizes = Sizes;
             return View(createCoffeeViewModel(coffeeViewModel.CoffeeId));
         }
 
@@ -173,6 +209,24 @@ namespace CoffeeShop.Controllers
             {
                 return HttpNotFound();
             }
+        }
+
+        public ActionResult CoffeeDay()
+        {
+            var coffeeDay = GetCoffeeDay();
+            return PartialView("_DailyDeal", coffeeDay);
+        }
+
+        public ActionResult HideDeal()
+        {
+            return PartialView("_HideDeal");
+        }
+
+        private CoffeeModel GetCoffeeDay()
+        {
+            CoffeeModel randomCoffee = _repository.GetRandomCoffee();
+            randomCoffee.TotalPrice *= 0.7m;
+            return randomCoffee;
         }
 
         protected override void Dispose(bool disposing)

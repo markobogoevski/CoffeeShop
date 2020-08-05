@@ -1,0 +1,47 @@
+﻿@model CoffeeShop.Models.CoffeeModel
+@using CoffeeShop.Models
+
+<div class="panel panel-primary col-md-5 block">
+    <div class="panel-heading">
+        <h3 class="panel-title">Your daily deal: @Model.Name</h3>
+    </div>
+    <div class="panel-body">
+        <p>
+            <img alt="@Model.Name" src="@Url.Content(Model.ImgUrl)" width="80%" />
+        </p>
+        <div>
+            <p>
+                <em>Size: </em>@Model.Size
+            </p>
+            <p>
+                <em>Description: </em>@Model.Description
+            </p>
+            <p>
+                <em>Price: </em>
+                @String.Format("{0:F}", Model.TotalPrice)
+            </p>
+            <h5 class="panel-footer">Ingredients: </h5>
+            <p>
+                @{
+                    foreach (var ingredient in (List<IngredientModel>)Model.Ingredients)
+                    {
+                        <strong>@ingredient.Name, Price: @ingredient.Price </strong>
+                        <br />
+                    }
+                }<br />
+            </p>
+        </div>
+        <a href="#" class="card-link btn btn-success btn-block">Order</a>
+        <br />
+        @Ajax.ActionLink("Hide",
+                         "HideDeal",
+                         null,
+                         new AjaxOptions
+                         {
+                             UpdateTargetId = "dailydeal",
+                             InsertionMode = InsertionMode.Replace,
+                             HttpMethod = "GET"
+                         },
+                         new { @class = "btn btn-info btn-block" })
+    </div>
+</div>

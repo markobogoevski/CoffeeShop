@@ -11,7 +11,9 @@ namespace CoffeeShop.Models
 
         public String Name { get; set; }
 
-        public decimal Price { get; set; }
+        public decimal BasePrice { get; set; }
+
+        public decimal TotalPrice { get; set; }
 
         public String  Size { get; set; }
 

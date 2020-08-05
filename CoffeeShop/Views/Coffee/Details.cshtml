@@ -1,58 +1,40 @@
 ﻿@model CoffeeShop.Models.CoffeeModel
-
+@using CoffeeShop.Models
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Coffee Details";
 }
+<br />
 
-<h2>Details</h2>
-
-<div>
-    <h4>CoffeeModel</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Size)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Size)
-        </dd>
-
-        <dt>
-            Image: 
-        </dt>
-
-        <dd>
-            <img alt="@Model.Name" src="@Url.Content(Model.ImgUrl)" width="300px" />
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-    </dl>
+<div style="margin:auto; width:50%; border:3px solid gray; padding:10px" class="bg-primary card text-center" style="width: 18rem;">
+    @ViewBag.Title<br /><br />
+    <img class="card-img-top" src="@Model.ImgUrl" alt="Coffee" width="100%">
+    <div class="card-body"><br />
+        <h5 class="card-title">Ingredients: </h5>
+        <p class="card-text">
+            @{
+                foreach (IngredientModel ingredient in (List<IngredientModel>)ViewBag.Ingredients)
+                {
+                    if (Model.Ingredients.Any(x => x.IngredientId.ToString() == ingredient.IngredientId.ToString()))
+                    {
+                        <strong>@ingredient.Name, Price: @ingredient.Price </strong>
+                        <br />
+                    }
+                }
+            }<br />
+        </p>
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item bg-danger">Name: @Model.Name</li>
+        <li class="list-group-item bg-danger">Price: @Model.TotalPrice denars.</li>
+        <li class="list-group-item bg-danger">Size: @Model.Size</li>
+        <li class="list-group-item bg-danger">Description: @Model.Description</li>
+    </ul><br />
+    <div class="card-body">
+        @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info" })
+        <a href="#" class="card-link btn btn-success">Order</a>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.CoffeeId }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
+@section Styles{
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+}

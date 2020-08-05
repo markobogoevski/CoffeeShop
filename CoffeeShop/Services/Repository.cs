@@ -3,7 +3,9 @@ using CoffeeShop.Models;
 using CoffeeShop.Models.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Reflection;
 
 namespace CoffeeShop.Services
 {
@@ -74,6 +76,11 @@ namespace CoffeeShop.Services
             }
         }
 
+        public List<string> GetAllCoffeeTypes()
+        {
+            return _db.Coffee.Select(coff => coff.Name + " bean,  " + coff.BasePrice + " price").ToList();
+        }
+
         internal void Dispose()
         {
             _db.Dispose();
@@ -87,7 +94,7 @@ namespace CoffeeShop.Services
         public void CreateCoffee(CreateCoffeeViewModel coffeeViewModel)
         {
             var coffeeIngredients = _db.Ingredients
-                .Where(ing => coffeeViewModel.selectedIngredients.Select(inner_ing=> inner_ing.IngredientId.ToString())
+                .Where(ing => coffeeViewModel.selectedIngredients
                 .Contains(ing.IngredientId.ToString()))
                 .ToList();
 
@@ -97,7 +104,8 @@ namespace CoffeeShop.Services
                 Name = coffeeViewModel.Name,
                 Description = coffeeViewModel.Description,
                 Ingredients = coffeeIngredients,
-                Price = coffeeIngredients.Sum(ing => ing.Price * GetPriceMultiplierForSize(coffeeViewModel.Size)),
+                BasePrice = coffeeViewModel.BasePrice,
+                TotalPrice = coffeeViewModel.BasePrice + coffeeIngredients.Sum(ing => ing.Price * GetPriceMultiplierForSize(coffeeViewModel.Size)),
                 ImgUrl = coffeeViewModel.ImgUrl,
                 Size = coffeeViewModel.Size
             };
@@ -113,13 +121,13 @@ namespace CoffeeShop.Services
             coffee.Description = coffeeViewModel.Description;
             coffee.ImgUrl = coffeeViewModel.ImgUrl;
             coffee.Size = coffeeViewModel.Size;
+            coffee.BasePrice = coffeeViewModel.BasePrice;
             _db.Entry(coffee).Collection(c => c.Ingredients).Load();
             var newIngredients = _db.Ingredients.Where(ing => coffeeViewModel.selectedIngredients
-                                                       .Select(inner_ing=>inner_ing.IngredientId.ToString())
                                                        .Contains(ing.IngredientId.ToString())).ToList();
             coffee.Ingredients = newIngredients;
-            var newPrice = newIngredients.Sum(ing => ing.Price * GetPriceMultiplierForSize(coffeeViewModel.Size));
-            coffee.Price = newPrice;
+            var newPrice = newIngredients.Sum(ing => ing.Price * GetPriceMultiplierForSize(coffeeViewModel.Size))+coffee.BasePrice;
+            coffee.TotalPrice = newPrice;
             _db.SaveChanges();
         }
 
@@ -133,6 +141,22 @@ namespace CoffeeShop.Services
                 return CoffeeSizeMultiplier.BigMultipler;
         }
 
-       
+        public List<string> GetAllCoffeeSizes()
+        {
+            Type t = typeof(CoffeeSize);
+            FieldInfo[] fields = t.GetFields(BindingFlags.Static | BindingFlags.Public);
+            List<string> Sizes = new List<string>();
+            foreach (FieldInfo fi in fields)
+            {
+                Sizes.Add(fi.GetValue(null).ToString());
+            }
+            return Sizes;
+        }
+
+        public CoffeeModel GetRandomCoffee()
+        {
+            var coffee = _db.Coffee.OrderBy(cof => Guid.NewGuid()).First();
+            return coffee;
+        }
     }
 }
