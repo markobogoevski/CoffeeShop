@@ -1,0 +1,12 @@
+﻿<div id="dailydeal" style="float:left;">
+    @Ajax.ActionLink("Check out the coffee of the day",
+                         "CoffeeDay",
+                         null,
+                         new AjaxOptions
+                         {
+                             UpdateTargetId = "dailydeal",
+                             InsertionMode = InsertionMode.Replace,
+                             HttpMethod = "GET"
+                         },
+                         new { @class = "btn btn-danger" })
+</div>

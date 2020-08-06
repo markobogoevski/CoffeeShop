@@ -1,0 +1,57 @@
+﻿@model CoffeeShop.Models.ViewModels.CreateCoffeeViewModel
+
+@{
+    ViewBag.Title = "CreateCustom";
+}
+
+@using (Html.BeginForm("CreateCustom", "Coffee", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <h4>Create a new coffee</h4>
+    <hr />
+    <div class="row container">
+        <div class="col-md-5">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+                <div>
+                    @Html.DropDownListFor(model => model.Name, new SelectList(ViewBag.CoffeeTypes), new { @class = "form-control" } )
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Size, htmlAttributes: new { @class = "control-label" })
+                <div>
+                    @Html.DropDownListFor(model => model.Size, new SelectList(ViewBag.Sizes), new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Size, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <br /><hr />
+        </div>
+        <div class="col-md-7">
+            @Html.ValidationSummary(false, "", new { @class = "text-danger ml-0" })
+            <label class="row font-weight-bold ml-2">Choose your ingredients: </label><br /><br />
+            @foreach (var item in Model.availableIngredients)
+            {
+                <div class="form-group">
+                    <div class="m-1 d-inline-block">
+                        <label class="container_new" for="@item.IngredientId">
+                            @item.Name, Price: @item.Price
+                            <input type="checkbox" value="@item.IngredientId" name="selectedIngredients" id="@item.IngredientId" />
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Add to shopping cart!" class="btn btn-success" />
+            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+}
+
+@section Styles {
+    <link href="@Url.Content("~/Styles/Checkbox.css")" rel="stylesheet" type="text/css" />
+}
