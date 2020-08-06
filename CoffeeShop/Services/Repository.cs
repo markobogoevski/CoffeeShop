@@ -3,7 +3,6 @@ using CoffeeShop.Models;
 using CoffeeShop.Models.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
 
@@ -27,6 +26,22 @@ namespace CoffeeShop.Services
 
             _db = new ApplicationDbContext();
             return _repository;
+        }
+
+        public List<IngredientModel> GetAllUsedIngredients()
+        {
+            var usedIngredients = _db.Ingredients.Where(ing => _db.Coffee.SelectMany(cof => cof.Ingredients)
+                                                                         .Select(ing_in => ing_in.IngredientId)
+                                                                         .Contains(ing.IngredientId)).ToList();
+            return usedIngredients;
+        }
+
+        public List<CoffeeModel> GetCoffeeByIngredients(List<string> ids)
+        {
+            var coffee = _db.Coffee.Where(cof => cof.Ingredients.Select(ing => ing.IngredientId.ToString())
+                                                                .Any(ing => ids.Contains(ing)))
+                                                                .ToList();
+            return coffee;
         }
 
         public  List<CoffeeModel> GetAllCoffee()
@@ -157,6 +172,40 @@ namespace CoffeeShop.Services
         {
             var coffee = _db.Coffee.OrderBy(cof => Guid.NewGuid()).First();
             return coffee;
+        }
+
+        public CoffeeModel GetMostSoldCoffee()
+        {
+            var coffeeOrdered = _db.Coffee.OrderBy(cof => cof.TotalQuantitySold).ToList();
+            return coffeeOrdered.Last();
+        }
+
+        public CoffeeModel GetLeastSoldCoffee()
+        {
+            var leastSold = _db.Coffee.OrderBy(cof => cof.TotalQuantitySold).First();
+            return leastSold;
+        }
+
+        public CoffeeModel GetMostSoldCoffeeWeek()
+        {
+            var coffeeOrdered = _db.Coffee.OrderBy(cof => cof.QuantitySoldLastWeek).ToList();
+            return coffeeOrdered.Last();
+        }
+
+        public CoffeeModel GetLeastSoldCoffeeWeek()
+        {
+            var leastSoldWeek = _db.Coffee.OrderBy(cof => cof.QuantitySoldLastWeek).First();
+            return leastSoldWeek;
+        }
+
+        public decimal GetTotalProfitWeek(CoffeeModel coffee)
+        {
+            return coffee.TotalPrice * coffee.QuantitySoldLastWeek * coffee.IncomeCoef;
+        }
+
+        public decimal GetTotalProfit(CoffeeModel coffee)
+        {
+            return coffee.TotalPrice * coffee.TotalQuantitySold * coffee.IncomeCoef;
         }
     }
 }

@@ -18,5 +18,13 @@ namespace CoffeeShop.Models
         public String Description { get; set; }
 
         public virtual List<CoffeeModel> Coffees { get; set; }
+
+        public int QuantityInStock { get; set; }
+
+        public int QuantityUsedLastWeek { get; set; }
+
+        public int TotalQuantityUsed { get; set; }
+
+        public int QuantityInCoffee { get; set; }
     }
 }

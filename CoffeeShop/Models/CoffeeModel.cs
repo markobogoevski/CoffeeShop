@@ -23,5 +23,12 @@ namespace CoffeeShop.Models
         
         public virtual List<IngredientModel> Ingredients { get; set; }
 
+        public int QuantityInStock { get; set; }
+
+        public int QuantitySoldLastWeek { get; set; }
+
+        public int TotalQuantitySold { get; set; }
+
+        public decimal IncomeCoef { get; set; }
     }
 }

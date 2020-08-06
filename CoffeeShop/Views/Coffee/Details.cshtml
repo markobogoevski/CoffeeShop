@@ -5,6 +5,22 @@
 }
 <br />
 
+@if (ViewBag.Statistics != null)
+{
+    <div>
+        Statistics about coffee:
+    </div>
+    <div>
+        <ul>
+            <li>Number of total times sold: @Model.TotalQuantitySold</li>
+            <li>Number of total times sold this week: @Model.QuantitySoldLastWeek</li>
+            <li>Number of items in stock: @Model.QuantityInStock</li>
+            <li>Total profit achieved: @ViewBag.TotalProfit</li>
+            <li>Total profit achieved this week: @ViewBag.TotalProfitWeek</li>
+        </ul>
+    </div>
+}
+
 <div style="margin:auto; width:50%; border:3px solid gray; padding:10px" class="bg-primary card text-center" style="width: 18rem;">
     @ViewBag.Title<br /><br />
     <img class="card-img-top" src="@Model.ImgUrl" alt="Coffee" width="100%">
@@ -12,13 +28,10 @@
         <h5 class="card-title">Ingredients: </h5>
         <p class="card-text">
             @{
-                foreach (IngredientModel ingredient in (List<IngredientModel>)ViewBag.Ingredients)
+                foreach (IngredientModel ingredient in (List<IngredientModel>)Model.Ingredients)
                 {
-                    if (Model.Ingredients.Any(x => x.IngredientId.ToString() == ingredient.IngredientId.ToString()))
-                    {
                         <strong>@ingredient.Name, Price: @ingredient.Price </strong>
                         <br />
-                    }
                 }
             }<br />
         </p>
@@ -29,10 +42,18 @@
         <li class="list-group-item bg-danger">Size: @Model.Size</li>
         <li class="list-group-item bg-danger">Description: @Model.Description</li>
     </ul><br />
-    <div class="card-body">
-        @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info" })
-        <a href="#" class="card-link btn btn-success">Order</a>
-    </div>
+         <div class="card-body">
+             @if (ViewBag.Statistics != null)
+             {
+                 @Html.ActionLink("Back to Statistics", "CoffeeStatistics", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info" })
+
+             }
+             else
+             {
+                 @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info" })
+                 <a href="#" class="card-link btn btn-success">Order</a>
+             }
+         </div>
 </div>
 
 @section Styles{

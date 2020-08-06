@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
-using CoffeeShop.Enumerations;
 using CoffeeShop.Models;
 using CoffeeShop.Models.ViewModels;
 using CoffeeShop.Services;
@@ -25,7 +23,23 @@ namespace CoffeeShop.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = "Coffee shop blabla";
-            var coffee = _repository.GetAllCoffee();
+            List<IngredientModel> ingredients = _repository.GetAllUsedIngredients();
+            ViewBag.Ingredients = ingredients;
+            List<CoffeeModel> coffee = new List<CoffeeModel>();
+            List<string> ingredientIds = new List<string>();
+            foreach(IngredientModel ingredient in ingredients)
+            {
+                if (Request.QueryString[ingredient.Name] != null)
+                    ingredientIds.Add(Request.QueryString[ingredient.Name]);
+            }
+            if (ingredientIds.Count >= 1)
+            {
+                coffee = _repository.GetCoffeeByIngredients(ingredientIds);
+            }
+            else
+            {
+                coffee = _repository.GetAllCoffee();
+            }
             return View(coffee);
         }
 
@@ -39,7 +53,6 @@ namespace CoffeeShop.Controllers
             try
             {
                 CoffeeModel coffeeModel = _repository.FindCoffee(id);
-                ViewBag.Ingredients = _repository.GetIngredients().ToList();
                 return View(coffeeModel);
 
             }
@@ -220,6 +233,48 @@ namespace CoffeeShop.Controllers
         public ActionResult HideDeal()
         {
             return PartialView("_HideDeal");
+        }
+
+        public ActionResult CoffeeStatistics()
+        {
+            var coffee = _repository.GetAllCoffee();
+            return View(coffee);
+        }
+
+        public ActionResult MostSold()
+        {
+            CoffeeModel mostSold = _repository.GetMostSoldCoffee();
+            ViewBag.Statistics = true;
+            ViewBag.TotalProfit = _repository.GetTotalProfit(mostSold);
+            ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeek(mostSold);
+            return View("Details",mostSold);
+        }
+
+        public ActionResult LeastSold()
+        {
+            CoffeeModel leastSold = _repository.GetLeastSoldCoffee();
+            ViewBag.Statistics = true;
+            ViewBag.TotalProfit = _repository.GetTotalProfit(leastSold);
+            ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeek(leastSold);
+            return View("Details", leastSold);
+        }
+
+        public ActionResult MostSoldWeek()
+        {
+            CoffeeModel mostSold = _repository.GetMostSoldCoffeeWeek();
+            ViewBag.Statistics = true;
+            ViewBag.TotalProfit = _repository.GetTotalProfit(mostSold);
+            ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeek(mostSold);
+            return View("Details", mostSold);
+        }
+
+        public ActionResult LeastSoldWeek()
+        {
+            CoffeeModel leastSold = _repository.GetLeastSoldCoffeeWeek();
+            ViewBag.Statistics = true;
+            ViewBag.TotalProfit = _repository.GetTotalProfit(leastSold);
+            ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeek(leastSold);
+            return View("Details", leastSold);
         }
 
         private CoffeeModel GetCoffeeDay()

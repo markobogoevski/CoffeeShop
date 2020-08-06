@@ -199,6 +199,10 @@
     <Compile Include="Migrations\202008051358180_BasePrice.designer.cs">
       <DependentUpon>202008051358180_BasePrice.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202008061407526_Statistics_Quantity.cs" />
+    <Compile Include="Migrations\202008061407526_Statistics_Quantity.designer.cs">
+      <DependentUpon>202008061407526_Statistics_Quantity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CartModel.cs" />
@@ -533,6 +537,7 @@
     <Content Include="Views\Coffee\CreateCustom.cshtml" />
     <Content Include="Views\Coffee\_DailyDeal.cshtml" />
     <Content Include="Views\Coffee\_HideDeal.cshtml" />
+    <Content Include="Views\Coffee\CoffeeStatistics.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -560,6 +565,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202008051358180_BasePrice.resx">
       <DependentUpon>202008051358180_BasePrice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008061407526_Statistics_Quantity.resx">
+      <DependentUpon>202008061407526_Statistics_Quantity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
