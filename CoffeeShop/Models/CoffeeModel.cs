@@ -11,7 +11,9 @@ namespace CoffeeShop.Models
 
         public String Name { get; set; }
 
-        public decimal Price { get; set; }
+        public decimal BasePrice { get; set; }
+
+        public decimal TotalPrice { get; set; }
 
         public String  Size { get; set; }
 
@@ -21,5 +23,12 @@ namespace CoffeeShop.Models
         
         public virtual List<IngredientModel> Ingredients { get; set; }
 
+        public int QuantityInStock { get; set; }
+
+        public int QuantitySoldLastWeek { get; set; }
+
+        public int TotalQuantitySold { get; set; }
+
+        public decimal IncomeCoef { get; set; }
     }
 }

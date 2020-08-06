@@ -1,58 +1,61 @@
 ﻿@model CoffeeShop.Models.CoffeeModel
-
+@using CoffeeShop.Models
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Coffee Details";
+}
+<br />
+
+@if (ViewBag.Statistics != null)
+{
+    <div>
+        Statistics about coffee:
+    </div>
+    <div>
+        <ul>
+            <li>Number of total times sold: @Model.TotalQuantitySold</li>
+            <li>Number of total times sold this week: @Model.QuantitySoldLastWeek</li>
+            <li>Number of items in stock: @Model.QuantityInStock</li>
+            <li>Total profit achieved: @ViewBag.TotalProfit</li>
+            <li>Total profit achieved this week: @ViewBag.TotalProfitWeek</li>
+        </ul>
+    </div>
 }
 
-<h2>Details</h2>
+<div style="margin:auto; width:50%; border:3px solid gray; padding:10px" class="bg-primary card text-center" style="width: 18rem;">
+    @ViewBag.Title<br /><br />
+    <img class="card-img-top" src="@Model.ImgUrl" alt="Coffee" width="100%">
+    <div class="card-body"><br />
+        <h5 class="card-title">Ingredients: </h5>
+        <p class="card-text">
+            @{
+                foreach (IngredientModel ingredient in (List<IngredientModel>)Model.Ingredients)
+                {
+                        <strong>@ingredient.Name, Price: @ingredient.Price </strong>
+                        <br />
+                }
+            }<br />
+        </p>
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item bg-danger">Name: @Model.Name</li>
+        <li class="list-group-item bg-danger">Price: @Model.TotalPrice denars.</li>
+        <li class="list-group-item bg-danger">Size: @Model.Size</li>
+        <li class="list-group-item bg-danger">Description: @Model.Description</li>
+    </ul><br />
+         <div class="card-body">
+             @if (ViewBag.Statistics != null)
+             {
+                 @Html.ActionLink("Back to Statistics", "CoffeeStatistics", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info" })
 
-<div>
-    <h4>CoffeeModel</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Size)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Size)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.ImgUrl)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.ImgUrl)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-    </dl>
+             }
+             else
+             {
+                 @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info" })
+                 <a href="#" class="card-link btn btn-success">Order</a>
+             }
+         </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.CoffeeId }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
+@section Styles{
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+}
