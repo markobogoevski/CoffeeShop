@@ -4,7 +4,7 @@
     ViewBag.Title = "Create";
 }
 
-@using (Html.BeginForm("Create","Coffee",FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("Create", "Coffee", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     <h4>Create a new coffee</h4>
@@ -40,13 +40,19 @@
                 </div>
             </div>
             <div class="form-group">
+                @Html.LabelFor(model => model.IncomeCoef, htmlAttributes: new { @class = "control-label" })
+                <div>
+                    @Html.EditorFor(model => model.IncomeCoef, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.IncomeCoef, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
                 <label for="file">Upload Image:</label>
                 <input type="file" id="file" class="btn btn-danger" name="file" style="width: 100%;" />
             </div>
             <br /><hr />
         </div>
         <div class="col-md-7">
-            @Html.ValidationSummary(false, "", new { @class = "text-danger ml-0" })
             <label class="row font-weight-bold ml-2">Choose your ingredients: </label><br /><br />
             @foreach (var item in Model.availableIngredients)
             {
@@ -54,9 +60,15 @@
                     <div class="m-1 d-inline-block">
                         <label class="container_new" for="@item.IngredientId">
                             @item.Name, Price: @item.Price
-                            <input type="checkbox" value="@item.IngredientId" name="selectedIngredients" id="@item.IngredientId" />
+                            <input type="checkbox" value="@item.IngredientId" name="selectedIngredients" id="@item.IngredientId" class="ing_check" autocomplete="off"/>
                             <span class="checkmark"></span>
                         </label>
+                        <div class="div_check" style="display:none">
+                            <label class="container_new" for="@item.QuantityInCoffee">
+                                @Html.LabelFor(m => item.QuantityInCoffee, htmlAttributes: new { @class = "control-label" })
+                            </label>
+                            <input type="number" name="selectedIngredientsQuantity" min="0" max="@item.QuantityInStock" step="1" value="0" class="form-control" />
+                        </div>
                     </div>
                 </div>
             }
@@ -65,11 +77,31 @@
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <input type="submit" value="Create" class="btn btn-success" />
-            @Html.ActionLink("Back to List", "Index",null,new { @class = "btn btn-primary" })
+            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
         </div>
     </div>
 }
 
 @section Styles {
     <link href="@Url.Content("~/Styles/Checkbox.css")" rel="stylesheet" type="text/css" />
+}
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".ing_check").click(function () {
+                var el = $(this);
+                var div = $(this).parent().next(".div_check");
+                var inputField = div.children()[1];
+                console.log(inputField)
+                if (el.prop("checked") == true) {
+                    inputField.setAttribute("value",1);
+                }
+                else {
+                    inputField.setAttribute("value", 0);
+                }
+                div.toggle();
+            });
+            });
+    </script>
 }

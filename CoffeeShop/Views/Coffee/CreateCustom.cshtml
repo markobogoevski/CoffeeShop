@@ -14,7 +14,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
                 <div>
-                    @Html.DropDownListFor(model => model.Name, new SelectList(ViewBag.CoffeeTypes), new { @class = "form-control" } )
+                    @Html.DropDownListFor(model => model.Name, new SelectList(ViewBag.CoffeeTypes), new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -36,9 +36,15 @@
                     <div class="m-1 d-inline-block">
                         <label class="container_new" for="@item.IngredientId">
                             @item.Name, Price: @item.Price
-                            <input type="checkbox" value="@item.IngredientId" name="selectedIngredients" id="@item.IngredientId" />
+                            <input type="checkbox" value="@item.IngredientId" name="selectedIngredients" id="@item.IngredientId" class="ing_check" autocomplete="off" />
                             <span class="checkmark"></span>
                         </label>
+                        <div class="div_check" style="display:none">
+                            <label class="container_new" for="@item.QuantityInCoffee">
+                                @Html.LabelFor(m => item.QuantityInCoffee, htmlAttributes: new { @class = "control-label" })
+                            </label>
+                            <input type="number" name="selectedIngredientsQuantity" min="0" max="@item.QuantityInStock" step="1" value="0" class="form-control" />
+                        </div>
                     </div>
                 </div>
             }
@@ -54,4 +60,24 @@
 
 @section Styles {
     <link href="@Url.Content("~/Styles/Checkbox.css")" rel="stylesheet" type="text/css" />
+}
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".ing_check").click(function () {
+                var el = $(this);
+                var div = $(this).parent().next(".div_check");
+                var inputField = div.children()[1];
+                console.log(inputField)
+                if (el.prop("checked") == true) {
+                    inputField.setAttribute("value", 1);
+                }
+                else {
+                    inputField.setAttribute("value", 0);
+                }
+                div.toggle();
+            });
+        });
+    </script>
 }

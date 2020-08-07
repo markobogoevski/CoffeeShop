@@ -23,9 +23,9 @@
             <h5 class="panel-footer">Ingredients: </h5>
             <p>
                 @{
-                    foreach (var ingredient in (List<IngredientModel>)Model.Ingredients)
+                    foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
                     {
-                        <strong>@ingredient.Name, Price: @ingredient.Price </strong>
+                        <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity</strong>
                         <br />
                     }
                 }<br />
