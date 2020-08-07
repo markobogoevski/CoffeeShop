@@ -23,8 +23,6 @@ namespace CoffeeShop.Models
 
         public int QuantityUsedLastWeek { get; set; }
 
-        public int TotalQuantityUsed { get; set; }
-
         public int QuantityInCoffee { get; set; }
     }
 }

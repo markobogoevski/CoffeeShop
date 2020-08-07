@@ -101,7 +101,6 @@ C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\Microsoft.Owin.Security.Tw
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\Microsoft.Owin.Security.OAuth.xml
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csprojAssemblyReference.cache
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.CoreCompileInputs.cache
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.CopyComplete
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.dll
@@ -111,3 +110,4 @@ C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.Ge
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.update1.resources
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.BasePrice.resources
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.Statistics_Quantity.resources
+C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.QuantityIngredient.resources

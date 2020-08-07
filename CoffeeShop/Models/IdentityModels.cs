@@ -23,6 +23,8 @@ namespace CoffeeShop.Models
     {
         public DbSet<CoffeeModel> Coffee { get; set; }
 
+        public DbSet<IngredientInCoffeeModel> IngredientInCoffee { get; set; }
+
         public DbSet<IngredientModel> Ingredients { get; set; }
 
         public DbSet<OrderItemModel> OrderItems { get; set; }

@@ -28,9 +28,9 @@
         <h5 class="card-title">Ingredients: </h5>
         <p class="card-text">
             @{
-                foreach (IngredientModel ingredient in (List<IngredientModel>)Model.Ingredients)
+                foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
                 {
-                        <strong>@ingredient.Name, Price: @ingredient.Price </strong>
+                        <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity, Price: @(ingredientQuantity.Ingredient.Price*ingredientQuantity.Quantity) </strong>
                         <br />
                 }
             }<br />

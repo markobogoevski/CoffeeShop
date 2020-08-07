@@ -48,13 +48,14 @@
                         </label>
                     </div>
                 </div>
+               
             }
         }
     </div>
 </div>
 
 <br />
-<br />
+
 <table class="table" id="table1">
     <thead>
         <tr>
@@ -73,35 +74,36 @@
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
-            <th></th>
+            <th>
+            </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TotalPrice)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Size)
-                </td>
-                <td>
-                    <img alt="@item.Name" src="@Url.Content(item.ImgUrl)" width="300px" />
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.CoffeeId }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.CoffeeId }) |
-                    <button data-coffee-id="@item.CoffeeId" class="btn btn-danger js-delete">Delete</button> |
-                    @Html.ActionLink("Add to shopping cart", "", new { id = item.CoffeeId }, new { @class = "btn btn-success" })
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Size)
+            </td>
+            <td>
+                <img alt="@item.Name" src="@Url.Content(item.ImgUrl)" width="300px" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.CoffeeId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.CoffeeId }) |
+                <button data-coffee-id="@item.CoffeeId" class="btn btn-danger js-delete">Delete</button> |
+                @Html.ActionLink("Add to shopping cart", "", new { id = item.CoffeeId }, new { @class = "btn btn-success" })
+            </td>
+        </tr>
         }
     </tbody>
 
@@ -116,23 +118,6 @@
     <script type="text/javascript">
         $(document).ready(function () {
             var table = $("#table1").DataTable();
-            var ids = {};
-            $('input[type=checkbox]:checked').each(function () {
-                ids[$(this).attr("name")] = $(this).val();
-            });
-            console.log(ids);
-            $.ajax({
-                method: "GET",
-                url: "/Coffee/Index",
-                data: ids,
-                success: function () {
-                    table.draw();
-                },
-                dataType: 'json',
-                contentType: 'application/json'
-            });
-            table.draw();
-
             $("#table1 .js-delete").click(function () {
                 var button = $(this);
                 bootbox.confirm("Дали сакате да го избришете кафето?", function (result) {
@@ -149,21 +134,22 @@
             });
 
             $(".ing_check").click(function () {
+                table = $("#table1").DataTable();
+                console.log(table.data());
                 var ids = {};
                 $('input[type=checkbox]:checked').each(function () {
                     ids[$(this).attr("name")] = $(this).val();
                 });
-                console.log(ids);
-
                 $.ajax({
                     method: "GET",
                     url: "/Coffee/Index",
                     data: ids,
-                    success: function () {
+                    error: function () {
+                        table = $("#table1").DataTable();
                         table.draw();
+                        location.reload();
                     },
-                    dataType: 'json',
-                    contentType: 'application/json'
+                    dataType: 'json'
                 });
             });
         });

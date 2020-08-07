@@ -19,7 +19,13 @@ namespace CoffeeShop.Models.ViewModels
 
         public string Description { get; set; }
 
+        public int QuantityInStock { get; set; }
+
+        public decimal IncomeCoef { get; set; }
+
         public List<string> selectedIngredients { set; get; }
+
+        public List<int> selectedIngredientsQuantity { set; get; }
 
         public List<IngredientModel> availableIngredients { get; set; }
 
@@ -28,6 +34,7 @@ namespace CoffeeShop.Models.ViewModels
         public CreateCoffeeViewModel()
         {
             selectedIngredients = new List<string>();
+            selectedIngredientsQuantity = new List<int>();
             availableIngredients = new List<IngredientModel>();
         }
     }
