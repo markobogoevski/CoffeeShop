@@ -111,3 +111,10 @@ C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migration
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.BasePrice.resources
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.Statistics_Quantity.resources
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.QuantityIngredient.resources
+C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csprojAssemblyReference.cache
+C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\System.Net.Http.Formatting.dll
+C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\System.Web.Http.dll
+C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\System.Web.Http.WebHost.dll
+C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\System.Net.Http.Formatting.xml
+C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\System.Web.Http.xml
+C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\System.Web.Http.WebHost.xml

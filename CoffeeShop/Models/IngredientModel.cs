@@ -17,6 +17,7 @@ namespace CoffeeShop.Models
 
         public String Description { get; set; }
 
+        [Newtonsoft.Json.JsonIgnore]
         public virtual List<CoffeeModel> Coffees { get; set; }
 
         public int QuantityInStock { get; set; }

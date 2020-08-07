@@ -43,7 +43,7 @@
                     <div class="m-1 d-inline-block">
                         <label class="container_new" for="@ingredient.IngredientId">
                             <em>@ingredient.Name</em>
-                            <input data-id="@ingredient.IngredientId" class="ing_check" type="checkbox" value="@ingredient.IngredientId" name="@ingredient.Name" id="@ingredient.IngredientId" />
+                            <input data-id="@ingredient.IngredientId" class="ing_check" type="checkbox" value="@ingredient.IngredientId" name="@ingredient.Name" id="@ingredient.IngredientId" autocomplete="off"/>
                             <span class="checkmark"></span>
                         </label>
                     </div>
@@ -101,7 +101,7 @@
                 @Html.ActionLink("Edit", "Edit", new { id = item.CoffeeId }) |
                 @Html.ActionLink("Details", "Details", new { id = item.CoffeeId }) |
                 <button data-coffee-id="@item.CoffeeId" class="btn btn-danger js-delete">Delete</button> |
-                @Html.ActionLink("Add to shopping cart", "", new { id = item.CoffeeId }, new { @class = "btn btn-success" })
+                @Html.ActionLink("Add to shopping cart", "Create","OrderItem", new { id = item.CoffeeId }, new { @class = "btn btn-success" })
             </td>
         </tr>
         }
@@ -133,21 +133,21 @@
                 });
             });
 
+
             $(".ing_check").click(function () {
-                table = $("#table1").DataTable();
-                console.log(table.data());
                 var ids = {};
                 $('input[type=checkbox]:checked').each(function () {
                     ids[$(this).attr("name")] = $(this).val();
                 });
                 $.ajax({
                     method: "GET",
-                    url: "/Coffee/Index",
+                    url: "/api/CoffeeApi",
                     data: ids,
-                    error: function () {
-                        table = $("#table1").DataTable();
+                    success: function (result) {
+                        var validData = JSON.stringify(result);
+                        $('#table1').DataTable()["aaData"] = validData;
+
                         table.draw();
-                        location.reload();
                     },
                     dataType: 'json'
                 });

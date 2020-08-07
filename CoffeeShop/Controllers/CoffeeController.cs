@@ -72,15 +72,54 @@ namespace CoffeeShop.Controllers
                 List<string> Sizes = new List<string>();
                 Sizes = _repository.GetAllCoffeeSizes();
                 ViewBag.Sizes = Sizes;
-                List<string> CoffeeTypes = new List<string>();
-                CoffeeTypes = _repository.GetAllCoffeeTypes();
-                ViewBag.CoffeeTypes = CoffeeTypes;
                 return View(createCoffeeViewModel(null));
             }
             catch (Exception)
             {
                 return HttpNotFound();
             }
+        }
+        
+        [HttpPost]
+        public ActionResult CreateCustomCoffee(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file)
+        {
+            if (ModelState.IsValid)
+            {
+                return Create(coffeeViewModel, file);
+            }
+            List<string> Sizes = new List<string>();
+            Sizes = _repository.GetAllCoffeeSizes();
+            ViewBag.Sizes = Sizes;
+            return View("CreateCustom",coffeeViewModel);
+        }
+
+        private ActionResult AddShoppingCartCustom(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file)
+        {
+                if (file != null)
+                {
+                    string pic = Path.GetFileName(file.FileName);
+                    string path = Path.Combine(
+                    Server.MapPath("~/Content/Images"), pic);
+                    file.SaveAs(path);
+
+                    // save the image path path to the database
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        file.InputStream.CopyTo(ms);
+                        byte[] array = ms.GetBuffer();
+                    }
+
+                    coffeeViewModel.ImgUrl = "/Content/Images/" + pic;
+                }
+                else
+                {
+                    coffeeViewModel.ImgUrl = "/Content/Images/default_coffee.JPG";
+                }
+
+                coffeeViewModel.selectedIngredientsQuantity = coffeeViewModel.selectedIngredientsQuantity.Where(quan => quan != 0).ToList();
+                _repository.CreateCoffee(coffeeViewModel);
+                ViewBag.Title = "Coffee Shop blabla";
+                return RedirectToAction("Index");
         }
 
         // GET: Coffee/Create
@@ -275,7 +314,7 @@ namespace CoffeeShop.Controllers
             _repository.UpdateCoffeeStock(id, quantity);
             var coffee = _repository.GetAllCoffee();
             var coffeeStatistics = _repository.GetCoffeeStatistics(coffee);
-            return View("CoffeeStatistics",coffeeStatistics);
+            return View("CoffeeStatistics", coffeeStatistics);       
         }
 
         public ActionResult MostSold()
@@ -284,6 +323,8 @@ namespace CoffeeShop.Controllers
             ViewBag.Statistics = true;
             ViewBag.TotalProfit = _repository.GetTotalProfit(mostSold);
             ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeek(mostSold);
+            List<IngredientInCoffeeModel> ingredientsForCoffee = _repository.GetIngredientsInCoffee(mostSold.CoffeeId);
+            ViewBag.IngredientsForCoffee = ingredientsForCoffee;
             return View("Details",mostSold);
         }
 
@@ -293,6 +334,8 @@ namespace CoffeeShop.Controllers
             ViewBag.Statistics = true;
             ViewBag.TotalProfit = _repository.GetTotalProfit(leastSold);
             ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeek(leastSold);
+            List<IngredientInCoffeeModel> ingredientsForCoffee = _repository.GetIngredientsInCoffee(leastSold.CoffeeId);
+            ViewBag.IngredientsForCoffee = ingredientsForCoffee;
             return View("Details", leastSold);
         }
 
@@ -302,6 +345,8 @@ namespace CoffeeShop.Controllers
             ViewBag.Statistics = true;
             ViewBag.TotalProfit = _repository.GetTotalProfit(mostSold);
             ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeek(mostSold);
+            List<IngredientInCoffeeModel> ingredientsForCoffee = _repository.GetIngredientsInCoffee(mostSold.CoffeeId);
+            ViewBag.IngredientsForCoffee = ingredientsForCoffee;
             return View("Details", mostSold);
         }
 
@@ -311,6 +356,8 @@ namespace CoffeeShop.Controllers
             ViewBag.Statistics = true;
             ViewBag.TotalProfit = _repository.GetTotalProfit(leastSold);
             ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeek(leastSold);
+            List<IngredientInCoffeeModel> ingredientsForCoffee = _repository.GetIngredientsInCoffee(leastSold.CoffeeId);
+            ViewBag.IngredientsForCoffee = ingredientsForCoffee;
             return View("Details", leastSold);
         }
 

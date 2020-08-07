@@ -104,7 +104,6 @@
                                     var row_index = table.row(button.parents("tr")).index()
                                     var cell_data = table.cell({ row: row_index, column: 2 }).data()
                                     table.draw()
-                                    table.cell({ row: row_index, column: 2 }).data(parseInt(cell_data)+ parseInt(result))
                                     bootbox.alert({
                                         message: "Successfully updated stock!",
                                         backdrop: true
@@ -128,7 +127,7 @@
                     callback: function (result) {
                         if (result) {
                             $.ajax({
-                                method: "GET",
+                                method: "POST",
                                 data: { "id": button.attr("data-button-id"), "quantity": -result },
                                 url: "/Coffee/UpdateCoffeeQuantity",
                                 error: function () {
