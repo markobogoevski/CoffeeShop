@@ -9,43 +9,81 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Price)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ImgUrl)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Price)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ImgUrl)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.IngredientId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.IngredientId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.IngredientId })
-        </td>
-    </tr>
-}
+<p>
+    <button class="show-img">Show Image</button>
+</p>
+
+<table class="table" id="table1">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th class="img-field">
+                @Html.DisplayNameFor(model => model.ImgUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td class="img-field">
+                    <img src="@item.ImgUrl" alt="@item.Name" width="100" />
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.IngredientId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.IngredientId })
+                    <button data-ingredient-id="@item.IngredientId" class="btn btn-danger js-delete">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+
+        }
+    </tbody>
 
 </table>
+
+
+@section scripts{
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var table = $("#table1").DataTable();
+            $(".js-delete").click(function () {
+                var button = $(this);
+                bootbox.confirm("Дали сигурна сакате да ја избришете состојката?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            method: "POST",
+                            url: "/Ingredient/Delete/" + button.attr("data-ingredient-id"),
+                            success: function () {
+                                table.row(button.parents("tr")).remove().draw();
+                                console.log("asdasd");
+                            },
+                        });
+                    }
+                })
+            });
+            /*$(".show-img").click(function () {
+                table.Columns["ImgUrl"].Visible=false;
+                
+            });*/
+        });
+    </script>
+}
