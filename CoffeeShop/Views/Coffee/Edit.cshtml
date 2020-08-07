@@ -5,6 +5,7 @@
     {
         @Html.AntiForgeryToken()
         @Html.HiddenFor(x => x.CoffeeId);
+        @Html.HiddenFor(x => x.QuantityInStock);
 
         <h4>Edit coffee</h4>
         <hr />
@@ -39,31 +40,54 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(model => model.ImgUrl, htmlAttributes: new { @class = "control-label" })
+                    @Html.LabelFor(model => model.IncomeCoef, htmlAttributes: new { @class = "control-label" })
                     <div>
-                        @Html.EditorFor(model => model.ImgUrl, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.ImgUrl, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.IncomeCoef, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.IncomeCoef, "", new { @class = "text-danger" })
                     </div>
                 </div>
-                <img src="@Model.ImgUrl" class="editImg" width="300px" />
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ImgUrl, htmlAttributes: new { @class = "control-label" })
+                    Current image: <br />
+                    <img src="@Model.ImgUrl" class="editImg" width="300px" />
+                    <br /><br />
+                    <div class="form-group">
+                        <label for="file">Upload new image:</label>
+                        <input type="file" id="file" class="btn btn-danger" name="file" style="width: 100%;" />
+                    </div>
+                </div>
             </div>
             <div class="col-md-7">
                 @Html.ValidationSummary(false, "", new { @class = "text-danger ml-0" })
                 <label class="row font-weight-bold ml-2">Choose your ingredients: </label><br /><br />
+                @{var i = 0;}
                 @foreach (var item in Model.availableIngredients)
                 {
                     <div class="form-group">
                         @{
                             var shouldCheck = Model.selectedIngredients.Any(x => x == item.IngredientId.ToString()) ? "checked" : "";
+                            var val="0";
+                            if (shouldCheck=="checked")
+                            {
+                                val = Model.selectedIngredientsQuantity.ElementAt(@i).ToString();
+                                i++;
+                            }
                         }
                         <div class="m-1 d-inline-block">
-                            <label class="container_new" for="@item.IngredientId">@item.Name
-                                <input type="checkbox" value="@item.IngredientId" name="selectedIngredients" id="@item.IngredientId" @shouldCheck />
-                                <span class="checkmark"></span>
-                            </label>                                
+                            <label class="container_new" for="@item.IngredientId">
+                                @item.Name
+                            <input type="checkbox" value="@item.IngredientId" name="selectedIngredients" id="@item.IngredientId" @shouldCheck class="ing_check" autocomplete="off"/>
+                            <span class="checkmark"></span>
+                        </label>
+                        <div class="div_check" style="display:none">
+                            <label class="container_new" for="@item.QuantityInCoffee">
+                                @Html.LabelFor(m => item.QuantityInCoffee, htmlAttributes: new { @class = "control-label" })
+                            </label>
+                            <input type="number" name="selectedIngredientsQuantity" min="0" max="@item.QuantityInStock" step="1" value=@val class="form-control" />
                         </div>
                     </div>
-                }
+                </div>
+            }
             </div>
         </div>
         <br /><br />
@@ -79,4 +103,31 @@
 
 @section Styles {
     <link href="@Url.Content("~/Styles/Checkbox.css")" rel="stylesheet" type="text/css" />
+}
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".ing_check").each(function () {
+                el = $(this);
+                var div = el.parent().next(".div_check");
+                if (el.prop("checked") == true) {
+                    div.show();
+                }
+            });
+           
+            $(".ing_check").click(function () {
+                var el = $(this);
+                var div = $(this).parent().next(".div_check");
+                var inputField = div.children()[1];
+                if (el.prop("checked") == true && inputField.getAttribute("value")=="0") {
+                    inputField.setAttribute("value",1);
+                }
+                else {
+                    inputField.setAttribute("value", 0);
+                }
+                div.toggle();
+            });
+            });
+    </script>
 }

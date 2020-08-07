@@ -53,6 +53,8 @@ namespace CoffeeShop.Controllers
             try
             {
                 CoffeeModel coffeeModel = _repository.FindCoffee(id);
+                List<IngredientInCoffeeModel> ingredientsForCoffee = _repository.GetIngredientsInCoffee(coffeeModel.CoffeeId);
+                ViewBag.IngredientsForCoffee = ingredientsForCoffee;
                 return View(coffeeModel);
 
             }
@@ -107,22 +109,24 @@ namespace CoffeeShop.Controllers
                 {
                     var coffeeToEdit = _repository.FindCoffee(id);
                     coffeeViewModel.CoffeeId = id;
-
                     coffeeViewModel.selectedIngredients = _repository.GetIngredientsForCoffee(id)
                                                                      .Select(x => x.IngredientId.ToString())
                                                                      .ToList();
                     coffeeViewModel.Name = coffeeToEdit.Name;
+                    coffeeViewModel.selectedIngredientsQuantity = _repository.GetSelectedIngredientQuantitiesForCoffee(id,coffeeViewModel.selectedIngredients);
                     coffeeViewModel.Size = coffeeToEdit.Size;
+                    coffeeViewModel.IncomeCoef = coffeeToEdit.IncomeCoef;
                     coffeeViewModel.ImgUrl = coffeeToEdit.ImgUrl;
                     coffeeViewModel.BasePrice = coffeeToEdit.BasePrice;
                     coffeeViewModel.Description = coffeeToEdit.Description;
+                    coffeeViewModel.QuantityInStock = coffeeToEdit.QuantityInStock;
                 }
                 catch (Exception)
                 {
                     throw new Exception();
                 }
             }
-            coffeeViewModel.availableIngredients = _repository.GetIngredients()
+            coffeeViewModel.availableIngredients = _repository.GetAvailableIngredients()
                                                               .ToList();
             return coffeeViewModel;
         }
@@ -157,6 +161,7 @@ namespace CoffeeShop.Controllers
                     coffeeViewModel.ImgUrl = "/Content/Images/default_coffee.JPG";
                 }
 
+                coffeeViewModel.selectedIngredientsQuantity = coffeeViewModel.selectedIngredientsQuantity.Where(quan => quan != 0).ToList();
                 _repository.CreateCoffee(coffeeViewModel);
                 ViewBag.Title = "Coffee Shop blabla";
                 return RedirectToAction("Index");
@@ -192,10 +197,30 @@ namespace CoffeeShop.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(CreateCoffeeViewModel coffeeViewModel)
+        public ActionResult Edit(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
             {
+                if (file != null)
+                {
+                    string pic = Path.GetFileName(file.FileName);
+                    string path = Path.Combine(
+                    Server.MapPath("~/Content/Images"), pic);
+                    file.SaveAs(path);
+
+                    // save the image path path to the database
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        file.InputStream.CopyTo(ms);
+                        byte[] array = ms.GetBuffer();
+                    }
+
+                    coffeeViewModel.ImgUrl = "/Content/Images/" + pic;
+                }
+                else
+                {
+                    coffeeViewModel.ImgUrl = "/Content/Images/default_coffee.JPG";
+                }
                 _repository.EditCoffee(coffeeViewModel);
                 return RedirectToAction("Index");
             }
@@ -227,6 +252,8 @@ namespace CoffeeShop.Controllers
         public ActionResult CoffeeDay()
         {
             var coffeeDay = GetCoffeeDay();
+            List<IngredientInCoffeeModel> ingredientsForCoffee = _repository.GetIngredientsInCoffee(coffeeDay.CoffeeId);
+            ViewBag.IngredientsForCoffee = ingredientsForCoffee;
             return PartialView("_DailyDeal", coffeeDay);
         }
 
@@ -238,7 +265,17 @@ namespace CoffeeShop.Controllers
         public ActionResult CoffeeStatistics()
         {
             var coffee = _repository.GetAllCoffee();
-            return View(coffee);
+            var coffeeStatistics = _repository.GetCoffeeStatistics(coffee);
+            return View(coffeeStatistics);
+        }
+
+        // Post: Coffee/UpdateCoffeeQuantity
+        public ActionResult UpdateCoffeeQuantity(string id,string quantity)
+        {
+            _repository.UpdateCoffeeStock(id, quantity);
+            var coffee = _repository.GetAllCoffee();
+            var coffeeStatistics = _repository.GetCoffeeStatistics(coffee);
+            return View("CoffeeStatistics",coffeeStatistics);
         }
 
         public ActionResult MostSold()

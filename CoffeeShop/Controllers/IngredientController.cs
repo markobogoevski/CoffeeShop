@@ -31,7 +31,7 @@ namespace CoffeeShop.Controllers
             }
             try
             {
-                var ingredients = _repository.GetAllIngredients();
+                var ingredients = _repository.GetIngredients();
                 return View(ingredients);
             }
             catch (Exception)
