@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Web;
 using System.Web.Mvc;
 using CoffeeShop.Models;
 using CoffeeShop.Services;
@@ -31,7 +33,7 @@ namespace CoffeeShop.Controllers
             }
             try
             {
-                var ingredients = _repository.GetIngredients();
+                var ingredients = _repository.GetIngredient(id);
                 return View(ingredients);
             }
             catch (Exception)
@@ -51,15 +53,36 @@ namespace CoffeeShop.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "IngredientId,Name,Price,ImgUrl,Description")] IngredientModel newIngredient)
+        public ActionResult Create(IngredientModel newIngredient, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
             {
+                if (file != null)
+                {
+                    string pic = Path.GetFileName(file.FileName);
+                    string path = Path.Combine(
+                    Server.MapPath("~/Content/Images"), pic);
+                    file.SaveAs(path);
+
+                    // save the image path path to the database
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        file.InputStream.CopyTo(ms);
+                        byte[] array = ms.GetBuffer();
+                    }
+
+                    newIngredient.ImgUrl = "/Content/Images/" + pic;
+                }
+                else
+                {
+                   newIngredient.ImgUrl = "/Content/Images/default_coffee.JPG";
+                }
                 _repository.CreateIngredient(newIngredient);
+                ViewBag.Title = "Coffee Shop blabla";
                 return RedirectToAction("Index");
             }
-
             return View(newIngredient);
+
         }
 
         // GET: Ingredient/Edit/5
@@ -71,7 +94,7 @@ namespace CoffeeShop.Controllers
             }
             try
             {
-                return View(db.Ingredients.Find(id));
+                return View(_repository.GetIngredient(id));
             }
             catch(Exception)
             {
@@ -111,11 +134,11 @@ namespace CoffeeShop.Controllers
         }*/
 
         // POST: Ingredient/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost]
         public ActionResult Delete(Guid id)
         {
             _repository.DeleteIngredient(id);
+            Console.WriteLine("Deleeting " + id);
             return RedirectToAction("Index");
         }
 
