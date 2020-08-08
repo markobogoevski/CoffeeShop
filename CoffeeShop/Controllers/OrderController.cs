@@ -8,12 +8,20 @@ using System.Web;
 using System.Web.Mvc;
 using CoffeeShop.Models;
 using CoffeeShop.Models.Order;
+using CoffeeShop.Services;
+using Microsoft.AspNet.Identity;
 
 namespace CoffeeShop.Controllers
 {
     public class OrderController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private Repository _repository;
+
+        public OrderController()
+        {
+            _repository = Repository.GetInstance();
+        }
 
         // GET: Order
         public ActionResult Index()
@@ -42,22 +50,22 @@ namespace CoffeeShop.Controllers
             return View();
         }
 
-        // POST: Order/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "OrderId,Address,OrderStatus,OrderTime,OrderRating")] OrderModel orderModel)
+        public ActionResult Create(List<OrderItemModel> OrderItems)
         {
-            if (ModelState.IsValid)
+            string Address = Request.QueryString["Address"];
+            if ((OrderItems != null && OrderItems.Count <= 0) || (OrderItems == null))
             {
-                orderModel.OrderId = Guid.NewGuid();
-                db.Orders.Add(orderModel);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json(new { message = "There was a problem with placing your order. Please try again later" });
             }
-
-            return View(orderModel);
+            else
+            {
+                _repository.CreateOrder(OrderItems, User.Identity.GetUserId(), Address);
+                Response.StatusCode = (int)HttpStatusCode.OK;
+                Session["cart"] = null;
+                return Json(new { message = "Your order has been placed" });
+            }
         }
 
         // GET: Order/Edit/5

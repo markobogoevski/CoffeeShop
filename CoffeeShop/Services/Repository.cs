@@ -1,5 +1,7 @@
+using CoffeeShop.Controllers;
 using CoffeeShop.Enumerations;
 using CoffeeShop.Models;
+using CoffeeShop.Models.Order;
 using CoffeeShop.Models.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -37,11 +39,47 @@ namespace CoffeeShop.Services
             return usedIngredients;
         }
 
+        public OrderItemModel GetOrderItem(Guid orderItemId)
+        {
+            var orderItem = _db.OrderItems.Find(orderItemId);
+            return orderItem;
+        }
+
+
         public List<CoffeeModel> GetCoffeeByIngredients(List<string> ids)
         {
             var coffee = _db.Coffee.Where(cof => cof.Ingredients.Select(ing => ing.IngredientId.ToString())
                                                                 .Any(ing => ids.Contains(ing)))
                                                                 .ToList();
+            return coffee;
+        }
+
+        public void CreateOrder(List<OrderItemModel> orderItems, string userId, string address)
+        {
+            ApplicationUser user = _db.Users.Find(userId);
+            OrderModel newOrder = new OrderModel
+            {
+                OrderId = Guid.NewGuid(),
+                Address = address,
+                OrderStatus = OrderStatus.INACTIVE,
+                User = user,
+                OrderTime = DateTime.Now,
+                OrderRating = 0
+            };
+
+            foreach (var item in orderItems)
+            {
+                newOrder.OrderItems.Add(item);
+                item.Order = newOrder;
+            }
+
+            _db.Orders.Add(newOrder);
+            _db.SaveChanges();
+        }
+
+        public CoffeeModel GetCoffee(string id)
+        {
+            var coffee = _db.Coffee.Find(Guid.Parse(id));
             return coffee;
         }
 
@@ -60,6 +98,13 @@ namespace CoffeeShop.Services
             }
 
             return coffee;
+        }
+
+        public void AddOrderItem(OrderItemModel orderItemModel)
+        {
+            _db.OrderItems.Add(orderItemModel);
+            _db.SaveChanges();
+            return;
         }
 
         public List<IngredientInCoffeeModel> GetIngredientsInCoffee(Guid coffeeId)
@@ -201,7 +246,14 @@ namespace CoffeeShop.Services
                 moduls.Add(quantitiesInStock.ElementAt(i) / quantitiesInCoffee.ElementAt(i));
             }
 
-            return moduls.Min();
+            if (moduls.Count != 0)
+            {
+                return moduls.Min();
+            }
+            else
+            {
+                return 500;
+            }
         }
 
         public List<int> GetSelectedIngredientQuantitiesForCoffee(Guid? id, List<string> selectedIngredients)
@@ -385,6 +437,7 @@ namespace CoffeeShop.Services
         public void CreateIngredient(IngredientModel _ingredient)
         {
             _db.Ingredients.Add(_ingredient);
+            _db.SaveChanges();
         }
 
         public void UpdateIngredient(IngredientModel _ingredient)

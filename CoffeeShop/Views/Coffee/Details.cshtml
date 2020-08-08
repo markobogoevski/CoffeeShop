@@ -50,8 +50,8 @@
              }
              else
              {
-                 @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info" })
-                 <a href="#" class="card-link btn btn-success">Order</a>
+                 @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = @Model.CoffeeId }, new { @class = "btn btn-success btn-block" })
+                 @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info btn-block" })
              }
          </div>
 </div>

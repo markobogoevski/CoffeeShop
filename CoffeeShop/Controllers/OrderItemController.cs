@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using CoffeeShop.Models;
 using CoffeeShop.Models.Order;
+using CoffeeShop.Services;
 
 namespace CoffeeShop.Controllers
 {
     public class OrderItemController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private Repository _repository;
+        public OrderItemController()
+        {
+            _repository = Repository.GetInstance();
+        }
+
+        private ApplicationDbContext db { get; set; }
 
         // GET: OrderItem
         public ActionResult Index()
@@ -37,27 +42,30 @@ namespace CoffeeShop.Controllers
         }
 
         // GET: OrderItem/Create
-        public ActionResult Create()
+        public ActionResult Create(string id)
         {
-            return View();
+            var coffee = _repository.GetCoffee(id);
+            OrderItemModel newOrderItemModel = new OrderItemModel()
+            {
+                Coffee = coffee
+            };
+            List<IngredientInCoffeeModel> ingredientsForCoffee = _repository.GetIngredientsInCoffee(coffee.CoffeeId);
+            ViewBag.IngredientsForCoffee = ingredientsForCoffee;
+            return View(newOrderItemModel);
         }
 
-        // POST: OrderItem/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "OrderItemId,Quantity")] OrderItemModel orderItemModel)
+        public ActionResult Create(string id, string quantity)
         {
-            if (ModelState.IsValid)
-            {
-                orderItemModel.OrderItemId = Guid.NewGuid();
-                db.OrderItems.Add(orderItemModel);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(orderItemModel);
+                var coffee = _repository.GetCoffee(id);
+                OrderItemModel orderItemModel = new OrderItemModel
+                {
+                    Coffee = coffee,
+                    Quantity = Convert.ToInt32(quantity),
+                    OrderItemId = Guid.NewGuid()
+                };
+            _repository.AddOrderItem(orderItemModel);
+            return RedirectToAction("AddToCart", "Cart", new { orderItemId = orderItemModel.OrderItemId });
         }
 
         // GET: OrderItem/Edit/5
@@ -121,7 +129,7 @@ namespace CoffeeShop.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _repository.Dispose();
             }
             base.Dispose(disposing);
         }
