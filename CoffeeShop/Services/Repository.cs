@@ -54,6 +54,29 @@ namespace CoffeeShop.Services
             return coffee;
         }
 
+        public void CreateOrder(List<OrderItemModel> orderItems, string userId, string address)
+        {
+            ApplicationUser user = _db.Users.Find(userId);
+            OrderModel newOrder = new OrderModel
+            {
+                OrderId = Guid.NewGuid(),
+                Address = address,
+                OrderStatus = OrderStatus.INACTIVE,
+                User = user,
+                OrderTime = DateTime.Now,
+                OrderRating = 0
+            };
+
+            foreach (var item in orderItems)
+            {
+                newOrder.OrderItems.Add(item);
+                item.Order = newOrder;
+            }
+
+            _db.Orders.Add(newOrder);
+            _db.SaveChanges();
+        }
+
         public CoffeeModel GetCoffee(string id)
         {
             var coffee = _db.Coffee.Find(Guid.Parse(id));

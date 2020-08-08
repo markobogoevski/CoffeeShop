@@ -113,7 +113,7 @@
     @{
         var data = (OrderModel)Session["cart"];
     }
-    <script>
+<script>
         $(document).ready(function () {
             var message = "";
             $("#makeOrderButton").on('click', function () {
@@ -122,9 +122,10 @@
                     $('#valid').removeClass('d-none')
                     return
                 }
+                console.log(@Html.Raw(Html.GetOrderRequestJson(data)))
                 $.ajax({
                     type: "POST",
-                    url: "Orders/Create?Address=" + address,
+                    url: "Order/Create?Address=" + address,
                     data: @Html.Raw(Html.GetOrderRequestJson(data)),
                     success: function (response) {
                         message = JSON.parse(response.responseText).message
@@ -195,5 +196,5 @@
         })
 
 
-    </script>
+</script>
 }

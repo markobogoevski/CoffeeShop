@@ -110,28 +110,6 @@ namespace CoffeeShop.Controllers
             return RedirectToAction("Index", "Cart");
         }
 
-        public ActionResult CreateOrderFromCart(string address)
-        {
-            OrderModel cart = (OrderModel)Session["cart"];
-            if (cart == null)
-            {
-                return HttpNotFound();
-            }
-
-            cart.OrderId = Guid.NewGuid();
-            cart.Address = address;
-            cart.OrderStatus = OrderStatus.INACTIVE;
-            cart.User = _userManager.FindById(User.Identity.GetUserId());
-
-            foreach (OrderItemModel orderItemModel in cart.OrderItems)
-            {
-                orderItemModel.OrderItemId = cart.OrderId;
-                orderItemModel.Order = cart;
-            }
-
-            return View();
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
