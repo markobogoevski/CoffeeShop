@@ -13,6 +13,8 @@ namespace CoffeeShop.Controllers
 {
     public class CoffeeController : Controller
     {
+        private ApplicationDbContext db = new ApplicationDbContext();
+
         private Repository _repository;
         public CoffeeController()
         {
