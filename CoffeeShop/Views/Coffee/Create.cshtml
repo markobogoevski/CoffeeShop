@@ -1,67 +1,107 @@
-﻿@model CoffeeShop.Models.CoffeeModel
+﻿@model CoffeeShop.Models.ViewModels.CreateCoffeeViewModel
 
 @{
     ViewBag.Title = "Create";
 }
 
-<h2>Create</h2>
-
-@using (Html.BeginForm()) 
+@using (Html.BeginForm("Create", "Coffee", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>CoffeeModel</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+    <h4>Create a new coffee</h4>
+    <hr />
+    <div class="row container">
+        <div class="col-md-5">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+                <div>
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
             </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.BasePrice, htmlAttributes: new { @class = "control-label" })
+                <div>
+                    @Html.EditorFor(model => model.BasePrice, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.BasePrice, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Size, htmlAttributes: new { @class = "control-label" })
+                <div>
+                    @Html.DropDownListFor(model => model.Size, new SelectList(ViewBag.Sizes), new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Size, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
+                <div>
+                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.IncomeCoef, htmlAttributes: new { @class = "control-label" })
+                <div>
+                    @Html.EditorFor(model => model.IncomeCoef, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.IncomeCoef, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="file">Upload Image:</label>
+                <input type="file" id="file" class="btn btn-danger" name="file" style="width: 100%;" />
+            </div>
+            <br /><hr />
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
-            </div>
+        <div class="col-md-7">
+            <label class="row font-weight-bold ml-2">Choose your ingredients: </label><br /><br />
+            @foreach (var item in Model.availableIngredients)
+            {
+                <div class="form-group">
+                    <div class="m-1 d-inline-block">
+                        <label class="container_new" for="@item.IngredientId">
+                            @item.Name, Price: @item.Price
+                            <input type="checkbox" value="@item.IngredientId" name="selectedIngredients" id="@item.IngredientId" class="ing_check" autocomplete="off"/>
+                            <span class="checkmark"></span>
+                        </label>
+                        <div class="div_check" style="display:none">
+                            <label class="container_new" for="@item.QuantityInCoffee">
+                                @Html.LabelFor(m => item.QuantityInCoffee, htmlAttributes: new { @class = "control-label" })
+                            </label>
+                            <input type="number" name="selectedIngredientsQuantity" min="0" max="@item.QuantityInStock" step="1" value="0" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Size, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Size, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Size, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ImgUrl, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ImgUrl, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ImgUrl, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-success" />
+            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
         </div>
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+@section Styles {
+    <link href="@Url.Content("~/Styles/Checkbox.css")" rel="stylesheet" type="text/css" />
+}
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".ing_check").click(function () {
+                var el = $(this);
+                var div = $(this).parent().next(".div_check");
+                var inputField = div.children()[1];
+                console.log(inputField)
+                if (el.prop("checked") == true) {
+                    inputField.setAttribute("value",1);
+                }
+                else {
+                    inputField.setAttribute("value", 0);
+                }
+                div.toggle();
+            });
+            });
+    </script>
+}

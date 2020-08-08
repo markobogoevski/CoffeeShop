@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace CoffeeShop.Models
@@ -15,5 +16,13 @@ namespace CoffeeShop.Models
         public String ImgUrl { get; set; }
 
         public String Description { get; set; }
+
+        public virtual List<CoffeeModel> Coffees { get; set; }
+
+        public int QuantityInStock { get; set; }
+
+        public int QuantityUsedLastWeek { get; set; }
+
+        public int QuantityInCoffee { get; set; }
     }
 }
