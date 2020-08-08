@@ -31,7 +31,7 @@
                 }<br />
             </p>
         </div>
-        <a href="#" class="card-link btn btn-success btn-block">Order</a>
+        @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = Model.CoffeeId }, new { @class = "btn btn-success btn-block" })
         <br />
         @Ajax.ActionLink("Hide",
                          "HideDeal",
