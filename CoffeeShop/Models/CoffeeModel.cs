@@ -30,5 +30,7 @@ namespace CoffeeShop.Models
         public int TotalQuantitySold { get; set; }
 
         public decimal IncomeCoef { get; set; }
+
+        public virtual ApplicationUser User { get; set; }
     }
 }

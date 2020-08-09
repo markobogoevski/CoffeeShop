@@ -61,7 +61,7 @@ namespace CoffeeShop.Controllers
                 {
                     string pic = Path.GetFileName(file.FileName);
                     string path = Path.Combine(
-                    Server.MapPath("~/Content/Images"), pic);
+                    Server.MapPath("~/Content/Images/Ingredient"), pic);
                     file.SaveAs(path);
 
                     // save the image path path to the database
@@ -71,14 +71,13 @@ namespace CoffeeShop.Controllers
                         byte[] array = ms.GetBuffer();
                     }
 
-                    newIngredient.ImgUrl = "/Content/Images/" + pic;
+                    newIngredient.ImgUrl = "/Content/Images/Ingredient/" + pic;
                 }
                 else
                 {
-                   newIngredient.ImgUrl = "/Content/Images/default_coffee.JPG";
+                   newIngredient.ImgUrl = "/Content/Images/Ingredient/default_ingredient.jpg";
                 }
                 _repository.CreateIngredient(newIngredient);
-                ViewBag.Title = "Coffee Shop blabla";
                 return RedirectToAction("Index");
             }
             return View(newIngredient);
@@ -108,43 +107,84 @@ namespace CoffeeShop.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "IngredientId,Name,Price,ImgUrl,Description")] IngredientModel _ingredient)
+        public ActionResult Edit(IngredientModel _ingredient, HttpPostedFileBase file)
         {
-            if (ModelState.IsValid)
+            if (file != null)
             {
-                _repository.UpdateIngredient(_ingredient);
-                return RedirectToAction("Index");
+                string pic = Path.GetFileName(file.FileName);
+                string path = Path.Combine(
+                Server.MapPath("~/Content/Images/Ingredient"), pic);
+                file.SaveAs(path);
+
+                // save the image path path to the database
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    file.InputStream.CopyTo(ms);
+                    byte[] array = ms.GetBuffer();
+                }
+
+                _ingredient.ImgUrl = "/Content/Images/Ingredient/" + pic;
             }
-            return View(_ingredient);
+            _repository.UpdateIngredient(_ingredient);
+            return RedirectToAction("Index");
         }
 
-        /*// GET: Ingredient/Delete/5
-        public ActionResult Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            IngredientModel ingredientModel = db.Ingredients.Find(id);
-            if (ingredientModel == null)
-            {
-                return HttpNotFound();
-            }
-            return View(ingredientModel);
-        }*/
-
-        // POST: Ingredient/Delete/5
         [HttpPost]
         public ActionResult Delete(Guid id)
         {
             _repository.DeleteIngredient(id);
-            Console.WriteLine("Deleeting " + id);
             return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
+            if (disposing)
+            {
+                _repository.Dispose();
+            }
             base.Dispose(disposing);
+        }
+
+        public ActionResult IngredientStatistics()
+        {
+            var ingredients = _repository.GetIngredients();
+            return View(ingredients);
+        }
+
+        // Post: Coffee/UpdateIngredientQuantity
+        public ActionResult UpdateIngredientQuantity(string id, string quantity)
+        {
+            _repository.UpdateIngredientStock(id, quantity);
+            var ingredients = _repository.GetIngredients();
+            return View("CoffeeStatistics", ingredients);
+        }
+
+        public ActionResult MostSold()
+        {
+            IngredientModel mostUsed= _repository.GetMostUsedIngredient();
+            ViewBag.Statistics = true;
+            return View("Details", mostUsed);
+        }
+
+        public ActionResult LeastSold()
+        {
+            IngredientModel leastUsed = _repository.GetLeastUsedIngredient();
+            ViewBag.Statistics = true;
+            return View("Details", leastUsed);
+        }
+
+        public ActionResult MostSoldWeek()
+        {
+            IngredientModel mostUsed = _repository.GetMostUsedIngredientWeek();
+            ViewBag.Statistics = true;
+            return View("Details", mostUsed);
+        }
+
+        public ActionResult LeastSoldWeek()
+        {
+            IngredientModel leastUsed = _repository.GetLeastUsedIngredientWeek();
+            ViewBag.Statistics = true;
+            return View("Details", leastUsed);
         }
 
         public ActionResult OrderBy(string sortOrder)

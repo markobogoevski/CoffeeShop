@@ -1,5 +1,7 @@
 ﻿@model CoffeeShop.Models.CoffeeModel
 @using CoffeeShop.Models
+@using CoffeeShop.Enumerations
+
 @{
     ViewBag.Title = "Coffee Details";
 }
@@ -24,17 +26,29 @@
 <div style="margin:auto; width:50%; border:3px solid gray; padding:10px" class="bg-primary card text-center" style="width: 18rem;">
     @ViewBag.Title<br /><br />
     <img class="card-img-top" src="@Model.ImgUrl" alt="Coffee" width="100%">
-    <div class="card-body"><br />
+    <div class="card-body">
+        <br />
         <h5 class="card-title">Ingredients: </h5>
-        <p class="card-text">
-            @{
-                foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
-                {
-                        <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity, Price: @(ingredientQuantity.Ingredient.Price*ingredientQuantity.Quantity) </strong>
-                        <br />
-                }
-            }<br />
-        </p>
+        @{
+            if (ViewBag.IngredientsForCoffee.Count == 0)
+            {
+                <p class="card-text">Basic coffee (no ingredients)</p>
+                <br />
+            }
+            else
+            {
+                <p class="card-text">
+                    @{
+                        foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
+                        {
+                            <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity, Price: @(ingredientQuantity.Ingredient.Price*ingredientQuantity.Quantity) </strong>
+                            <br />
+                        }
+                    }<br />
+                </p>
+            }
+        }
+
     </div>
     <ul class="list-group list-group-flush">
         <li class="list-group-item bg-danger">Name: @Model.Name</li>
@@ -45,13 +59,19 @@
          <div class="card-body">
              @if (ViewBag.Statistics != null)
              {
-                 @Html.ActionLink("Back to Statistics", "CoffeeStatistics", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info" })
+                 @Html.ActionLink("Back to Statistics", "CoffeeStatistics", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info btn-block" })
 
              }
              else
              {
                  @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = @Model.CoffeeId }, new { @class = "btn btn-success btn-block" })
-                 @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info btn-block" })
+                 @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "btn btn-info btn-block" })
+             }
+             @{
+                 if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+                 {
+                     @Html.ActionLink("Edit", "Edit", new { id = Model.CoffeeId }, new { @class = "btn btn-warning btn-block" })
+                 }
              }
          </div>
 </div>

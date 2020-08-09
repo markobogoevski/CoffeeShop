@@ -188,12 +188,9 @@
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\OrderItemController.cs" />
-    <Compile Include="Enumerations\CoffeeCosts.cs" />
-    <Compile Include="Enumerations\CoffeeDescriptions.cs" />
     <Compile Include="Enumerations\CoffeeSize.cs" />
     <Compile Include="Enumerations\CoffeeSizeMultiplier.cs" />
-    <Compile Include="Enumerations\IngredientsCosts.cs" />
-    <Compile Include="Enumerations\IngredientsDescriptions.cs" />
+    <Compile Include="Enumerations\IngredientStock.cs" />
     <Compile Include="Enumerations\OrderStatus.cs" />
     <Compile Include="Enumerations\UserRoles.cs" />
     <Compile Include="Global.asax.cs">
@@ -220,6 +217,22 @@
     <Compile Include="Migrations\202008061925541_QuantityIngredient.designer.cs">
       <DependentUpon>202008061925541_QuantityIngredient.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202008090155363_ingredientFix.cs" />
+    <Compile Include="Migrations\202008090155363_ingredientFix.designer.cs">
+      <DependentUpon>202008090155363_ingredientFix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202008090254559_UserWork.cs" />
+    <Compile Include="Migrations\202008090254559_UserWork.designer.cs">
+      <DependentUpon>202008090254559_UserWork.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202008090447285_IngredientTotalUsed.cs" />
+    <Compile Include="Migrations\202008090447285_IngredientTotalUsed.designer.cs">
+      <DependentUpon>202008090447285_IngredientTotalUsed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202008090709151_OrderTimeEnd.cs" />
+    <Compile Include="Migrations\202008090709151_OrderTimeEnd.designer.cs">
+      <DependentUpon>202008090709151_OrderTimeEnd.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CartModel.cs" />
@@ -230,8 +243,10 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\OrderModel.cs" />
     <Compile Include="Models\OrderItemModel.cs" />
+    <Compile Include="Models\ViewModels\CancelOrderViewModel.cs" />
     <Compile Include="Models\ViewModels\CoffeeStatisticViewModel.cs" />
     <Compile Include="Models\ViewModels\CreateCoffeeViewModel.cs" />
+    <Compile Include="Models\ViewModels\IngredientQuantityViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Repository.cs" />
     <Compile Include="Startup.cs" />
@@ -398,7 +413,8 @@
     <Content Include="Content\DataTables\images\sort_desc.png" />
     <Content Include="Content\DataTables\images\sort_desc_disabled.png" />
     <Content Include="Content\DataTables\swf\flashExport.swf" />
-    <Content Include="Content\Images\default_coffee.JPG" />
+    <Content Include="Content\Images\Coffee\default_coffee.JPG" />
+    <Content Include="Content\Images\Ingredient\default_ingredient.jpg" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -504,13 +520,6 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Styles\Checkbox.css" />
-    <Content Include="Web.config" />
-    <Content Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
-    <Content Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
@@ -562,6 +571,15 @@
     <Content Include="Views\Coffee\_HideDeal.cshtml" />
     <Content Include="Views\Coffee\CoffeeStatistics.cshtml" />
     <Content Include="Views\Cart\Index.cshtml" />
+    <Content Include="web.config" />
+    <Content Include="Views\Account\AddUserToRole.cshtml" />
+    <Content Include="Views\Ingredient\IngredientStatistics.cshtml" />
+    <None Include="web.Debug.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
+    <None Include="web.Release.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -595,6 +613,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202008061925541_QuantityIngredient.resx">
       <DependentUpon>202008061925541_QuantityIngredient.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008090155363_ingredientFix.resx">
+      <DependentUpon>202008090155363_ingredientFix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008090254559_UserWork.resx">
+      <DependentUpon>202008090254559_UserWork.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008090447285_IngredientTotalUsed.resx">
+      <DependentUpon>202008090447285_IngredientTotalUsed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008090709151_OrderTimeEnd.resx">
+      <DependentUpon>202008090709151_OrderTimeEnd.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

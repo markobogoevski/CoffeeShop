@@ -1,4 +1,5 @@
 ﻿@model CoffeeShop.Models.Order.OrderModel
+@using CoffeeShop.Enumerations
 
 @{
     ViewBag.Title = "Details";
@@ -31,7 +32,33 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.OrderTime)
+            @{
+                if (Model.OrderStatus != OrderStatus.INACTIVE)
+                {
+                    @Html.DisplayFor(model => model.OrderTime);
+                }
+                else
+                {
+                    <em>Order is still not activated...</em>
+                }
+            }
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OrderFinishTime)
+        </dt>
+
+        <dd>
+            @{
+                if (Model.OrderStatus == OrderStatus.FINISHED)
+                {
+                    @Html.DisplayFor(model => model.OrderFinishTime);
+                }
+                else
+                {
+                    <em>Order is still not finished...</em>
+                }
+            }
         </dd>
 
         <dt>
@@ -39,12 +66,59 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.OrderRating)
+            @{
+                if (Model.OrderStatus == OrderStatus.FINISHED)
+                {
+                    @Html.DisplayFor(model => model.OrderRating);
+                }
+                else
+                {
+                    <em>Order is still not finished...</em>
+                }
+            }
         </dd>
 
     </dl>
 </div>
+<div>
+    <ul>
+        @{
+            decimal totalPrice = 0;
+            var j = 1;
+            foreach (var orderItem in Model.OrderItems)
+            {
+                <strong>Order item: @j</strong>
+                j++;
+                <li>Coffee: @orderItem.Coffee.Name</li>
+               
+                    if (orderItem.Coffee.Ingredients.Count != 0)
+                    {
+                        <li>
+                            <ul>
+                                @{
+                                    <em>Ingredients: </em>
+                                    foreach (var ingredientItem in orderItem.Coffee.Ingredients)
+                                    {
+                                        <li>@ingredientItem.Name</li>
+                                    }
+                                }
+                            </ul>
+                        </li>
+                     }
+                <li>Quantity: @orderItem.Quantity</li>
+                var price = orderItem.Coffee.TotalPrice * orderItem.Quantity;
+                totalPrice += price;
+                <li>Order item price: @price</li>
+            }
+        }
+    </ul>
+    @{ 
+
+    }
+    <em><strong>Total order price: @totalPrice</strong></em><br /><br />
+</div>
+
+
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.OrderId }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to orders", "Index", null, new { @class = "btn btn-info" })
 </p>

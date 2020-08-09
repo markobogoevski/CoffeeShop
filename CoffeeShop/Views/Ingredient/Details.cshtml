@@ -1,4 +1,5 @@
 ﻿@model CoffeeShop.Models.IngredientModel
+@using CoffeeShop.Enumerations
 
 @{
     ViewBag.Title = "Details";
@@ -44,6 +45,18 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.IngredientId }) |
-    @Html.ActionLink("Back to List", "Index")
+    @if (ViewBag.Statistics != null)
+    {
+        @Html.ActionLink("Back to Statistics", "IngredientStatistics", routeValues: null, htmlAttributes: new { @class = "btn btn-info" })
+    }
+    else
+    {
+        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-info" })
+    }
+    @{
+        if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+        {
+            @Html.ActionLink("Edit", "Edit", new { id = Model.IngredientId }, new { @class = "btn btn-warning" })
+        }
+    }
 </p>

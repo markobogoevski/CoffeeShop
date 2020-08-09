@@ -1,0 +1,151 @@
+﻿@model IEnumerable<CoffeeShop.Models.IngredientModel>
+
+@{
+    ViewBag.Title = "IngredientStatistics";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div style="padding-bottom:10%">
+    <div class="col-md-6" style="float:left">
+        <div>
+            @Html.ActionLink("Check out the most used ingredient", "MostSold", null, new { @class = "btn btn-info" })
+        </div>
+        <br />
+        <div>
+            @Html.ActionLink("Check out the least used ingredient!", "LeastSold", null, new { @class = "btn btn-info" })
+        </div>
+    </div>
+    <div class="col-md-6" style="float:right">
+        <div>
+            @Html.ActionLink("Check out the most used ingredient this week", "MostSoldWeek", null, new { @class = "btn btn-info" })
+        </div>
+        <br />
+        <div>
+            @Html.ActionLink("Check out the least used ingredient this week!", "LeastSoldWeek", null, new { @class = "btn btn-info" })
+        </div>
+    </div>
+</div>
+
+<table class="table" id="table_ingredient_statistics">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImgUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.QuantityInStock)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.QuantityUsedLastWeek)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalQuantityUsed)
+            </th>
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <img alt="@item.Name" src="@Url.Content(item.ImgUrl)" width="300px" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.QuantityInStock)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.QuantityUsedLastWeek)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalQuantityUsed)
+                </td>
+                <td>
+                    <button data-button-id=@item.IngredientId data-max-decrease=@item.QuantityInStock class="btn btn-success btn_increase">Increase quantity in stock</button>|
+                    <button data-button-id=@item.IngredientId data-max-decrease=@item.QuantityInStock class="btn btn-danger btn_decrease">Decrease quantity in stock</button>
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>
+
+<div>
+    @Html.ActionLink("Back to list", "Index", null, new { @class = "btn btn-info" })
+</div>
+
+@section scripts{
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script type="text/javascript">
+            var table = $("#table_ingredient_statistics").DataTable();
+            $("#table_ingredient_statistics .btn_increase").click(function () {
+                var button = $(this);
+                bootbox.prompt({
+                    title: "Внесете колку сакате да зголемите залиха",
+                    inputType: 'number',
+                    min: 0,
+                    value: 1,
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                method: "POST",
+                                data: { "id":button.attr("data-button-id"), "quantity": result },
+                                url: "/Ingredient/UpdateIngredientQuantity",
+                                dataType: 'json',
+                                error: function () {
+                                    var row_index = table.row(button.parents("tr")).index()
+                                    var cell_data = table.cell({ row: row_index, column: 2 }).data()
+                                    table.draw()
+                                    bootbox.alert({
+                                        message: "Successfully updated stock!",
+                                        backdrop: true
+                                    });
+                                    location.reload()
+                                }
+                            });
+                        }
+                    }
+                });
+                });
+
+            $("#table_ingredient_statistics .btn_decrease").click(function () {
+                var button = $(this);
+                bootbox.prompt({
+                    title: "Внесете колку сакате да намалите залиха",
+                    inputType: 'number',
+                    max: button.attr("data-max-decrease"),
+                    min: 0,
+                    value: 1,
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                method: "POST",
+                                data: { "id": button.attr("data-button-id"), "quantity": -result },
+                                url: "/Ingredient/UpdateIngredientQuantity",
+                                error: function () {
+                                    var row_index = table.row(button.parents("tr")).index()
+                                    var cell_data = table.cell({ row: row_index, column: 2 }).data()
+                                    table.cell({ row: row_index, column: 2 }).data(parseInt(cell_data) + parseInt(-result))
+                                    table.draw()
+                                    bootbox.alert({
+                                        message: "Successfully updated stock!",
+                                        backdrop: true
+                                    });
+                                    location.reload();
+                                },
+                                dataType: 'json'
+                            });
+                        }
+                    }
+                });
+            });
+    </script>
+}

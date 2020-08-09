@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using CoffeeShop.Models;
 using CoffeeShop.Models.Order;
@@ -26,7 +24,13 @@ namespace CoffeeShop.Controllers
         // GET: Order
         public ActionResult Index()
         {
-            return View(db.Orders.ToList());
+            var orders = _repository.GetOrders(User.Identity.GetUserId());
+            if (orders.Count == 0)
+                ViewBag.Empty = true;
+            ViewBag.OrderStatus = _repository.GetAllOrderStatuses();
+            var cancellables = _repository.GetOrderCancels(orders, User.Identity.GetUserId());
+            ViewBag.Cancellable = cancellables;
+            return View(orders);
         }
 
         // GET: Order/Details/5
@@ -99,6 +103,114 @@ namespace CoffeeShop.Controllers
             return View(orderModel);
         }
 
+        // GET: Order/Cancel/5
+        public ActionResult Cancel(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            try
+            {
+                _repository.DeactivateOrder(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
+        // GET: Order/Rate
+        public ActionResult RateOrder(string id, string grade)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            try
+            {
+                _repository.RateOrder(id, grade);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
+        // GET: Order/Finish/5
+        public ActionResult Finish(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            try
+            {
+                _repository.FinishOrder(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
+        // GET: Order/ForceCancel/5
+        public ActionResult ForceCancel(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            try
+            {
+                _repository.ForceCancelOrder(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
+        // GET: Order/Discard/5
+        public ActionResult Discard(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            try
+            {
+                _repository.DiscardOrder(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
+        // GET: Order/Activate/5
+        public ActionResult Activate(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            try
+            {
+                _repository.ActivateOrder(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
         // GET: Order/Delete/5
         public ActionResult Delete(Guid? id)
         {
@@ -106,30 +218,22 @@ namespace CoffeeShop.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            OrderModel orderModel = db.Orders.Find(id);
-            if (orderModel == null)
+            try
+            {
+                _repository.DeleteOrder(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
             {
                 return HttpNotFound();
             }
-            return View(orderModel);
-        }
-
-        // POST: Order/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(Guid id)
-        {
-            OrderModel orderModel = db.Orders.Find(id);
-            db.Orders.Remove(orderModel);
-            db.SaveChanges();
-            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                _repository.Dispose();
             }
             base.Dispose(disposing);
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,13 +18,13 @@ namespace CoffeeShop.Models
 
         public String Description { get; set; }
 
-        [Newtonsoft.Json.JsonIgnore]
+        [JsonIgnore]
         public virtual List<CoffeeModel> Coffees { get; set; }
 
         public int QuantityInStock { get; set; }
 
         public int QuantityUsedLastWeek { get; set; }
 
-        public int QuantityInCoffee { get; set; }
+        public int TotalQuantityUsed { get; set; }
     }
 }

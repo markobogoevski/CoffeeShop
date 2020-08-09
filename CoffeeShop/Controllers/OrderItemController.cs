@@ -57,15 +57,7 @@ namespace CoffeeShop.Controllers
         [HttpPost]
         public ActionResult Create(string id, string quantity)
         {
-                var coffee = _repository.GetCoffee(id);
-                OrderItemModel orderItemModel = new OrderItemModel
-                {
-                    Coffee = coffee,
-                    Quantity = Convert.ToInt32(quantity),
-                    OrderItemId = Guid.NewGuid()
-                };
-            _repository.AddOrderItem(orderItemModel);
-            return RedirectToAction("AddToCart", "Cart", new { orderItemId = orderItemModel.OrderItemId });
+            return RedirectToAction("AddToCart", "Cart", new { coffeeId = id, quantity = quantity});
         }
 
         // GET: OrderItem/Edit/5

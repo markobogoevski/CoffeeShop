@@ -1,51 +1,321 @@
 ﻿@model IEnumerable<CoffeeShop.Models.Order.OrderModel>
+@using CoffeeShop.Enumerations
+@using CoffeeShop.Models.ViewModels
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Orders";
 }
 
-<h2>Index</h2>
+<h2>@ViewBag.Title</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Address)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.OrderStatus)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.OrderTime)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.OrderRating)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Address)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OrderStatus)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OrderTime)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OrderRating)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.OrderId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.OrderId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.OrderId })
-        </td>
-    </tr>
+@{
+    if (ViewBag.Empty == null)
+    {
+        <div class="container">
+            <div class="col-md-6" style="float:left"></div>
+            <div class="col-md-6" style="float:right">
+                <strong>Filter orders by status: </strong><br /><br />
+                @{
+                    foreach (var orderStatus in (List<string>)ViewBag.OrderStatus)
+                    {
+                        <div class="form-group">
+                            <div class="m-1 d-inline-block">
+                                <label class="container_new" for="@orderStatus">
+                                    <em>@orderStatus</em>
+                                    <input data-id="@orderStatus" class="ing_check" type="checkbox" value="@orderStatus" name="@orderStatus" id="@orderStatus" autocomplete="off" />
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                    }
+                }
+            </div>
+        </div>
+
+        <table class="table" id="table1">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Address)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.OrderStatus)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.OrderTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.OrderFinishTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.OrderRating)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderStatus)
+                        </td>
+                        <td>
+                            @{
+                                if (item.OrderStatus != OrderStatus.INACTIVE)
+                                {
+                                    @Html.DisplayFor(modelItem => item.OrderTime);
+                                }
+                                else
+                                {
+                                    <em>Yet to be activated</em>
+                                }
+
+                            }
+                        </td>
+                        <td>
+                            @{
+                                if (item.OrderStatus == OrderStatus.FINISHED)
+                                {
+                                    @Html.DisplayFor(modelItem => item.OrderFinishTime);
+                                }
+                                else if (item.OrderStatus == OrderStatus.CANCELLED)
+                                {
+                                    <em>I am sorry. Your order has been cancelled...</em>
+                                }
+                                else
+                                {
+                                    <em>Yet to be finished</em>
+                                }
+
+                            }
+                        </td>
+                        <td>
+                            @{
+                                if (item.OrderRating != 0)
+                                {
+                                    @Html.DisplayFor(modelItem => item.OrderRating);
+                                }
+                                else if (item.OrderStatus == OrderStatus.CANCELLED)
+                                {
+                                    <em>I am sorry. Your order has been cancelled...</em>
+                                }
+                                else
+                                {
+                                    <em>Yet to be rated</em>
+                                }
+
+                            }
+                        </td>
+                        <td>
+                            @Html.ActionLink("Details", "Details", new { id = item.OrderId }, new { @class = "btn btn-info" })
+                            @{
+                                List<CancelOrderViewModel> cancellable = ViewBag.Cancellable;
+                                bool canCancel = cancellable.Where(can => can.OrderId == item.OrderId).First().Cancellable;
+                                if (canCancel && User.IsInRole(UserRoles.User) && (item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED))
+                                {
+                                    canCancel = !canCancel;
+                                }
+                                bool canActivate = item.OrderStatus == OrderStatus.INACTIVE ? true : false;
+                                bool canFinish = item.OrderStatus == OrderStatus.PENDING ? true : false;
+                                bool canRate = (item.OrderRating == 0 && item.OrderStatus == OrderStatus.FINISHED) ? true : false;
+                                bool canDiscard = (item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED) ? true : false;
+                                if (canFinish && !User.IsInRole(UserRoles.User))
+                                {
+                                    canCancel = false;
+                                }
+                                string btnDeactivateName = (item.OrderStatus == OrderStatus.INACTIVE || item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED) ? "Remove" : "Cancel";
+                            }
+                            <button data-hide=@canCancel data-order-id=@item.OrderId class="btn btn-danger btn-cancel">@btnDeactivateName</button>
+                            @{
+                                if (User.IsInRole(UserRoles.User))
+                                {
+                                    <button data-hide=@canActivate data-order-id=@item.OrderId class="btn btn-warning btn-activate">Activate</button>
+                                    <button data-hide=@canDiscard data-order-id=@item.OrderId class="btn btn-danger btn-discard">Discard</button>
+                                    <button data-hide=@canRate data-order-id=@item.OrderId class="btn btn-success btn-rate">Rate</button>
+                                }
+                            }
+                            @{
+                                if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+                                {
+                                    <button data-hide=@canFinish data-order-id=@item.OrderId class="btn btn-success btn-finish">Finish order</button>
+                                    <button data-hide=@canFinish data-order-id=@item.OrderId class="btn btn-warning btn-force">Cancel order</button>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    }
+    else
+    {
+        <h1>You have no orders!</h1>
+    }
 }
 
-</table>
+@section Styles {
+    <link href="@Url.Content("~/Styles/Checkbox.css")" rel="stylesheet" type="text/css" />
+}
+
+@section scripts{
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var table = $("#table1").DataTable();
+
+            $("#table1 .btn-cancel, .btn-activate, .btn-finish, .btn-discard, .btn-force, .btn-rate").each(function () {
+                var button = $(this);
+                if (button.attr("data-hide") == "False") {
+                    button.hide();
+                }
+            })
+
+            $("#table1 .btn-cancel").click(function () {
+                var button = $(this);
+                var text = button.html();
+
+                if (text == "Cancel") {
+                    bootbox.confirm("Дали сакате да ја поништите нарачката?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                method: "POST",
+                                url: "/Order/Cancel/" + button.attr("data-order-id"),
+                                success: function () {
+                                    location.reload();
+                                }
+                            });
+                        }
+                    });
+                }
+                else {
+                    bootbox.confirm("Дали сакате да ја избришете нарачката?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                method: "POST",
+                                url: "/Order/Delete/" + button.attr("data-order-id"),
+                                success: function () {
+                                    table.row(button.parents("tr")).remove().draw();
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+
+            $("#table1 .btn-activate").click(function () {
+                var button = $(this);
+                bootbox.confirm("Дали сакате да ја активирате нарачката?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            method: "POST",
+                            url: "/Order/Activate/" + button.attr("data-order-id"),
+                            success: function () {
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+            });
+
+            $("#table1 .btn-finish").click(function () {
+                var button = $(this);
+                bootbox.confirm("Дали сакате да ја поставите нарачката како завршена?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            method: "POST",
+                            url: "/Order/Finish/" + button.attr("data-order-id"),
+                            success: function () {
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+            });
+
+            $("#table1 .btn-discard").click(function () {
+                var button = $(this);
+                bootbox.confirm("Дали сакате да ја отстраните завршената нарачка?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            method: "POST",
+                            url: "/Order/Discard/" + button.attr("data-order-id"),
+                            success: function () {
+                                table.row(button.parents("tr")).remove().draw();
+                            }
+                        });
+                    }
+                });
+            });
+
+            $("#table1 .btn-force").click(function () {
+                var button = $(this);
+                bootbox.confirm("Дали сакате да ја откажете оваа нарачка?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            method: "POST",
+                            url: "/Order/ForceCancel/" + button.attr("data-order-id"),
+                            success: function () {
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+            });
+
+            $("#table1 .btn-rate").click(function () {
+                var button = $(this);
+                bootbox.prompt({
+                    title: "Внесете оценка на нарачката",
+                    inputType: 'number',
+                    max: 5,
+                    min: 1,
+                    value: 1,
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                method: "POST",
+                                data: { "id": button.attr("data-order-id"), "grade": result },
+                                url: "/Order/RateOrder",
+                                error: function () {
+                                    var row_index = table.row(button.parents("tr")).index()
+                                    table.cell({ row: row_index, column: 4 }).data(parseInt(result))
+                                    bootbox.alert({
+                                        message: "Ви благодариме за оцената!",
+                                        backdrop: true
+                                    });
+                                    table.draw()
+                                },
+                                dataType: 'json'
+                            });
+                        }
+                    }
+                });
+            });
+
+            $(".ing_check").click(function () {
+                var ids = {};
+                $('input[type=checkbox]:checked').each(function () {
+                    ids[$(this).attr("name")] = $(this).val();
+                });
+                $.ajax({
+                    method: "GET",
+                    url: "/api/CoffeeApi",
+                    data: ids,
+                    success: function (result) {
+                        var validData = JSON.stringify(result);
+                        $('#table1').DataTable()["aaData"] = validData;
+                        table.draw();
+                    },
+                    dataType: 'json'
+                });
+            });
+        });
+    </script>
+}

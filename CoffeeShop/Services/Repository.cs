@@ -3,11 +3,14 @@ using CoffeeShop.Enumerations;
 using CoffeeShop.Models;
 using CoffeeShop.Models.Order;
 using CoffeeShop.Models.ViewModels;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-
+using System.Web.UI.WebControls;
+using System.Web.WebSockets;
 
 namespace CoffeeShop.Services
 {
@@ -16,9 +19,52 @@ namespace CoffeeShop.Services
         private static Repository _repository;
 
         private static ApplicationDbContext _db = null;
+        private static UserManager<ApplicationUser> _userManager;
 
         // Singleton pattern for the repository
-        private Repository() { }
+        private Repository() {
+            
+        }
+
+        public List<OrderModel> GetOrders(string userId)
+        {
+            var orders = _db.Orders.ToList();
+
+            if (_userManager.IsInRole(userId, UserRoles.User))
+                return orders.Where(ord => ord.User!=null && ord.User.Id == userId).ToList();
+
+            return orders;
+        }
+
+        public List<CancelOrderViewModel> GetOrderCancels(List<OrderModel> orders, string userId)
+        {
+            List<CancelOrderViewModel> cancels = new List<CancelOrderViewModel>();
+            foreach(var order in orders)
+            {
+                cancels.Add(new CancelOrderViewModel
+                {
+                    OrderId = order.OrderId,
+                    Cancellable = GetCancelOrderOption(order, userId)
+                });
+            }
+            return cancels;
+        }
+
+        private bool GetCancelOrderOption(OrderModel order, string userId)
+        {
+            if (order.OrderStatus == OrderStatus.INACTIVE)
+                return true;
+
+            var topFiveOrders = _db.Orders.Where(ord => ord.OrderStatus == OrderStatus.PENDING)
+                                          .OrderBy(ord => ord.OrderTime)
+                                          .Take(5)
+                                          .ToList();
+
+            if (!topFiveOrders.Contains(order))
+                return true;
+
+            return false;
+        }
 
         public static Repository GetInstance()
         {
@@ -28,15 +74,30 @@ namespace CoffeeShop.Services
             }
 
             _db = new ApplicationDbContext();
+            var userStore = new UserStore<ApplicationUser>(_db);
+            _userManager = new UserManager<ApplicationUser>(userStore);
             return _repository;
         }
 
-        public List<IngredientModel> GetAllUsedIngredients()
+        public List<IngredientModel> GetAllUsedIngredients(string userId)
         {
-            var usedIngredients = _db.Ingredients.Where(ing => _db.Coffee.SelectMany(cof => cof.Ingredients)
+            if (_userManager.IsInRole(userId, UserRoles.User))
+            {
+                return _db.Ingredients.Where(ing => _db.Coffee.Where(cof => cof.User == null || cof.User.Id == userId)
+                                                                         .SelectMany(cof => cof.Ingredients)
                                                                          .Select(ing_in => ing_in.IngredientId)
                                                                          .Contains(ing.IngredientId)).ToList();
-            return usedIngredients;
+            }
+          
+            return _db.Ingredients.Where(ing => _db.Coffee.SelectMany(cof => cof.Ingredients)
+                                                            .Select(ing_in => ing_in.IngredientId)
+                                                            .Contains(ing.IngredientId)).ToList();
+        }
+
+        public IngredientModel GetIngredient(Guid? id)
+        {
+            var ingredient = _db.Ingredients.Find(id.Value);
+            return ingredient;
         }
 
         public OrderItemModel GetOrderItem(Guid orderItemId)
@@ -45,12 +106,84 @@ namespace CoffeeShop.Services
             return orderItem;
         }
 
+        public void DeactivateOrder(Guid? id)
+        {
+            var order = _db.Orders.Find(id.Value);
+            order.OrderStatus = OrderStatus.INACTIVE;
+            order.OrderTime = DateTime.MaxValue;
+            _db.SaveChanges();
+        }
 
-        public List<CoffeeModel> GetCoffeeByIngredients(List<string> ids)
+        public void DeleteOrder(Guid? id)
+        {
+            var order = _db.Orders.Find(id.Value);
+            _db.OrderItems.RemoveRange(order.OrderItems);
+            _db.Orders.Remove(order);
+            _db.SaveChanges();
+        }
+
+        public void RateOrder(string orderId, string grade)
+        {
+            var order = _db.Orders.Find(Guid.Parse(orderId));
+            order.OrderRating = Convert.ToInt32(grade);
+            _db.SaveChanges();
+        }
+
+        public void FinishOrder(Guid? id)
+        {
+            var order = _db.Orders.Find(id.Value);
+            order.OrderStatus = OrderStatus.FINISHED;
+            order.OrderFinishTime = DateTime.Now;
+            foreach(var orderItem in order.OrderItems)
+            {
+                var coffee = FindCoffee(orderItem.Coffee.CoffeeId);
+                coffee.TotalQuantitySold += orderItem.Quantity;
+                var ingredientsInCoffee = GetIngredientsInCoffee(coffee.CoffeeId);
+                foreach(var ingredientInCoffee in ingredientsInCoffee)
+                {
+                    var ing = FindIngredient(ingredientInCoffee.IngredientId);
+                    ing.TotalQuantityUsed += ingredientInCoffee.Quantity;
+                }              
+            }
+            _db.SaveChanges();
+        }
+
+        public void ForceCancelOrder(Guid? id)
+        {
+            var order = _db.Orders.Find(id.Value);
+            order.OrderStatus = OrderStatus.CANCELLED;
+            _db.SaveChanges();
+        }
+
+        public void DiscardOrder(Guid? id)
+        {
+            var order = _db.Orders.Find(id.Value);
+            order.User = null;
+            _db.SaveChanges();
+        }
+
+        public IngredientModel FindIngredient(Guid? ingredientId)
+        {
+            var ingredient = _db.Ingredients.Find(ingredientId.Value);
+            return ingredient;
+        }
+
+        public void ActivateOrder(Guid? id)
+        {
+            var order = _db.Orders.Find(id.Value);
+            order.OrderStatus = OrderStatus.PENDING;
+            order.OrderTime = DateTime.Now;
+            _db.SaveChanges();
+        }
+
+        public List<CoffeeModel> GetCoffeeByIngredients(List<string> ids, string userId)
         {
             var coffee = _db.Coffee.Where(cof => cof.Ingredients.Select(ing => ing.IngredientId.ToString())
                                                                 .Any(ing => ids.Contains(ing)))
                                                                 .ToList();
+            if (userId!=null && _userManager.IsInRole(userId, UserRoles.User))
+                return coffee.Where(cof => cof.User == null || cof.User.Id == userId).ToList();
+
             return coffee;
         }
 
@@ -64,13 +197,21 @@ namespace CoffeeShop.Services
                 OrderStatus = OrderStatus.INACTIVE,
                 User = user,
                 OrderTime = DateTime.Now,
+                OrderFinishTime = DateTime.Now,
                 OrderRating = 0
             };
 
-            foreach (var item in orderItems)
+            foreach(var item in orderItems)
             {
-                newOrder.OrderItems.Add(item);
-                item.Order = newOrder;
+                var newOrderItem = new OrderItemModel
+                {
+                    OrderItemId = Guid.NewGuid(),
+                    Coffee = _db.Coffee.Find(item.Coffee.CoffeeId),
+                    Quantity = item.Quantity,
+                    Order = newOrder
+                };
+                _db.OrderItems.Add(newOrderItem);
+                newOrder.OrderItems.Add(newOrderItem);
             }
 
             _db.Orders.Add(newOrder);
@@ -83,9 +224,13 @@ namespace CoffeeShop.Services
             return coffee;
         }
 
-        public  List<CoffeeModel> GetAllCoffee()
+        public  List<CoffeeModel> GetAllCoffee(string userId)
         {
             var coffee = _db.Coffee.ToList();
+
+            if (_userManager.IsInRole(userId, UserRoles.User))
+                return coffee.Where(cof => cof.User == null || cof.User.Id == userId).ToList();
+
             return coffee;
         }
 
@@ -105,6 +250,35 @@ namespace CoffeeShop.Services
             _db.OrderItems.Add(orderItemModel);
             _db.SaveChanges();
             return;
+        }
+
+        public void UpdateIngredientStock(string id, string quantity)
+        {
+            var ingredient = _db.Ingredients.Find(Guid.Parse(id));
+            ingredient.QuantityInStock += Convert.ToInt32(quantity);
+            _db.SaveChanges();
+        }
+
+        public IngredientModel GetMostUsedIngredientWeek()
+        {
+            var ingredientsOrdered = _db.Ingredients.OrderBy(ing => ing.QuantityUsedLastWeek).ToList();
+            return ingredientsOrdered.Last();
+        }
+
+        public IngredientModel GetLeastUsedIngredientWeek()
+        {
+            return _db.Ingredients.OrderBy(ing => ing.QuantityUsedLastWeek).First();
+        }
+
+        public IngredientModel GetLeastUsedIngredient()
+        {
+            return _db.Ingredients.OrderBy(ing => ing.TotalQuantityUsed).First();
+        }
+
+        public IngredientModel GetMostUsedIngredient()
+        {
+            var ingredientsOrdered = _db.Ingredients.OrderBy(ing => ing.TotalQuantityUsed).ToList();
+            return ingredientsOrdered.Last();
         }
 
         public List<IngredientInCoffeeModel> GetIngredientsInCoffee(Guid coffeeId)
@@ -178,7 +352,7 @@ namespace CoffeeShop.Services
             return _db.Ingredients.ToList();
         }
 
-        public void CreateCoffee(CreateCoffeeViewModel coffeeViewModel)
+        public void CreateCoffee(CreateCoffeeViewModel coffeeViewModel, string userId)
         {
             var coffeeIngredients = _db.Ingredients
                 .Where(ing => coffeeViewModel.selectedIngredients
@@ -203,6 +377,11 @@ namespace CoffeeShop.Services
                 IncomeCoef = coffeeViewModel.IncomeCoef
             };
 
+            if (userId != null)
+            {
+                newCoffee.User = _db.Users.Find(userId);
+            }
+
             _db.Coffee.Add(newCoffee);
 
             for (int i = 0; i < coffeeIngredients.Count; i++)
@@ -223,6 +402,8 @@ namespace CoffeeShop.Services
                 };
                 _db.IngredientInCoffee.Add(newIngredientInCoffeeModel);
             }
+
+            
 
             _db.SaveChanges();
         }
@@ -355,6 +536,11 @@ namespace CoffeeShop.Services
                 ingredient.QuantityInStock -= ingQuantity*Convert.ToInt32(quantity);
             }
             coffee.QuantityInStock += Convert.ToInt32(quantity);
+            if (coffee.QuantityInStock == 0)
+            {
+                DeleteCoffee(coffee.CoffeeId);
+            }
+
             _db.SaveChanges();
         }
 
@@ -380,6 +566,18 @@ namespace CoffeeShop.Services
                 return CoffeeSizeMultiplier.MediumMultipler;
             else
                 return CoffeeSizeMultiplier.BigMultipler;
+        }
+
+        public List<string> GetAllOrderStatuses()
+        {
+            Type t = typeof(OrderStatus);
+            FieldInfo[] fields = t.GetFields(BindingFlags.Static | BindingFlags.Public);
+            List<string> Statuses = new List<string>();
+            foreach (FieldInfo fi in fields)
+            {
+                Statuses.Add(fi.GetValue(null).ToString());
+            }
+            return Statuses;
         }
 
         public List<string> GetAllCoffeeSizes()
@@ -436,6 +634,8 @@ namespace CoffeeShop.Services
         
         public void CreateIngredient(IngredientModel _ingredient)
         {
+            _ingredient.IngredientId = Guid.NewGuid();
+            _ingredient.QuantityInStock = IngredientStock.DEFAULT_STOCK_QUANTITY;
             _db.Ingredients.Add(_ingredient);
             _db.SaveChanges();
         }
@@ -446,7 +646,7 @@ namespace CoffeeShop.Services
             toChange.Name = _ingredient.Name;
             toChange.ImgUrl = _ingredient.ImgUrl;
             toChange.Price = _ingredient.Price;
-
+            toChange.Description = _ingredient.Description;
             _db.SaveChanges();
         }
 
@@ -456,6 +656,11 @@ namespace CoffeeShop.Services
 
             if(toDelete != null)
             {
+                var coffee = GetCoffeeByIngredients(new List<string>() { ID.ToString() }, null);
+                foreach(var coffeeItem in coffee)
+                {
+                    DeleteCoffee(coffeeItem.CoffeeId);
+                }
                 _db.Ingredients.Remove(toDelete);
                 _db.SaveChanges();
             }
@@ -467,12 +672,16 @@ namespace CoffeeShop.Services
 
         public List<IngredientModel> GetSortedIngredients(bool isAscending)
         {
-            List<IngredientModel> allIngredients = GetIngredients();
+            List<IngredientModel> allIngredients = _repository.GetAllIngredients();
             if(isAscending)
                 return allIngredients.OrderBy(x=>x.Price).ToList();
 
             return allIngredients.OrderByDescending(x => x.Price).ToList();
         }
 
+        private List<IngredientModel> GetAllIngredients()
+        {
+            return _db.Ingredients.ToList();
+        }
     }
 }

@@ -9,6 +9,9 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using CoffeeShop.Models;
+using CoffeeShop.Enumerations;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System.Web.Security;
 
 namespace CoffeeShop.Controllers
 {
@@ -50,6 +53,27 @@ namespace CoffeeShop.Controllers
             {
                 _userManager = value;
             }
+        }
+
+        [AllowAnonymous]
+        public ActionResult AddUserToRole()
+        {
+            var roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());
+            var roleManager = new RoleManager<IdentityRole>(roleStore);
+            var roles = roleManager.Roles.Select(r => r.Name);
+            ViewBag.Roles = roles;
+            var userEmails = UserManager.Users.Select(u => u.Email);
+            ViewBag.Emails = userEmails;
+            return View();
+        }
+
+        public ActionResult UserRole(string userEmail, string role)
+        {
+            string userId = UserManager.FindByEmail(userEmail).Id;
+            string[] roles = UserManager.GetRoles(userId).ToArray();
+            UserManager.RemoveFromRoles(userId, roles);
+            UserManager.AddToRole(userId, role);
+            return RedirectToAction("Index", "Coffee");
         }
 
         //
@@ -153,6 +177,7 @@ namespace CoffeeShop.Controllers
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
+                UserManager.AddToRole(user.Id, UserRoles.User);
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);

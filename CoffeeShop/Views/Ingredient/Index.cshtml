@@ -1,89 +1,105 @@
 ﻿@model IEnumerable<CoffeeShop.Models.IngredientModel>
+@using CoffeeShop.Enumerations
 
 @{
     ViewBag.Title = "Index";
 }
 
 <h2>Состојки</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-
-<p>
-    <button class="show-img">Show Image</button>
-</p>
-
-<table class="table" id="table1">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th class="img-field">
-                @Html.DisplayNameFor(model => model.ImgUrl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<div class="container">
+    @{ if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Price)
-                </td>
-                <td class="img-field">
-                    <img src="@item.ImgUrl" alt="@item.Name" width="100" />
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.IngredientId }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.IngredientId })
-                    <button data-ingredient-id="@item.IngredientId" class="btn btn-danger js-delete">
-                        Delete
-                    </button>
-                </td>
-            </tr>
-
+            <div>
+                @Html.ActionLink("Create a new ingredient", "Create", null, new { @class = "btn btn-primary" })
+            </div>
+            <br />
+            <div>
+                @Html.ActionLink("Check out ingredient statistics", "IngredientStatistics", null, new { @class = "btn btn-primary" })
+            </div>
+            <br />
         }
-    </tbody>
+    }
+    <p>
+        <button class="show-img btn btn-info">Toggle ingredient image</button>
+    </p>
+    <br />
+</div>
 
-</table>
+    <table class="table" id="table1">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Price)
+                </th>
+                <th class="img-field">
+                    @Html.DisplayNameFor(model => model.ImgUrl)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td class="img-field">
+                        <img src="@item.ImgUrl" alt="@item.Name" width="100" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @{
+                            if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+                            {
+                                @Html.ActionLink("Edit", "Edit", new { id = item.IngredientId }, new { @class = "btn btn-info" })
+                                <button data-ingredient-id="@item.IngredientId" class="btn btn-danger js-delete">Delete</button>
+                            }
+                        }
+                        @Html.ActionLink("Details", "Details", new { id = item.IngredientId }, new { @class = "btn btn-info" })
+                    </td>
+                </tr>
 
+            }
+        </tbody>
 
-@section scripts{
-    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
+    </table>
 
-            var table = $("#table1").DataTable();
-            $(".js-delete").click(function () {
-                var button = $(this);
-                bootbox.confirm("Дали сигурна сакате да ја избришете состојката?", function (result) {
-                    if (result) {
-                        $.ajax({
-                            method: "POST",
-                            url: "/Ingredient/Delete/" + button.attr("data-ingredient-id"),
-                            success: function () {
-                                table.row(button.parents("tr")).remove().draw();
-                                console.log("asdasd");
-                            },
-                        });
-                    }
-                })
+    @section scripts{
+        <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var table = $("#table1").DataTable();
+                $(".js-delete").click(function () {
+                    var button = $(this);
+                    bootbox.confirm("Дали сигурна сакате да ја избришете состојката?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                method: "POST",
+                                url: "/Ingredient/Delete/" + button.attr("data-ingredient-id"),
+                                success: function () {
+                                    table.row(button.parents("tr")).remove().draw();
+                                    console.log("asdasd");
+                                },
+                            });
+                        }
+                    })
+                });
+                /*$(".show-img").click(function () {
+                    table.Columns["ImgUrl"].Visible=false;
+
+                });*/
             });
-            /*$(".show-img").click(function () {
-                table.Columns["ImgUrl"].Visible=false;
-                
-            });*/
-        });
-    </script>
-}
+        </script>
+    }
