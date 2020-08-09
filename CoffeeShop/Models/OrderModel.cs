@@ -20,6 +20,8 @@ namespace CoffeeShop.Models.Order
         [Required]
         public DateTime OrderTime { get; set; }
 
+        public DateTime OrderFinishTime { get; set; }
+
         public int OrderRating { get; set; }
 
         public virtual ApplicationUser User { get; set; }

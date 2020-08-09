@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using CoffeeShop.Models;
 using CoffeeShop.Models.ViewModels;
 using CoffeeShop.Services;
+using Microsoft.AspNet.Identity;
 
 namespace CoffeeShop.Controllers
 {
@@ -25,7 +26,7 @@ namespace CoffeeShop.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = "Coffee shop blabla";
-            List<IngredientModel> ingredients = _repository.GetAllUsedIngredients();
+            List<IngredientModel> ingredients = _repository.GetAllUsedIngredients(User.Identity.GetUserId());
             ViewBag.Ingredients = ingredients;
             List<CoffeeModel> coffee = new List<CoffeeModel>();
             List<string> ingredientIds = new List<string>();
@@ -36,11 +37,11 @@ namespace CoffeeShop.Controllers
             }
             if (ingredientIds.Count >= 1)
             {
-                coffee = _repository.GetCoffeeByIngredients(ingredientIds);
+                coffee = _repository.GetCoffeeByIngredients(ingredientIds, User.Identity.GetUserId());
             }
             else
             {
-                coffee = _repository.GetAllCoffee();
+                coffee = _repository.GetAllCoffee(User.Identity.GetUserId());
             }
             return View(coffee);
         }
@@ -87,7 +88,7 @@ namespace CoffeeShop.Controllers
         {
             if (ModelState.IsValid)
             {
-                return Create(coffeeViewModel, file);
+                return Create(coffeeViewModel, file, custom:true);
             }
             List<string> Sizes = new List<string>();
             Sizes = _repository.GetAllCoffeeSizes();
@@ -101,7 +102,7 @@ namespace CoffeeShop.Controllers
                 {
                     string pic = Path.GetFileName(file.FileName);
                     string path = Path.Combine(
-                    Server.MapPath("~/Content/Images"), pic);
+                    Server.MapPath("~/Content/Images/Coffee"), pic);
                     file.SaveAs(path);
 
                     // save the image path path to the database
@@ -111,15 +112,15 @@ namespace CoffeeShop.Controllers
                         byte[] array = ms.GetBuffer();
                     }
 
-                    coffeeViewModel.ImgUrl = "/Content/Images/" + pic;
+                    coffeeViewModel.ImgUrl = "/Content/Images/Coffee/" + pic;
                 }
                 else
                 {
-                    coffeeViewModel.ImgUrl = "/Content/Images/default_coffee.JPG";
+                    coffeeViewModel.ImgUrl = "/Content/Images/Coffee/default_coffee.JPG";
                 }
 
                 coffeeViewModel.selectedIngredientsQuantity = coffeeViewModel.selectedIngredientsQuantity.Where(quan => quan != 0).ToList();
-                _repository.CreateCoffee(coffeeViewModel);
+                _repository.CreateCoffee(coffeeViewModel, User.Identity.GetUserId());
                 ViewBag.Title = "Coffee Shop blabla";
                 return RedirectToAction("Index");
         }
@@ -167,8 +168,11 @@ namespace CoffeeShop.Controllers
                     throw new Exception();
                 }
             }
-            coffeeViewModel.availableIngredients = _repository.GetAvailableIngredients()
-                                                              .ToList();
+            coffeeViewModel.availableIngredients = _repository.GetAvailableIngredients().Select(item=>new IngredientQuantityViewModel { 
+                                                                                                Ingredient = item,
+                                                                                                QuantityInCoffee = 1})
+
+                                                                                        .ToList();
             return coffeeViewModel;
         }
 
@@ -177,7 +181,7 @@ namespace CoffeeShop.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file)
+        public ActionResult Create(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file, bool custom=false)
         {
             if (ModelState.IsValid)
             {
@@ -185,7 +189,7 @@ namespace CoffeeShop.Controllers
                 {
                     string pic = Path.GetFileName(file.FileName);
                     string path = Path.Combine(
-                    Server.MapPath("~/Content/Images"), pic);
+                    Server.MapPath("~/Content/Images/Coffee"), pic);
                     file.SaveAs(path);
 
                     // save the image path path to the database
@@ -195,15 +199,22 @@ namespace CoffeeShop.Controllers
                         byte[] array = ms.GetBuffer();
                     }
 
-                    coffeeViewModel.ImgUrl = "/Content/Images/" + pic;
+                    coffeeViewModel.ImgUrl = "/Content/Images/Coffee/" + pic;
                 }
                 else
                 {
-                    coffeeViewModel.ImgUrl = "/Content/Images/default_coffee.JPG";
+                    coffeeViewModel.ImgUrl = "/Content/Images/Coffee/default_coffee.JPG";
                 }
 
                 coffeeViewModel.selectedIngredientsQuantity = coffeeViewModel.selectedIngredientsQuantity.Where(quan => quan != 0).ToList();
-                _repository.CreateCoffee(coffeeViewModel);
+                if (custom)
+                {
+                    _repository.CreateCoffee(coffeeViewModel, User.Identity.GetUserId());
+                }
+                else
+                {
+                    _repository.CreateCoffee(coffeeViewModel, null);
+                }
                 ViewBag.Title = "Coffee Shop blabla";
                 return RedirectToAction("Index");
             }
@@ -246,7 +257,7 @@ namespace CoffeeShop.Controllers
                 {
                     string pic = Path.GetFileName(file.FileName);
                     string path = Path.Combine(
-                    Server.MapPath("~/Content/Images"), pic);
+                    Server.MapPath("~/Content/Images/Coffee"), pic);
                     file.SaveAs(path);
 
                     // save the image path path to the database
@@ -256,12 +267,10 @@ namespace CoffeeShop.Controllers
                         byte[] array = ms.GetBuffer();
                     }
 
-                    coffeeViewModel.ImgUrl = "/Content/Images/" + pic;
+                    coffeeViewModel.ImgUrl = "/Content/Images/Coffee/" + pic;
                 }
-                else
-                {
-                    coffeeViewModel.ImgUrl = "/Content/Images/default_coffee.JPG";
-                }
+                
+                coffeeViewModel.selectedIngredientsQuantity = coffeeViewModel.selectedIngredientsQuantity.Where(quan => quan != 0).ToList();
                 _repository.EditCoffee(coffeeViewModel);
                 return RedirectToAction("Index");
             }
@@ -305,7 +314,7 @@ namespace CoffeeShop.Controllers
 
         public ActionResult CoffeeStatistics()
         {
-            var coffee = _repository.GetAllCoffee();
+            var coffee = _repository.GetAllCoffee(User.Identity.GetUserId());
             var coffeeStatistics = _repository.GetCoffeeStatistics(coffee);
             return View(coffeeStatistics);
         }
@@ -314,7 +323,7 @@ namespace CoffeeShop.Controllers
         public ActionResult UpdateCoffeeQuantity(string id,string quantity)
         {
             _repository.UpdateCoffeeStock(id, quantity);
-            var coffee = _repository.GetAllCoffee();
+            var coffee = _repository.GetAllCoffee(User.Identity.GetUserId());
             var coffeeStatistics = _repository.GetCoffeeStatistics(coffee);
             return View("CoffeeStatistics", coffeeStatistics);       
         }

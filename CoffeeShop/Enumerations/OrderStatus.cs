@@ -6,8 +6,8 @@
 
         public static string FINISHED = "Finished";
 
-        public static string CANCELLED = "Cancelled";
-
         public static string INACTIVE = "Inactive";
+
+        public static string CANCELLED = "Cancelled";
     }
 }

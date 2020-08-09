@@ -2,7 +2,7 @@
 @using CoffeeShop.Models.Order
 @using CoffeeShop.Helpers
 
-@{ 
+@{
     ViewBag.Title = "Cart";
 }
 
@@ -94,7 +94,8 @@
                         <button id="makeOrderButton" class="btn bg-orange text-white font-weight-bold align-bottom ml-auto align-bottom" style="width: 8rem">
                             Order &#187;
                         </button>
-                    </div>
+                    </div><br />
+                    <div id="valid" class="text-danger d-none">Please enter a delivery address</div>
                 </div>
             </div>
         }
@@ -104,16 +105,23 @@
             <h3>Are you full of energy or just haven't chosen a coffee yet?</h3>
         }
 
-
-
     }
 </section>
+
+@section Styles{
+    <style>
+        .d-none {
+            display: none !important;
+        }
+    </style>
+ 
+}
 
 @section scripts{
     @{
         var data = (OrderModel)Session["cart"];
     }
-<script>
+    <script>
         $(document).ready(function () {
             var message = "";
             $("#makeOrderButton").on('click', function () {
@@ -196,5 +204,5 @@
         })
 
 
-</script>
+    </script>
 }
