@@ -1,12 +1,10 @@
 ﻿namespace CoffeeShop.Controllers
 {
     using System;
-    using System.Collections.Generic;
-    using System.Data.Entity;
+    using System.Linq;
     using System.Net;
     using System.Web.Mvc;
     using CoffeeShop.Enumerations;
-    using CoffeeShop.Models;
     using CoffeeShop.Models.Order;
     using CoffeeShop.Services;
 
@@ -48,7 +46,8 @@
                 {
                     Coffee = coffee
                 };
-                var ingredientsForCoffee = _repository.GetIngredientsInCoffee(coffee.CoffeeId);
+                var ingredientsForCoffee = _repository.GetIngredientsInCoffee(coffee.CoffeeId)
+                                                      .ToList();
                 ViewBag.IngredientsForCoffee = ingredientsForCoffee;
                 return View(newOrderItemModel);
             }

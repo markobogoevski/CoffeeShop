@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Web;
     using System.Web.Mvc;
@@ -13,7 +14,6 @@
     public class IngredientController : Controller
     {
         private Repository _repository;
-        private ApplicationDbContext db = new ApplicationDbContext();
 
         public IngredientController()
         {
@@ -26,7 +26,7 @@
         {
             try
             {
-                return View(_repository.GetIngredients());
+                return View(_repository.GetIngredients().ToList());
             }
             catch (Exception)
             {
@@ -61,10 +61,7 @@
         }
 
         // POST: Ingredient/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult Create(IngredientModel newIngredient, HttpPostedFileBase file)
         {
@@ -116,10 +113,7 @@
         }
 
         // POST: Ingredient/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult Edit(IngredientModel _ingredient, HttpPostedFileBase file)
         {
@@ -146,7 +140,7 @@
             }
             catch (Exception)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return HttpNotFound();
             }
         }
 
@@ -158,12 +152,12 @@
             try
             {
                 _repository.DeleteIngredient(id);
+                return RedirectToAction("Index");
             }
             catch (Exception)
             {
                 return HttpNotFound();
             }
-            return RedirectToAction("Index");
         }
 
         // GET: Ingredient/IngredientStatistics
@@ -172,7 +166,7 @@
         {
             try
             {
-                var ingredients = _repository.GetIngredients();
+                var ingredients = _repository.GetIngredients().ToList();
                 return View(ingredients);
             }
             catch (Exception)
@@ -188,7 +182,7 @@
             try
             {
                 _repository.UpdateIngredientStock(Guid.Parse(id), quantity);
-                var ingredients = _repository.GetIngredients();
+                var ingredients = _repository.GetIngredients().ToList();
                 return View("CoffeeStatistics", ingredients);
             }
             catch (Exception)

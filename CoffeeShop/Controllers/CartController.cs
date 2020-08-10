@@ -3,22 +3,16 @@
     using System;
     using System.Linq;
     using System.Web.Mvc;
-    using CoffeeShop.Models;
     using CoffeeShop.Models.Order;
     using CoffeeShop.Services;
-    using Microsoft.AspNet.Identity;
-    using Microsoft.AspNet.Identity.EntityFramework;
 
     [Authorize]
     public class CartController : Controller
     {
-        private UserManager<ApplicationUser> _userManager;
         private Repository _repository;
 
         public CartController()
         {
-            var userStore = new UserStore<ApplicationUser>();
-            _userManager = new UserManager<ApplicationUser>(userStore);
             _repository = Repository.GetInstance();
         }
 

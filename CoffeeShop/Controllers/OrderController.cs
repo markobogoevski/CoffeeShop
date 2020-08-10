@@ -6,7 +6,6 @@
     using System.Net;
     using System.Web.Mvc;
     using CoffeeShop.Enumerations;
-    using CoffeeShop.Models;
     using CoffeeShop.Models.Order;
     using CoffeeShop.Services;
     using Microsoft.AspNet.Identity;
@@ -14,7 +13,6 @@
     [Authorize]
     public class OrderController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
         private Repository _repository;
 
         public OrderController()
@@ -27,11 +25,12 @@
         {
             try
             {
-                var orders = _repository.GetOrdersForUser(User.Identity.GetUserId());
+                var orders = _repository.GetOrdersForUser(User.Identity.GetUserId())
+                                        .ToList();
                 if (orders.Count() == 0)
                     ViewBag.Empty = true;
-                ViewBag.OrderStatus = _repository.GetAllOrderStatuses();
-                var cancellables = _repository.GetOrderCancels(orders);
+                ViewBag.OrderStatus = _repository.GetAllOrderStatuses().ToList();
+                var cancellables = _repository.GetOrderCancels(orders).ToList();
                 ViewBag.Cancellable = cancellables;
                 return View(orders);
             }

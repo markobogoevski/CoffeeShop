@@ -407,6 +407,20 @@ namespace CoffeeShop.Services
             }
         }
 
+        public CoffeeModel GetCoffeeDay()
+        {
+            try
+            {
+                var randomCoffee = GetRandomCoffee();
+                randomCoffee.TotalPrice *= 0.7m;
+                return randomCoffee;
+            }
+            catch (Exception)
+            {
+                throw new Exception();
+            }
+        }
+
         // Gets the overall most sold coffee which exists in database which is not custom made
         public CoffeeModel GetMostSoldCoffee()
         {
@@ -484,7 +498,7 @@ namespace CoffeeShop.Services
         }
 
         // Gets statistics for the provided coffee
-        public IEnumerable<CoffeeStatisticViewModel> GetCoffeeStatistics(List<CoffeeModel> coffee)
+        public IEnumerable<CoffeeStatisticViewModel> GetCoffeeStatistics(IEnumerable<CoffeeModel> coffee)
         {
             List<CoffeeStatisticViewModel> coffeeStatistics = new List<CoffeeStatisticViewModel>();
             foreach (var coffeeUnit in coffee)
@@ -606,17 +620,29 @@ namespace CoffeeShop.Services
         // admin or owner
         public IEnumerable<IngredientModel> GetAllUsedIngredients(string userId)
         {
+            var ingredients = new List<IngredientModel>();
             if (_userManager.IsInRole(userId, UserRoles.User))
             {
-                return _db.Ingredients.Where(ing => _db.Coffee.Where(cof => cof.User == null || cof.User.Id == userId)
+                ingredients = _db.Ingredients.Where(ing => _db.Coffee.Where(cof => cof.User == null || cof.User.Id == userId)
                                                                          .SelectMany(cof => cof.Ingredients)
                                                                          .Select(ing_in => ing_in.IngredientId)
                                                                          .Contains(ing.IngredientId)).ToList();
             }
-
-            return _db.Ingredients.Where(ing => _db.Coffee.SelectMany(cof => cof.Ingredients)
+            else
+            {
+                ingredients = _db.Ingredients.Where(ing => _db.Coffee.SelectMany(cof => cof.Ingredients)
                                                             .Select(ing_in => ing_in.IngredientId)
                                                             .Contains(ing.IngredientId)).ToList();
+            }
+
+            if (ingredients != null)
+            {
+                return ingredients;
+            }
+            else
+            {
+                throw new Exception();
+            }
         }
 
         // Creates a new ingredient in database and sets default stock quantity for it. Only possible for admin/owner
@@ -640,7 +666,6 @@ namespace CoffeeShop.Services
                 toChange.Price = _ingredient.Price;
                 toChange.Description = _ingredient.Description;
                 _db.SaveChanges();
-
             }
             catch (Exception)
             {
