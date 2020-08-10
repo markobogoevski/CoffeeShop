@@ -122,3 +122,4 @@ C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csprojAss
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.UserWork.resources
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.IngredientTotalUsed.resources
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.OrderTimeEnd.resources
+C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.ModelValidation1.resources

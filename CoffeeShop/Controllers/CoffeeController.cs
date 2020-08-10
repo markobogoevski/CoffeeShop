@@ -108,7 +108,12 @@
                 }
                 var Sizes = _repository.GetAllCoffeeSizes().ToList();
                 ViewBag.Sizes = Sizes;
-                return View("CreateCustom", coffeeViewModel);
+                coffeeViewModel.availableIngredients = _repository.GetAvailableIngredients(null).Select(item => new IngredientQuantityViewModel
+                {
+                    Ingredient = item,
+                    QuantityInCoffee = 1
+                }).ToList();
+                return View("CreateCustom",coffeeViewModel);
             }
             catch (Exception)
             {
@@ -216,6 +221,11 @@
                 }
                 var Sizes = _repository.GetAllCoffeeSizes().ToList();
                 ViewBag.Sizes = Sizes;
+                coffeeViewModel.availableIngredients = _repository.GetAvailableIngredients(null).Select(item => new IngredientQuantityViewModel
+                {
+                    Ingredient = item,
+                    QuantityInCoffee = 1
+                }).ToList();
                 return View(coffeeViewModel);
             }
             catch (Exception)
@@ -317,6 +327,14 @@
         {
             try
             {
+                var coffee = _repository.GetAllCoffeeForUser(User.Identity.GetUserId()).ToList();
+
+                if (coffee.Count == 0)
+                {
+                    ViewBag.Empty = true;
+                    return PartialView("_DailyDeal");
+                }
+
                 var coffeeDay = _repository.GetCoffeeDay();
                 var ingredientsForCoffee = _repository.GetIngredientsInCoffee(coffeeDay.CoffeeId)
                                                       .ToList();
@@ -462,10 +480,15 @@
         private CreateCoffeeViewModel createCoffeeViewModel(Guid? id)
         {
             var coffeeViewModel = new CreateCoffeeViewModel();
-
-            if (id != null)
+            try
             {
-                try
+                coffeeViewModel.availableIngredients = _repository.GetAvailableIngredients(id).Select(item => new IngredientQuantityViewModel
+                {
+                    Ingredient = item,
+                    QuantityInCoffee = 1
+                }).ToList();
+                
+                if (id != null)
                 {
                     var coffeeToEdit = _repository.FindCoffee(id);
                     coffeeViewModel.CoffeeId = id;
@@ -481,19 +504,13 @@
                     coffeeViewModel.BasePrice = coffeeToEdit.BasePrice;
                     coffeeViewModel.Description = coffeeToEdit.Description;
                     coffeeViewModel.QuantityInStock = coffeeToEdit.QuantityInStock;
-                    coffeeViewModel.availableIngredients = _repository.GetAvailableIngredients().Select(item => new IngredientQuantityViewModel
-                    {
-                        Ingredient = item,
-                        QuantityInCoffee = 1
-                    }).ToList();
-
                 }
-                catch (Exception)
+                return coffeeViewModel;
+            }
+            catch (Exception)
                 {
                     throw new Exception();
                 }
-            }
-            return coffeeViewModel;
         }
 
         protected override void Dispose(bool disposing)

@@ -12,6 +12,8 @@
 
         public virtual OrderModel Order { get; set; }
 
+        [Required]
+        [Display(Name = "Quantity of coffee")]
         public int Quantity { get; set; }
     }
 }

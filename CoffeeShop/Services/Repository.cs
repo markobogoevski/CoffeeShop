@@ -43,7 +43,7 @@ namespace CoffeeShop.Services
         {
             var coffee = _db.Coffee.ToList();
 
-            if (_userManager.IsInRole(userId, UserRoles.User))
+            if (userId == null || _userManager.IsInRole(userId, UserRoles.User))
             {
                 coffee = coffee.Where(cof => cof.User == null || cof.User.Id == userId).ToList();
             }
@@ -396,7 +396,7 @@ namespace CoffeeShop.Services
         {
             var coffee = _db.Coffee.Where(cof=>cof.User==null)
                                    .OrderBy(cof => Guid.NewGuid())
-                                   .First();
+                                   .FirstOrDefault();
             if (coffee != null)
             {
                 return coffee;
@@ -603,9 +603,22 @@ namespace CoffeeShop.Services
 
         // Gets all ingredients with at least >=1 stock quantity. Note: Ingredients with 0 quantity are still kept
         // in the database because users can't order ingredients and each ingredient's stock quantity can be changed.
-        public IEnumerable<IngredientModel> GetAvailableIngredients()
+        public IEnumerable<IngredientModel> GetAvailableIngredients(Guid? coffeeId)
         {
             var ingredients = _db.Ingredients.Where(ing => ing.QuantityInStock >= 1).ToList();
+
+            if (coffeeId.HasValue)
+            {
+                var previousIngredients = _db.IngredientInCoffee.Where(ingc => ingc.CoffeeId == coffeeId)
+                                                                .Select(ingc => ingc.Ingredient)
+                                                                .ToList();
+                foreach(var ingredient in previousIngredients)
+                {
+                    ingredients.Remove(ingredient);
+                }
+                ingredients.AddRange(previousIngredients);
+            }
+
             if (ingredients != null)
             {
                 return ingredients;
@@ -621,7 +634,7 @@ namespace CoffeeShop.Services
         public IEnumerable<IngredientModel> GetAllUsedIngredients(string userId)
         {
             var ingredients = new List<IngredientModel>();
-            if (_userManager.IsInRole(userId, UserRoles.User))
+            if (userId==null || _userManager.IsInRole(userId, UserRoles.User))
             {
                 ingredients = _db.Ingredients.Where(ing => _db.Coffee.Where(cof => cof.User == null || cof.User.Id == userId)
                                                                          .SelectMany(cof => cof.Ingredients)

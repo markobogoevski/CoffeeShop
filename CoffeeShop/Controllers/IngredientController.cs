@@ -57,7 +57,8 @@
         [Authorize(Roles=UserRoles.Admin + "," +UserRoles.Owner)]
         public ActionResult Create()
         {
-            return View();
+            var ingredientModel = new IngredientModel();
+            return View(ingredientModel);
         }
 
         // POST: Ingredient/Create

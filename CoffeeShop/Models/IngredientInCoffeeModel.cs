@@ -16,6 +16,8 @@
 
         public virtual IngredientModel Ingredient { get; set; }
 
+        [Required]
+        [Display(Name = "Quantity of ingredient in coffee")]
         public int Quantity { get; set; }
     }
 }

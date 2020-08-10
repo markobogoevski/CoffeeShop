@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.HiddenFor(model=>model.ImgUrl)
+                    @Html.HiddenFor(model => model.ImgUrl)
                     @Html.LabelFor(model => model.ImgUrl, htmlAttributes: new { @class = "control-label" })
                     Current image: <br />
                     <img src="@Model.ImgUrl" class="editImg" width="300px" />
@@ -58,38 +58,45 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-7">
-                @Html.ValidationSummary(false, "", new { @class = "text-danger ml-0" })
-                <label class="row font-weight-bold ml-2">Choose your ingredients: </label><br /><br />
-                @{var i = 0;}
-                @foreach (var item in Model.availableIngredients)
+            @{
+                if (Model.availableIngredients.Count!=0)
                 {
-                    <div class="form-group">
-                        @{
-                            var shouldCheck = Model.selectedIngredients.Any(x => x == item.Ingredient.IngredientId.ToString()) ? "checked" : "";
-                            var val="0";
-                            if (shouldCheck=="checked")
-                            {
-                                val = Model.selectedIngredientsQuantity.ElementAt(@i).ToString();
-                                i++;
-                            }
+                    <div class="col-md-7">
+                        <label class="row font-weight-bold ml-2">Choose your ingredients: </label><br /><br />
+                        @{var i = 0;}
+                        @foreach (var item in Model.availableIngredients)
+                        {
+                            <div class="form-group">
+                                @{
+                                    var shouldCheck = Model.selectedIngredients.Any(x => x == item.Ingredient.IngredientId.ToString()) ? "checked" : "";
+                                    var val = "0";
+                                    if (shouldCheck == "checked")
+                                    {
+                                        val = Model.selectedIngredientsQuantity.ElementAt(@i).ToString();
+                                        i++;
+                                    }
+                                }
+                                <div class="m-1 d-inline-block">
+                                    <label class="container_new" for="@item.Ingredient.IngredientId">
+                                        @item.Ingredient.Name
+                                        <input type="checkbox" value="@item.Ingredient.IngredientId" name="selectedIngredients" id="@item.Ingredient.IngredientId" @shouldCheck class="ing_check" autocomplete="off" />
+                                        <span class="checkmark"></span>
+                                    </label>
+                                    <div class="div_check" style="display:none">
+                                        <label class="container_new" for="@item.QuantityInCoffee">
+                                            @Html.LabelFor(m => item.QuantityInCoffee, htmlAttributes: new { @class = "control-label" })
+                                        </label>
+                                        @{ 
+                                            bool usedIngredient = Model.selectedIngredients.Contains(item.Ingredient.IngredientId.ToString());
+                                        }
+                                        <input type="number" name="selectedIngredientsQuantity" min="0" max="@item.Ingredient.QuantityInStock?usedIngredient:@item.QuantityInCoffee" step="1" value=@val class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
                         }
-                        <div class="m-1 d-inline-block">
-                            <label class="container_new" for="@item.Ingredient.IngredientId">
-                                @item.Ingredient.Name
-                            <input type="checkbox" value="@item.Ingredient.IngredientId" name="selectedIngredients" id="@item.Ingredient.IngredientId" @shouldCheck class="ing_check" autocomplete="off"/>
-                            <span class="checkmark"></span>
-                        </label>
-                        <div class="div_check" style="display:none">
-                            <label class="container_new" for="@item.QuantityInCoffee">
-                                @Html.LabelFor(m => item.QuantityInCoffee, htmlAttributes: new { @class = "control-label" })
-                            </label>
-                            <input type="number" name="selectedIngredientsQuantity" min="0" max="@item.Ingredient.QuantityInStock" step="1" value=@val class="form-control" />
-                        </div>
                     </div>
-                </div>
+                }
             }
-            </div>
         </div>
         <br /><br />
         <div class="form-group">

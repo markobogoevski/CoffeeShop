@@ -231,6 +231,10 @@
     <Compile Include="Migrations\202008090709151_OrderTimeEnd.designer.cs">
       <DependentUpon>202008090709151_OrderTimeEnd.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202008101611526_ModelValidation1.cs" />
+    <Compile Include="Migrations\202008101611526_ModelValidation1.designer.cs">
+      <DependentUpon>202008101611526_ModelValidation1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CoffeeModel.cs" />
@@ -615,6 +619,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202008090709151_OrderTimeEnd.resx">
       <DependentUpon>202008090709151_OrderTimeEnd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008101611526_ModelValidation1.resx">
+      <DependentUpon>202008101611526_ModelValidation1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
