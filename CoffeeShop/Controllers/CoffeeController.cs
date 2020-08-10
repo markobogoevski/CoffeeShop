@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using CoffeeShop.Models;
-using CoffeeShop.Models.ViewModels;
-using CoffeeShop.Services;
-using Microsoft.AspNet.Identity;
-
-namespace CoffeeShop.Controllers
+﻿namespace CoffeeShop.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Web;
+    using System.Web.Mvc;
+    using CoffeeShop.Models;
+    using CoffeeShop.Models.ViewModels;
+    using CoffeeShop.Services;
+    using Microsoft.AspNet.Identity;
+
     public class CoffeeController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();

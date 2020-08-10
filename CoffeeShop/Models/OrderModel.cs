@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
-namespace CoffeeShop.Models.Order
+﻿namespace CoffeeShop.Models.Order
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+
     public class OrderModel
     {
         [Key]
@@ -28,7 +28,7 @@ namespace CoffeeShop.Models.Order
 
         public OrderModel()
         {
-            OrderStatus = Enumerations.OrderStatus.PENDING;
+            OrderStatus = Enumerations.OrderStatus.INACTIVE;
             OrderItems = new List<OrderItemModel>();
         }
     }

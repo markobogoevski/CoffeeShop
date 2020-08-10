@@ -1,8 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace CoffeeShop.Models
+﻿namespace CoffeeShop.Models
 {
+    using System;
+    using System.ComponentModel.DataAnnotations;
+
     public class IngredientInCoffeeModel
     {
         [Key]

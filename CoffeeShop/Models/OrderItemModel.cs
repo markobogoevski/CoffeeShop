@@ -1,8 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace CoffeeShop.Models.Order
+﻿namespace CoffeeShop.Models.Order
 {
+    using System;
+    using System.ComponentModel.DataAnnotations;
+
     public class OrderItemModel
     {
         [Key]

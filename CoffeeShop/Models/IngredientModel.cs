@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
-namespace CoffeeShop.Models
+﻿namespace CoffeeShop.Models
 {
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+
     public class IngredientModel
     {
         [Key]

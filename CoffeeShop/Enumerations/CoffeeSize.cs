@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace CoffeeShop.Enumerations
+﻿namespace CoffeeShop.Enumerations
 {
+    using System;
+
     public static class CoffeeSize
     {
         public static String SMALL = "Small";

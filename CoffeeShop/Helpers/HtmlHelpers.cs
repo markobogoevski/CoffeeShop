@@ -1,10 +1,10 @@
-﻿using CoffeeShop.Models.Order;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Web.Mvc;
-
-namespace CoffeeShop.Helpers
+﻿namespace CoffeeShop.Helpers
 {
+    using CoffeeShop.Models.Order;
+    using Newtonsoft.Json;
+    using System.Collections.Generic;
+    using System.Web.Mvc;
+
     public static class HtmlHelpers
     {
         public static string GetOrderRequestJson(this HtmlHelper helper, OrderModel cart)

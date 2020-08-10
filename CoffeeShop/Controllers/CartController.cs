@@ -1,15 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Web.Mvc;
-using CoffeeShop.Enumerations;
-using CoffeeShop.Models;
-using CoffeeShop.Models.Order;
-using CoffeeShop.Services;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-
-namespace CoffeeShop.Controllers
+﻿namespace CoffeeShop.Controllers
 {
+    using System;
+    using System.Linq;
+    using System.Web.Mvc;
+    using CoffeeShop.Models;
+    using CoffeeShop.Models.Order;
+    using CoffeeShop.Services;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
+
+    [Authorize]
     public class CartController : Controller
     {
         private UserManager<ApplicationUser> _userManager;
@@ -41,41 +41,49 @@ namespace CoffeeShop.Controllers
         // POST: Cart/AddToCart
         public ActionResult AddToCart(string coffeeId, string quantity)
         {
-            var coffee = _repository.GetCoffee(coffeeId);
-            object sessionCart = Session["cart"];
-            int quantityNumber = Convert.ToInt32(quantity);
-            Guid coffeeGuid = Guid.Parse(coffeeId);
- 
-            if (sessionCart != null)
+            try
             {
-                var cart = (OrderModel)sessionCart;
-                if (cart.OrderItems.Any(item => item.Coffee.CoffeeId == coffeeGuid))
+                Guid coffeeGuid = Guid.Parse(coffeeId);
+                var coffee = _repository.FindCoffee(coffeeGuid);
+                object sessionCart = Session["cart"];
+                int quantityNumber = Convert.ToInt32(quantity);
+
+                if (sessionCart != null)
                 {
-                    cart.OrderItems.Find(item => item.Coffee.CoffeeId == coffeeGuid).Quantity += quantityNumber;
+                    var cart = (OrderModel)sessionCart;
+                    if (cart.OrderItems.Any(item => item.Coffee.CoffeeId == coffeeGuid))
+                    {
+                        cart.OrderItems.Find(item => item.Coffee.CoffeeId == coffeeGuid).Quantity += quantityNumber;
+                    }
+                    else
+                    {
+                        cart.OrderItems.Add(new OrderItemModel
+                        {
+                            Quantity = quantityNumber,
+                            Coffee = coffee
+                        });
+                    }
+                    Session["cart"] = cart;
                 }
                 else
                 {
+                    var cart = new OrderModel();
                     cart.OrderItems.Add(new OrderItemModel
                     {
                         Quantity = quantityNumber,
                         Coffee = coffee
                     });
+                    Session["cart"] = cart;
                 }
-                Session["cart"] = cart;
+                return View("Index");
             }
-            else
+            catch (Exception)
             {
-                var cart = new OrderModel();
-                cart.OrderItems.Add(new OrderItemModel
-                {
-                    Quantity = quantityNumber,
-                    Coffee = coffee
-                });
-                Session["cart"] = cart;
+                return HttpNotFound();
             }
-            return View("Index");
         }
 
+        // POST: Cart/RemoveCoffeeFromOrder/id/quantity
         public ActionResult RemoveCoffeeFromOrder(string id, string quantity)
         {
             OrderModel cart = (OrderModel)Session["cart"];
@@ -85,6 +93,10 @@ namespace CoffeeShop.Controllers
             }
 
             var coffeeToRemove = cart.OrderItems.First(item => item.Coffee.CoffeeId == Guid.Parse(id));
+
+            if (coffeeToRemove == null)
+                return HttpNotFound();
+
             coffeeToRemove.Quantity -= Convert.ToInt32(quantity);
             if (coffeeToRemove.Quantity == 0)
             {
@@ -100,6 +112,7 @@ namespace CoffeeShop.Controllers
             return RedirectToAction("Index", "Cart");
         }
 
+        // POST: Cart/RemoveOrderItemFromCart/id
         public ActionResult RemoveOrderItemFromCart(string id)
         {
             OrderModel cart = (OrderModel)Session["cart"];
@@ -109,6 +122,10 @@ namespace CoffeeShop.Controllers
             }
 
             var orderToRemove = cart.OrderItems.Find(item => item.OrderItemId == Guid.Parse(id));
+
+            if (orderToRemove == null)
+                return HttpNotFound();
+
             cart.OrderItems.Remove(orderToRemove);
             Session["cart"] = cart;
             if (cart.OrderItems.Count == 0)

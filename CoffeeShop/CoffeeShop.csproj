@@ -179,8 +179,6 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\Api\CoffeeApiController.cs" />
-    <Compile Include="Controllers\Api\IngredientModelsController.cs" />
     <Compile Include="Controllers\CoffeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IngredientController.cs" />
@@ -235,7 +233,6 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\CartModel.cs" />
     <Compile Include="Models\CoffeeModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\IngredientInCoffeeModel.cs" />
@@ -557,10 +554,7 @@
     <Content Include="Views\Ingredient\Edit.cshtml" />
     <Content Include="Views\Ingredient\Index.cshtml" />
     <Content Include="Views\OrderItem\Create.cshtml" />
-    <Content Include="Views\OrderItem\Delete.cshtml" />
     <Content Include="Views\OrderItem\Details.cshtml" />
-    <Content Include="Views\OrderItem\Edit.cshtml" />
-    <Content Include="Views\OrderItem\Index.cshtml" />
     <Content Include="Views\Order\Create.cshtml" />
     <Content Include="Views\Order\Delete.cshtml" />
     <Content Include="Views\Order\Details.cshtml" />
@@ -583,7 +577,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
