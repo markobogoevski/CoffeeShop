@@ -554,11 +554,7 @@
     <Content Include="Views\Ingredient\Edit.cshtml" />
     <Content Include="Views\Ingredient\Index.cshtml" />
     <Content Include="Views\OrderItem\Create.cshtml" />
-    <Content Include="Views\OrderItem\Details.cshtml" />
-    <Content Include="Views\Order\Create.cshtml" />
-    <Content Include="Views\Order\Delete.cshtml" />
     <Content Include="Views\Order\Details.cshtml" />
-    <Content Include="Views\Order\Edit.cshtml" />
     <Content Include="Views\Order\Index.cshtml" />
     <Content Include="Views\Coffee\CreateCustom.cshtml" />
     <Content Include="Views\Coffee\_DailyDeal.cshtml" />
@@ -568,6 +564,7 @@
     <Content Include="web.config" />
     <Content Include="Views\Account\AddUserToRole.cshtml" />
     <Content Include="Views\Ingredient\IngredientStatistics.cshtml" />
+    <Content Include="Views\OrderItem\Details.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
