@@ -179,8 +179,6 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\Api\CoffeeApiController.cs" />
-    <Compile Include="Controllers\Api\IngredientModelsController.cs" />
     <Compile Include="Controllers\CoffeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IngredientController.cs" />
@@ -233,9 +231,12 @@
     <Compile Include="Migrations\202008090709151_OrderTimeEnd.designer.cs">
       <DependentUpon>202008090709151_OrderTimeEnd.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202008101611526_ModelValidation1.cs" />
+    <Compile Include="Migrations\202008101611526_ModelValidation1.designer.cs">
+      <DependentUpon>202008101611526_ModelValidation1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\CartModel.cs" />
     <Compile Include="Models\CoffeeModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\IngredientInCoffeeModel.cs" />
@@ -557,14 +558,7 @@
     <Content Include="Views\Ingredient\Edit.cshtml" />
     <Content Include="Views\Ingredient\Index.cshtml" />
     <Content Include="Views\OrderItem\Create.cshtml" />
-    <Content Include="Views\OrderItem\Delete.cshtml" />
-    <Content Include="Views\OrderItem\Details.cshtml" />
-    <Content Include="Views\OrderItem\Edit.cshtml" />
-    <Content Include="Views\OrderItem\Index.cshtml" />
-    <Content Include="Views\Order\Create.cshtml" />
-    <Content Include="Views\Order\Delete.cshtml" />
     <Content Include="Views\Order\Details.cshtml" />
-    <Content Include="Views\Order\Edit.cshtml" />
     <Content Include="Views\Order\Index.cshtml" />
     <Content Include="Views\Coffee\CreateCustom.cshtml" />
     <Content Include="Views\Coffee\_DailyDeal.cshtml" />
@@ -574,6 +568,7 @@
     <Content Include="web.config" />
     <Content Include="Views\Account\AddUserToRole.cshtml" />
     <Content Include="Views\Ingredient\IngredientStatistics.cshtml" />
+    <Content Include="Views\OrderItem\Details.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -583,7 +578,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -625,6 +619,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202008090709151_OrderTimeEnd.resx">
       <DependentUpon>202008090709151_OrderTimeEnd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008101611526_ModelValidation1.resx">
+      <DependentUpon>202008101611526_ModelValidation1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -33,6 +33,7 @@ namespace CoffeeShop.Models.ViewModels
 
         public CreateCoffeeViewModel()
         {
+            BasePrice = 0;
             selectedIngredients = new List<string>();
             selectedIngredientsQuantity = new List<int>();
             availableIngredients = new List<IngredientQuantityViewModel>();

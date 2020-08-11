@@ -7,6 +7,7 @@
 }
 
 <h2>@ViewBag.Title</h2>
+<div hidden data-coffee-count="@Model.Count()" id="div-count"></div>
 
 <div class="container">
     <div class="col-md-6" style="float:left">
@@ -17,9 +18,12 @@
                     @Html.ActionLink("Create a new coffee", "Create", null, new { @class = "btn btn-primary" })
                 </div>
                 <br />
-                <div>
-                    @Html.ActionLink("Check out coffee statistics", "CoffeeStatistics", null, new { @class = "btn btn-primary" })
-                </div>
+                    if (Model.Count() != 0)
+                    {
+                        <div>
+                            @Html.ActionLink("Check out coffee statistics", "CoffeeStatistics", null, new { @class = "btn btn-primary" })
+                        </div>
+                    }
             }
         }
         @{
@@ -32,37 +36,47 @@
             <br />
         }
 
-        <div id="dailydeal" style="float:left;">
-            @Ajax.ActionLink("Check out the coffee of the day",
-                             "CoffeeDay",
-                             null,
-                             new AjaxOptions
-                             {
-                                 UpdateTargetId = "dailydeal",
-                                 InsertionMode = InsertionMode.Replace,
-                                 HttpMethod = "GET"
-                             },
-                             new { @class = "btn btn-danger" })
-        </div>
-    </div>
-    <div class="col-md-6" style="float:right">
-        <strong>Filter coffee by ingredients: </strong><br /><br />
         @{
-            foreach (IngredientModel ingredient in (List<IngredientModel>)ViewBag.Ingredients)
+            if (Model.Count() != 0)
             {
-                <div class="form-group">
-                    <div class="m-1 d-inline-block">
-                        <label class="container_new" for="@ingredient.IngredientId">
-                            <em>@ingredient.Name</em>
-                            <input data-id="@ingredient.IngredientId" class="ing_check" type="checkbox" value="@ingredient.IngredientId" name="@ingredient.Name" id="@ingredient.IngredientId" autocomplete="off"/>
-                            <span class="checkmark"></span>
-                        </label>
-                    </div>
+                <div id="dailydeal" style="float:left;">
+                    @Ajax.ActionLink("Check out the coffee of the day",
+                                     "CoffeeDay",
+                                     null,
+                                     new AjaxOptions
+                                     {
+                                         UpdateTargetId = "dailydeal",
+                                         InsertionMode = InsertionMode.Replace,
+                                         HttpMethod = "GET"
+                                     },
+                                     new { @class = "btn btn-danger" })
                 </div>
-               
             }
         }
     </div>
+    @{
+        if (ViewBag.Ingredients.Count != 0)
+        {
+            <div class="col-md-6" style="float:right">
+                <strong>Filter coffee by ingredients: </strong><br /><br />
+                @{
+                    foreach (IngredientModel ingredient in (List<IngredientModel>)ViewBag.Ingredients)
+                    {
+                        <div class="form-group">
+                            <div class="m-1 d-inline-block">
+                                <label class="container_new" for="@ingredient.IngredientId">
+                                    <em>@ingredient.Name</em>
+                                    <input data-id="@ingredient.IngredientId" class="ing_check" type="checkbox" value="@ingredient.IngredientId" name="@ingredient.Name" id="@ingredient.IngredientId" autocomplete="off" />
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                    }
+                }
+            </div>
+        }
+    }
 </div>
 
 <br />
@@ -113,11 +127,16 @@
                     if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
                     {
                         @Html.ActionLink("Edit", "Edit", new { id = item.CoffeeId }, new { @class = "btn btn-info" })
-                        <button data-coffee-id="@item.CoffeeId" class="btn btn-danger js-delete">Delete</button> 
+                        <button data-coffee-id="@item.CoffeeId" class="btn btn-danger js-delete">Delete</button>
                     }
                 }
-                @Html.ActionLink("Details", "Details", new { id = item.CoffeeId }, new { @class = "btn btn-info" }) |
-                @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = item.CoffeeId }, new { @class = "btn btn-success" })
+                @Html.ActionLink("Details", "Details", new { id = item.CoffeeId }, new { @class = "btn btn-info" })
+                @{
+                    if (User.IsInRole(UserRoles.User))
+                    {
+                        @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = item.CoffeeId }, new { @class = "btn btn-success" })
+                    }
+                }
             </td>
         </tr>
         }
@@ -143,6 +162,13 @@
                             url: "/Coffee/Delete/" + button.attr("data-coffee-id"),
                             success: function () {
                                 table.row(button.parents("tr")).remove().draw();
+                                var div = $("#div-count");
+                                var value = div.attr("data-coffee-count");
+                                var newValue = parseInt(value) - 1;
+                                div.attr("data-coffee-count", newValue)
+                                if (parseInt(div.attr("data-coffee-count")) == 0) {
+                                    location.reload();
+                                }
                             }
                         });
                     }

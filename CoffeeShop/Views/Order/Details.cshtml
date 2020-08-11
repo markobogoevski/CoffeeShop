@@ -56,7 +56,21 @@
                 }
                 else
                 {
-                    <em>Order is still not finished...</em>
+                    if (Model.OrderStatus != OrderStatus.CANCELLED)
+                    {
+                        <em>Order is still not finished...</em>
+                    }
+                    else
+                    {
+                        if (User.IsInRole(UserRoles.User))
+                        {
+                            <em>I am sorry. Your order has been cancelled...</em>
+                        }
+                        else
+                        {
+                            <em>Cancelled</em>
+                        }
+                    }
                 }
             }
         </dd>
@@ -73,7 +87,21 @@
                 }
                 else
                 {
-                    <em>Order is still not finished...</em>
+                    if (Model.OrderStatus != OrderStatus.CANCELLED)
+                    {
+                        <em>Order is still not finished...</em>
+                    }
+                    else
+                    {
+                        if (User.IsInRole(UserRoles.User))
+                        {
+                            <em>I am sorry. Your order has been cancelled...</em>
+                        }
+                        else
+                        {
+                            <em>Cancelled</em>
+                        }
+                    }
                 }
             }
         </dd>

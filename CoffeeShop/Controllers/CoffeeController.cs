@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using CoffeeShop.Models;
-using CoffeeShop.Models.ViewModels;
-using CoffeeShop.Services;
-using Microsoft.AspNet.Identity;
-
-namespace CoffeeShop.Controllers
+﻿namespace CoffeeShop.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Web;
+    using System.Web.Mvc;
+    using CoffeeShop.Enumerations;
+    using CoffeeShop.Models;
+    using CoffeeShop.Models.ViewModels;
+    using CoffeeShop.Services;
+    using Microsoft.AspNet.Identity;
+
+    [Authorize]
     public class CoffeeController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
-
         private Repository _repository;
         public CoffeeController()
         {
@@ -23,30 +23,42 @@ namespace CoffeeShop.Controllers
         }
 
         // GET: Coffee
+        [AllowAnonymous]
         public ActionResult Index()
         {
-            ViewBag.Title = "Coffee shop blabla";
-            List<IngredientModel> ingredients = _repository.GetAllUsedIngredients(User.Identity.GetUserId());
-            ViewBag.Ingredients = ingredients;
-            List<CoffeeModel> coffee = new List<CoffeeModel>();
-            List<string> ingredientIds = new List<string>();
-            foreach(IngredientModel ingredient in ingredients)
+            try
             {
-                if (Request.QueryString[ingredient.Name] != null)
-                    ingredientIds.Add(Request.QueryString[ingredient.Name]);
+                var ingredients = _repository.GetAllUsedIngredients(User.Identity.GetUserId())
+                                             .ToList();
+                ViewBag.Ingredients = ingredients;
+                List<CoffeeModel> coffee = null;
+                List<string> ingredientIds = new List<string>();
+                foreach (IngredientModel ingredient in ingredients)
+                {
+                    if (Request.QueryString[ingredient.Name] != null)
+                        ingredientIds.Add(Request.QueryString[ingredient.Name]);
+                }
+                if (ingredientIds.Count >= 1)
+                {
+                    coffee = _repository.GetCoffeeForUserByIngredients(ingredientIds, User.Identity.GetUserId())
+                                        .ToList();
+                }
+                else
+                {
+                    coffee = _repository.GetAllCoffeeForUser(User.Identity.GetUserId())
+                                        .ToList();
+                }
+                return View(coffee);
             }
-            if (ingredientIds.Count >= 1)
+            catch (Exception)
             {
-                coffee = _repository.GetCoffeeByIngredients(ingredientIds, User.Identity.GetUserId());
+                return HttpNotFound();
             }
-            else
-            {
-                coffee = _repository.GetAllCoffee(User.Identity.GetUserId());
-            }
-            return View(coffee);
+           
         }
 
         // GET: Coffee/Details/5
+        [AllowAnonymous]
         public ActionResult Details(Guid id)
         {
             if (id == null)
@@ -56,7 +68,8 @@ namespace CoffeeShop.Controllers
             try
             {
                 CoffeeModel coffeeModel = _repository.FindCoffee(id);
-                List<IngredientInCoffeeModel> ingredientsForCoffee = _repository.GetIngredientsInCoffee(coffeeModel.CoffeeId);
+                var ingredientsForCoffee = _repository.GetIngredientsInCoffee(coffeeModel.CoffeeId)
+                                                      .ToList();
                 ViewBag.IngredientsForCoffee = ingredientsForCoffee;
                 return View(coffeeModel);
 
@@ -68,12 +81,12 @@ namespace CoffeeShop.Controllers
         }
 
         // GET: Coffee/CreateCustom
+        [Authorize(Roles = UserRoles.User)]
         public ActionResult CreateCustom()
         {
             try
             {
-                List<string> Sizes = new List<string>();
-                Sizes = _repository.GetAllCoffeeSizes();
+                var Sizes = _repository.GetAllCoffeeSizes().ToList();
                 ViewBag.Sizes = Sizes;
                 return View(createCoffeeViewModel(null));
             }
@@ -84,18 +97,32 @@ namespace CoffeeShop.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = UserRoles.User)]
         public ActionResult CreateCustomCoffee(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file)
         {
-            if (ModelState.IsValid)
+            try
             {
-                return Create(coffeeViewModel, file, custom:true);
+                if (ModelState.IsValid)
+                {
+                    return Create(coffeeViewModel, file, custom: true);
+                }
+                var Sizes = _repository.GetAllCoffeeSizes().ToList();
+                ViewBag.Sizes = Sizes;
+                coffeeViewModel.availableIngredients = _repository.GetAvailableIngredients(null).Select(item => new IngredientQuantityViewModel
+                {
+                    Ingredient = item,
+                    QuantityInCoffee = 1
+                }).ToList();
+                return View("CreateCustom",coffeeViewModel);
             }
-            List<string> Sizes = new List<string>();
-            Sizes = _repository.GetAllCoffeeSizes();
-            ViewBag.Sizes = Sizes;
-            return View("CreateCustom",coffeeViewModel);
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
         }
 
+        [HttpPost]
+        [Authorize(Roles = UserRoles.User)]
         private ActionResult AddShoppingCartCustom(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file)
         {
                 if (file != null)
@@ -119,19 +146,26 @@ namespace CoffeeShop.Controllers
                     coffeeViewModel.ImgUrl = "/Content/Images/Coffee/default_coffee.JPG";
                 }
 
-                coffeeViewModel.selectedIngredientsQuantity = coffeeViewModel.selectedIngredientsQuantity.Where(quan => quan != 0).ToList();
+            try
+            {
+                coffeeViewModel.selectedIngredientsQuantity = coffeeViewModel.selectedIngredientsQuantity.Where(quan => quan != 0)
+                                                                                                         .ToList();
                 _repository.CreateCoffee(coffeeViewModel, User.Identity.GetUserId());
-                ViewBag.Title = "Coffee Shop blabla";
                 return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
         }
-
+                
         // GET: Coffee/Create
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult Create()
         {
             try
             {
-                List<string> Sizes = new List<string>();
-                Sizes = _repository.GetAllCoffeeSizes();
+                var Sizes = _repository.GetAllCoffeeSizes().ToList();
                 ViewBag.Sizes = Sizes;
                 return View(createCoffeeViewModel(null));
             }
@@ -141,90 +175,73 @@ namespace CoffeeShop.Controllers
             }
         }
 
-        private CreateCoffeeViewModel createCoffeeViewModel(Guid? id)
+        // POST: Coffee/Create
+        [HttpPost]
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
+        public ActionResult Create(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file, bool custom = false)
         {
-            var coffeeViewModel = new CreateCoffeeViewModel();
-
-            if (id != null)
+            try
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    var coffeeToEdit = _repository.FindCoffee(id);
-                    coffeeViewModel.CoffeeId = id;
-                    coffeeViewModel.selectedIngredients = _repository.GetIngredientsForCoffee(id)
-                                                                     .Select(x => x.IngredientId.ToString())
-                                                                     .ToList();
-                    coffeeViewModel.Name = coffeeToEdit.Name;
-                    coffeeViewModel.selectedIngredientsQuantity = _repository.GetSelectedIngredientQuantitiesForCoffee(id,coffeeViewModel.selectedIngredients);
-                    coffeeViewModel.Size = coffeeToEdit.Size;
-                    coffeeViewModel.IncomeCoef = coffeeToEdit.IncomeCoef;
-                    coffeeViewModel.ImgUrl = coffeeToEdit.ImgUrl;
-                    coffeeViewModel.BasePrice = coffeeToEdit.BasePrice;
-                    coffeeViewModel.Description = coffeeToEdit.Description;
-                    coffeeViewModel.QuantityInStock = coffeeToEdit.QuantityInStock;
+                    if (file != null)
+                    {
+                        string pic = Path.GetFileName(file.FileName);
+                        string path = Path.Combine(
+                        Server.MapPath("~/Content/Images/Coffee"), pic);
+                        file.SaveAs(path);
+
+                        // save the image path path to the database
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            file.InputStream.CopyTo(ms);
+                            byte[] array = ms.GetBuffer();
+                        }
+
+                        coffeeViewModel.ImgUrl = "/Content/Images/Coffee/" + pic;
+                    }
+                    else
+                    {
+                        coffeeViewModel.ImgUrl = "/Content/Images/Coffee/default_coffee.JPG";
+                    }
+
+                    coffeeViewModel.selectedIngredientsQuantity = coffeeViewModel.selectedIngredientsQuantity.Where(quan => quan != 0)
+                                                                                                             .ToList();
+                    if (custom)
+                    {
+                        _repository.CreateCoffee(coffeeViewModel, User.Identity.GetUserId());
+                    }
+                    else
+                    {
+                        _repository.CreateCoffee(coffeeViewModel, null);
+                    }
+                    ViewBag.Title = "Coffee Shop blabla";
+                    return RedirectToAction("Index");
                 }
-                catch (Exception)
+                var Sizes = _repository.GetAllCoffeeSizes().ToList();
+                ViewBag.Sizes = Sizes;
+                coffeeViewModel.availableIngredients = _repository.GetAvailableIngredients(null).Select(item => new IngredientQuantityViewModel
+                {
+                    Ingredient = item,
+                    QuantityInCoffee = 1
+                }).ToList();
+                return View(coffeeViewModel);
+            }
+            catch (Exception)
+            {
+                if (custom)
                 {
                     throw new Exception();
                 }
-            }
-            coffeeViewModel.availableIngredients = _repository.GetAvailableIngredients().Select(item=>new IngredientQuantityViewModel { 
-                                                                                                Ingredient = item,
-                                                                                                QuantityInCoffee = 1})
-
-                                                                                        .ToList();
-            return coffeeViewModel;
-        }
-
-        // POST: Coffee/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file, bool custom=false)
-        {
-            if (ModelState.IsValid)
-            {
-                if (file != null)
-                {
-                    string pic = Path.GetFileName(file.FileName);
-                    string path = Path.Combine(
-                    Server.MapPath("~/Content/Images/Coffee"), pic);
-                    file.SaveAs(path);
-
-                    // save the image path path to the database
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        file.InputStream.CopyTo(ms);
-                        byte[] array = ms.GetBuffer();
-                    }
-
-                    coffeeViewModel.ImgUrl = "/Content/Images/Coffee/" + pic;
-                }
                 else
                 {
-                    coffeeViewModel.ImgUrl = "/Content/Images/Coffee/default_coffee.JPG";
+                    return HttpNotFound();
                 }
-
-                coffeeViewModel.selectedIngredientsQuantity = coffeeViewModel.selectedIngredientsQuantity.Where(quan => quan != 0).ToList();
-                if (custom)
-                {
-                    _repository.CreateCoffee(coffeeViewModel, User.Identity.GetUserId());
-                }
-                else
-                {
-                    _repository.CreateCoffee(coffeeViewModel, null);
-                }
-                ViewBag.Title = "Coffee Shop blabla";
-                return RedirectToAction("Index");
             }
-            List<string> Sizes = new List<string>();
-            Sizes = _repository.GetAllCoffeeSizes();
-            ViewBag.Sizes = Sizes;
-            return View(coffeeViewModel);
         }
 
         // GET: Coffee/Edit/5
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult Edit(Guid? id)
         {
             if (id == null)
@@ -233,8 +250,7 @@ namespace CoffeeShop.Controllers
             }
             try
             {
-                List<string> Sizes = new List<string>();
-                Sizes = _repository.GetAllCoffeeSizes();
+                var Sizes = _repository.GetAllCoffeeSizes().ToList();
                 ViewBag.Sizes = Sizes;
                 return View(createCoffeeViewModel(id));
             }
@@ -245,49 +261,54 @@ namespace CoffeeShop.Controllers
         }
 
         // POST: Coffee/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult Edit(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file)
         {
-            if (ModelState.IsValid)
+            try
             {
-                if (file != null)
+                if (ModelState.IsValid)
                 {
-                    string pic = Path.GetFileName(file.FileName);
-                    string path = Path.Combine(
-                    Server.MapPath("~/Content/Images/Coffee"), pic);
-                    file.SaveAs(path);
-
-                    // save the image path path to the database
-                    using (MemoryStream ms = new MemoryStream())
+                    if (file != null)
                     {
-                        file.InputStream.CopyTo(ms);
-                        byte[] array = ms.GetBuffer();
+                        string pic = Path.GetFileName(file.FileName);
+                        string path = Path.Combine(
+                        Server.MapPath("~/Content/Images/Coffee"), pic);
+                        file.SaveAs(path);
+
+                        // save the image path path to the database
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            file.InputStream.CopyTo(ms);
+                            byte[] array = ms.GetBuffer();
+                        }
+
+                        coffeeViewModel.ImgUrl = "/Content/Images/Coffee/" + pic;
                     }
 
-                    coffeeViewModel.ImgUrl = "/Content/Images/Coffee/" + pic;
+                    coffeeViewModel.selectedIngredientsQuantity = coffeeViewModel.selectedIngredientsQuantity.Where(quan => quan != 0).ToList();
+                    _repository.EditCoffee(coffeeViewModel);
+                    return RedirectToAction("Index");
                 }
-                
-                coffeeViewModel.selectedIngredientsQuantity = coffeeViewModel.selectedIngredientsQuantity.Where(quan => quan != 0).ToList();
-                _repository.EditCoffee(coffeeViewModel);
-                return RedirectToAction("Index");
+                var Sizes = _repository.GetAllCoffeeSizes().ToList();
+                ViewBag.Sizes = Sizes;
+                return View(createCoffeeViewModel(coffeeViewModel.CoffeeId));
             }
-            List<string> Sizes = new List<string>();
-            Sizes = _repository.GetAllCoffeeSizes();
-            ViewBag.Sizes = Sizes;
-            return View(createCoffeeViewModel(coffeeViewModel.CoffeeId));
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+            
         }
 
-        // Post: Coffee/Delete
+        // POST: Coffee/Delete
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult Delete(Guid id)
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
             try
             {
                 _repository.DeleteCoffee(id);
@@ -299,84 +320,196 @@ namespace CoffeeShop.Controllers
             }
         }
 
+        // GET: Coffee/CoffeeDay
+        [AllowAnonymous]
         public ActionResult CoffeeDay()
         {
-            var coffeeDay = GetCoffeeDay();
-            List<IngredientInCoffeeModel> ingredientsForCoffee = _repository.GetIngredientsInCoffee(coffeeDay.CoffeeId);
-            ViewBag.IngredientsForCoffee = ingredientsForCoffee;
-            return PartialView("_DailyDeal", coffeeDay);
+            try
+            {
+                var coffee = _repository.GetAllCoffeeForUser(User.Identity.GetUserId()).ToList();
+
+                if (coffee.Count == 0)
+                {
+                    ViewBag.Empty = true;
+                    return PartialView("_DailyDeal");
+                }
+
+                var coffeeDay = _repository.GetCoffeeDay();
+                var ingredientsForCoffee = _repository.GetIngredientsInCoffee(coffeeDay.CoffeeId)
+                                                      .ToList();
+                ViewBag.IngredientsForCoffee = ingredientsForCoffee;
+                return PartialView("_DailyDeal", coffeeDay);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
         }
 
+        // GET: Coffee/HideDeal
+        [AllowAnonymous]
         public ActionResult HideDeal()
         {
             return PartialView("_HideDeal");
         }
 
+        // GET: Coffee/CoffeeStatistics
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult CoffeeStatistics()
         {
-            var coffee = _repository.GetAllCoffee(User.Identity.GetUserId());
-            var coffeeStatistics = _repository.GetCoffeeStatistics(coffee);
-            return View(coffeeStatistics);
+            try
+            {
+                var coffee = _repository.GetAllCoffeeForUser(User.Identity.GetUserId());
+                var coffeeStatistics = _repository.GetCoffeeStatistics(coffee)
+                                                  .ToList();
+                return View(coffeeStatistics);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
         }
 
-        // Post: Coffee/UpdateCoffeeQuantity
-        public ActionResult UpdateCoffeeQuantity(string id,string quantity)
+        // POST: Coffee/UpdateCoffeeQuantity
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
+        public ActionResult UpdateCoffeeQuantity(string id, string quantity)
         {
-            _repository.UpdateCoffeeStock(id, quantity);
-            var coffee = _repository.GetAllCoffee(User.Identity.GetUserId());
-            var coffeeStatistics = _repository.GetCoffeeStatistics(coffee);
-            return View("CoffeeStatistics", coffeeStatistics);       
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            try
+            {
+                _repository.UpdateCoffeeStock(Guid.Parse(id), quantity);
+                var coffee = _repository.GetAllCoffeeForUser(User.Identity.GetUserId());
+                var coffeeStatistics = _repository.GetCoffeeStatistics(coffee)
+                                                  .ToList();
+                return View("CoffeeStatistics", coffeeStatistics);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }          
         }
 
+        // GET: Coffee/MostSold
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult MostSold()
         {
-            CoffeeModel mostSold = _repository.GetMostSoldCoffee();
-            ViewBag.Statistics = true;
-            ViewBag.TotalProfit = _repository.GetTotalProfit(mostSold);
-            ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeek(mostSold);
-            List<IngredientInCoffeeModel> ingredientsForCoffee = _repository.GetIngredientsInCoffee(mostSold.CoffeeId);
-            ViewBag.IngredientsForCoffee = ingredientsForCoffee;
-            return View("Details",mostSold);
+            try
+            {
+                CoffeeModel mostSold = _repository.GetMostSoldCoffee();
+                ViewBag.Statistics = true;
+                ViewBag.TotalProfit = _repository.GetTotalProfitCoffee(mostSold);
+                ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeekCoffee(mostSold);
+                var ingredientsForCoffee = _repository.GetIngredientsInCoffee(mostSold.CoffeeId)
+                                                      .ToList();
+                ViewBag.IngredientsForCoffee = ingredientsForCoffee;
+                return View("Details", mostSold);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
         }
 
+        // GET: Coffee/LeastSold 
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult LeastSold()
         {
-            CoffeeModel leastSold = _repository.GetLeastSoldCoffee();
-            ViewBag.Statistics = true;
-            ViewBag.TotalProfit = _repository.GetTotalProfit(leastSold);
-            ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeek(leastSold);
-            List<IngredientInCoffeeModel> ingredientsForCoffee = _repository.GetIngredientsInCoffee(leastSold.CoffeeId);
-            ViewBag.IngredientsForCoffee = ingredientsForCoffee;
-            return View("Details", leastSold);
+            try
+            {
+                CoffeeModel leastSold = _repository.GetLeastSoldCoffee();
+                ViewBag.Statistics = true;
+                ViewBag.TotalProfit = _repository.GetTotalProfitCoffee(leastSold);
+                ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeekCoffee(leastSold);
+                var ingredientsForCoffee = _repository.GetIngredientsInCoffee(leastSold.CoffeeId)
+                                                      .ToList();
+                ViewBag.IngredientsForCoffee = ingredientsForCoffee;
+                return View("Details", leastSold);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
         }
 
+        // GET: Coffee/MostSoldWeek 
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult MostSoldWeek()
         {
-            CoffeeModel mostSold = _repository.GetMostSoldCoffeeWeek();
-            ViewBag.Statistics = true;
-            ViewBag.TotalProfit = _repository.GetTotalProfit(mostSold);
-            ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeek(mostSold);
-            List<IngredientInCoffeeModel> ingredientsForCoffee = _repository.GetIngredientsInCoffee(mostSold.CoffeeId);
-            ViewBag.IngredientsForCoffee = ingredientsForCoffee;
-            return View("Details", mostSold);
+            try
+            {
+                CoffeeModel mostSold = _repository.GetMostSoldCoffeeWeek();
+                ViewBag.Statistics = true;
+                ViewBag.TotalProfit = _repository.GetTotalProfitCoffee(mostSold);
+                ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeekCoffee(mostSold);
+                var ingredientsForCoffee = _repository.GetIngredientsInCoffee(mostSold.CoffeeId)
+                                                      .ToList();
+                ViewBag.IngredientsForCoffee = ingredientsForCoffee;
+                return View("Details", mostSold);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
         }
 
+        // GET: Coffee/LeastSoldWeek 
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult LeastSoldWeek()
         {
-            CoffeeModel leastSold = _repository.GetLeastSoldCoffeeWeek();
-            ViewBag.Statistics = true;
-            ViewBag.TotalProfit = _repository.GetTotalProfit(leastSold);
-            ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeek(leastSold);
-            List<IngredientInCoffeeModel> ingredientsForCoffee = _repository.GetIngredientsInCoffee(leastSold.CoffeeId);
-            ViewBag.IngredientsForCoffee = ingredientsForCoffee;
-            return View("Details", leastSold);
+            try
+            {
+                CoffeeModel leastSold = _repository.GetLeastSoldCoffeeWeek();
+                ViewBag.Statistics = true;
+                ViewBag.TotalProfit = _repository.GetTotalProfitCoffee(leastSold);
+                ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeekCoffee(leastSold);
+                var ingredientsForCoffee = _repository.GetIngredientsInCoffee(leastSold.CoffeeId)
+                                                      .ToList();
+                ViewBag.IngredientsForCoffee = ingredientsForCoffee;
+                return View("Details", leastSold);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
         }
 
-        private CoffeeModel GetCoffeeDay()
+        private CreateCoffeeViewModel createCoffeeViewModel(Guid? id)
         {
-            CoffeeModel randomCoffee = _repository.GetRandomCoffee();
-            randomCoffee.TotalPrice *= 0.7m;
-            return randomCoffee;
+            var coffeeViewModel = new CreateCoffeeViewModel();
+            try
+            {
+                coffeeViewModel.availableIngredients = _repository.GetAvailableIngredients(id).Select(item => new IngredientQuantityViewModel
+                {
+                    Ingredient = item,
+                    QuantityInCoffee = 1
+                }).ToList();
+                
+                if (id != null)
+                {
+                    var coffeeToEdit = _repository.FindCoffee(id);
+                    coffeeViewModel.CoffeeId = id;
+                    coffeeViewModel.selectedIngredients = _repository.GetIngredientsForCoffee(id)
+                                                                     .Select(x => x.IngredientId.ToString())
+                                                                     .ToList();
+                    coffeeViewModel.Name = coffeeToEdit.Name;
+                    coffeeViewModel.selectedIngredientsQuantity = _repository.GetSelectedIngredientQuantitiesForCoffee(id, coffeeViewModel.selectedIngredients)
+                                                                             .ToList();
+                    coffeeViewModel.Size = coffeeToEdit.Size;
+                    coffeeViewModel.IncomeCoef = coffeeToEdit.IncomeCoef;
+                    coffeeViewModel.ImgUrl = coffeeToEdit.ImgUrl;
+                    coffeeViewModel.BasePrice = coffeeToEdit.BasePrice;
+                    coffeeViewModel.Description = coffeeToEdit.Description;
+                    coffeeViewModel.QuantityInStock = coffeeToEdit.QuantityInStock;
+                }
+                return coffeeViewModel;
+            }
+            catch (Exception)
+                {
+                    throw new Exception();
+                }
         }
 
         protected override void Dispose(bool disposing)

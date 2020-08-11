@@ -86,7 +86,14 @@
                                 }
                                 else if (item.OrderStatus == OrderStatus.CANCELLED)
                                 {
-                                    <em>I am sorry. Your order has been cancelled...</em>
+                                    if (User.IsInRole(UserRoles.User))
+                                    {
+                                        <em>I am sorry. Your order has been cancelled...</em>
+                                    }
+                                    else
+                                    {
+                                        <em>Cancelled</em>
+                                    }
                                 }
                                 else
                                 {
@@ -103,7 +110,14 @@
                                 }
                                 else if (item.OrderStatus == OrderStatus.CANCELLED)
                                 {
-                                    <em>I am sorry. Your order has been cancelled...</em>
+                                    if (User.IsInRole(UserRoles.User))
+                                    {
+                                        <em>I am sorry. Your order has been cancelled...</em>
+                                    }
+                                    else
+                                    {
+                                        <em>Cancelled</em>
+                                    }
                                 }
                                 else
                                 {
@@ -156,7 +170,14 @@
     }
     else
     {
-        <h1>You have no orders!</h1>
+        if (User.IsInRole(UserRoles.User))
+        {
+            <h1>You have no orders!</h1>
+        }
+        else
+        {
+            <h1>No orders to show...</h1>
+        }
     }
 }
 
@@ -291,6 +312,7 @@
                                         backdrop: true
                                     });
                                     table.draw()
+                                    button.hide();
                                 },
                                 dataType: 'json'
                             });

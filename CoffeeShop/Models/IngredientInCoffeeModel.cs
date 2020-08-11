@@ -1,8 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace CoffeeShop.Models
+﻿namespace CoffeeShop.Models
 {
+    using System;
+    using System.ComponentModel.DataAnnotations;
+
     public class IngredientInCoffeeModel
     {
         [Key]
@@ -16,6 +16,8 @@ namespace CoffeeShop.Models
 
         public virtual IngredientModel Ingredient { get; set; }
 
+        [Required]
+        [Display(Name = "Quantity of ingredient in coffee")]
         public int Quantity { get; set; }
     }
 }

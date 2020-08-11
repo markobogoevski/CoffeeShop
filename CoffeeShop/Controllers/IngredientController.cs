@@ -1,30 +1,41 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using CoffeeShop.Models;
-using CoffeeShop.Services;
-namespace CoffeeShop.Controllers
+﻿namespace CoffeeShop.Controllers
 {
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Web;
+    using System.Web.Mvc;
+    using CoffeeShop.Enumerations;
+    using CoffeeShop.Models;
+    using CoffeeShop.Services;
+
+    [Authorize]
     public class IngredientController : Controller
     {
-        public static bool isAscending = true;
-
         private Repository _repository;
-        private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Ingredient
-        public ActionResult Index()
-        {
-            return View(db.Ingredients.ToList());
-        }
         public IngredientController()
         {
             _repository = Repository.GetInstance();
         }
+
+        // GET: Ingredient
+        [AllowAnonymous]
+        public ActionResult Index()
+        {
+            try
+            {
+                return View(_repository.GetIngredients().ToList());
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+       
         // GET: Ingredient/Details/5
+        [AllowAnonymous]
         public ActionResult Details(Guid? id)
         {
             if (id == null)
@@ -33,8 +44,8 @@ namespace CoffeeShop.Controllers
             }
             try
             {
-                var ingredients = _repository.GetIngredient(id);
-                return View(ingredients);
+                var ingredient = _repository.FindIngredient(id);
+                return View(ingredient);
             }
             catch (Exception)
             {
@@ -43,16 +54,16 @@ namespace CoffeeShop.Controllers
         }
 
         // GET: Ingredient/Create
+        [Authorize(Roles=UserRoles.Admin + "," +UserRoles.Owner)]
         public ActionResult Create()
         {
-            return View();
+            var ingredientModel = new IngredientModel();
+            return View(ingredientModel);
         }
 
         // POST: Ingredient/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult Create(IngredientModel newIngredient, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
@@ -81,10 +92,10 @@ namespace CoffeeShop.Controllers
                 return RedirectToAction("Index");
             }
             return View(newIngredient);
-
         }
 
         // GET: Ingredient/Edit/5
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult Edit(Guid? id)
         {
             if (id == null)
@@ -93,7 +104,7 @@ namespace CoffeeShop.Controllers
             }
             try
             {
-                return View(_repository.GetIngredient(id));
+                return View(_repository.FindIngredient(id));
             }
             catch(Exception)
             {
@@ -103,10 +114,8 @@ namespace CoffeeShop.Controllers
         }
 
         // POST: Ingredient/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult Edit(IngredientModel _ingredient, HttpPostedFileBase file)
         {
             if (file != null)
@@ -125,15 +134,126 @@ namespace CoffeeShop.Controllers
 
                 _ingredient.ImgUrl = "/Content/Images/Ingredient/" + pic;
             }
-            _repository.UpdateIngredient(_ingredient);
-            return RedirectToAction("Index");
+            try
+            {
+                _repository.UpdateIngredient(_ingredient);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
         }
 
         [HttpPost]
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
+        // POST: Ingredient/Delete/5
         public ActionResult Delete(Guid id)
         {
-            _repository.DeleteIngredient(id);
-            return RedirectToAction("Index");
+            try
+            {
+                _repository.DeleteIngredient(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
+        // GET: Ingredient/IngredientStatistics
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
+        public ActionResult IngredientStatistics()
+        {
+            try
+            {
+                var ingredients = _repository.GetIngredients().ToList();
+                return View(ingredients);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
+        // POST: Ingredient/UpdateIngredientQuantity
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
+        public ActionResult UpdateIngredientQuantity(string id, string quantity)
+        {
+            try
+            {
+                _repository.UpdateIngredientStock(Guid.Parse(id), quantity);
+                var ingredients = _repository.GetIngredients().ToList();
+                return View("CoffeeStatistics", ingredients);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
+        // GET: Ingredient/MostUsed
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
+        public ActionResult MostUsed()
+        {
+            try
+            {
+                IngredientModel mostUsed = _repository.GetMostUsedIngredient();
+                ViewBag.Statistics = true;
+                return View("Details", mostUsed);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
+        // GET: Ingredient/LeastUsed
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
+        public ActionResult LeastUsed()
+        {
+            try
+            {
+                IngredientModel leastUsed = _repository.GetLeastUsedIngredient();
+                ViewBag.Statistics = true;
+                return View("Details", leastUsed);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
+        // GET: Ingredient/MostUsedWeek
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
+        public ActionResult MostUsedWeek()
+        {
+            try
+            {
+                IngredientModel mostUsed = _repository.GetMostUsedIngredientWeek();
+                ViewBag.Statistics = true;
+                return View("Details", mostUsed);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
+        // GET: Ingredient/LeastUsedWeek
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
+        public ActionResult LeastUsedWeek()
+        {
+            try
+            {
+                IngredientModel leastUsed = _repository.GetLeastUsedIngredientWeek();
+                ViewBag.Statistics = true;
+                return View("Details", leastUsed);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
         }
 
         protected override void Dispose(bool disposing)
@@ -143,63 +263,6 @@ namespace CoffeeShop.Controllers
                 _repository.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        public ActionResult IngredientStatistics()
-        {
-            var ingredients = _repository.GetIngredients();
-            return View(ingredients);
-        }
-
-        // Post: Coffee/UpdateIngredientQuantity
-        public ActionResult UpdateIngredientQuantity(string id, string quantity)
-        {
-            _repository.UpdateIngredientStock(id, quantity);
-            var ingredients = _repository.GetIngredients();
-            return View("CoffeeStatistics", ingredients);
-        }
-
-        public ActionResult MostSold()
-        {
-            IngredientModel mostUsed= _repository.GetMostUsedIngredient();
-            ViewBag.Statistics = true;
-            return View("Details", mostUsed);
-        }
-
-        public ActionResult LeastSold()
-        {
-            IngredientModel leastUsed = _repository.GetLeastUsedIngredient();
-            ViewBag.Statistics = true;
-            return View("Details", leastUsed);
-        }
-
-        public ActionResult MostSoldWeek()
-        {
-            IngredientModel mostUsed = _repository.GetMostUsedIngredientWeek();
-            ViewBag.Statistics = true;
-            return View("Details", mostUsed);
-        }
-
-        public ActionResult LeastSoldWeek()
-        {
-            IngredientModel leastUsed = _repository.GetLeastUsedIngredientWeek();
-            ViewBag.Statistics = true;
-            return View("Details", leastUsed);
-        }
-
-        public ActionResult OrderBy(string sortOrder)
-        {
-            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "price_desc" : "";
-            switch (sortOrder)
-            {
-                case "price_desc":
-                    ViewBag.Title = "The ingredients are displayed in descending order";
-                    return View("Index", _repository.GetSortedIngredients(!isAscending));
-
-                default:
-                    ViewBag.Title = "The ingredients are displayed in ascending order";
-                    return View("Index", _repository.GetSortedIngredients(isAscending));
-            }
         }
     }
 }

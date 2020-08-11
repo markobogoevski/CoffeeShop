@@ -1,29 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web.Mvc;
-using CoffeeShop.Models;
-using CoffeeShop.Models.Order;
-using CoffeeShop.Services;
-
-namespace CoffeeShop.Controllers
+﻿namespace CoffeeShop.Controllers
 {
+    using System;
+    using System.Linq;
+    using System.Net;
+    using System.Web.Mvc;
+    using CoffeeShop.Enumerations;
+    using CoffeeShop.Models.Order;
+    using CoffeeShop.Services;
+
+    [Authorize]
     public class OrderItemController : Controller
     {
         private Repository _repository;
         public OrderItemController()
         {
             _repository = Repository.GetInstance();
-        }
-
-        private ApplicationDbContext db { get; set; }
-
-        // GET: OrderItem
-        public ActionResult Index()
-        {
-            return View(db.OrderItems.ToList());
         }
 
         // GET: OrderItem/Details/5
@@ -33,88 +24,56 @@ namespace CoffeeShop.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            OrderItemModel orderItemModel = db.OrderItems.Find(id);
-            if (orderItemModel == null)
+            try
+            {
+                OrderItemModel orderItemModel = _repository.FindOrderitem(id);
+                return View(orderItemModel);
+            }
+            catch (Exception)
             {
                 return HttpNotFound();
             }
-            return View(orderItemModel);
         }
 
         // GET: OrderItem/Create
-        public ActionResult Create(string id)
+        [Authorize(Roles = UserRoles.User)]
+        public ActionResult Create(string id, bool? daily)
         {
-            var coffee = _repository.GetCoffee(id);
-            OrderItemModel newOrderItemModel = new OrderItemModel()
+            try
             {
-                Coffee = coffee
-            };
-            List<IngredientInCoffeeModel> ingredientsForCoffee = _repository.GetIngredientsInCoffee(coffee.CoffeeId);
-            ViewBag.IngredientsForCoffee = ingredientsForCoffee;
-            return View(newOrderItemModel);
-        }
+                var coffee = _repository.FindCoffee(Guid.Parse(id));
+                if (daily.HasValue && daily.Value==true)
+                    coffee.TotalPrice *= 0.7m;
 
-        [HttpPost]
-        public ActionResult Create(string id, string quantity)
-        {
-            return RedirectToAction("AddToCart", "Cart", new { coffeeId = id, quantity = quantity});
-        }
+                OrderItemModel newOrderItemModel = new OrderItemModel()
+                {
+                    Coffee = coffee
+                };
+                var ingredientsForCoffee = _repository.GetIngredientsInCoffee(coffee.CoffeeId)
+                                                      .ToList();
+                ViewBag.IngredientsForCoffee = ingredientsForCoffee;
+                if (daily.HasValue)
+                {
+                    ViewBag.Daily = "true";
+                }
+                else
+                {
+                    ViewBag.Daily = "false";
+                }
 
-        // GET: OrderItem/Edit/5
-        public ActionResult Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return View(newOrderItemModel);
             }
-            OrderItemModel orderItemModel = db.OrderItems.Find(id);
-            if (orderItemModel == null)
+            catch (Exception)
             {
                 return HttpNotFound();
             }
-            return View(orderItemModel);
         }
 
-        // POST: OrderItem/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "OrderItemId,Quantity")] OrderItemModel orderItemModel)
+        [Authorize(Roles = UserRoles.User)]
+        public ActionResult Create(string id, string quantity, string daily)
         {
-            if (ModelState.IsValid)
-            {
-                db.Entry(orderItemModel).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(orderItemModel);
-        }
-
-        // GET: OrderItem/Delete/5
-        public ActionResult Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            OrderItemModel orderItemModel = db.OrderItems.Find(id);
-            if (orderItemModel == null)
-            {
-                return HttpNotFound();
-            }
-            return View(orderItemModel);
-        }
-
-        // POST: OrderItem/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(Guid id)
-        {
-            OrderItemModel orderItemModel = db.OrderItems.Find(id);
-            db.OrderItems.Remove(orderItemModel);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("AddToCart", "Cart", new { coffeeId = id, quantity, daily });
         }
 
         protected override void Dispose(bool disposing)

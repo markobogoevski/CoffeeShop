@@ -1,8 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace CoffeeShop.Models.Order
+﻿namespace CoffeeShop.Models.Order
 {
+    using System;
+    using System.ComponentModel.DataAnnotations;
+
     public class OrderItemModel
     {
         [Key]
@@ -12,6 +12,8 @@ namespace CoffeeShop.Models.Order
 
         public virtual OrderModel Order { get; set; }
 
+        [Required]
+        [Display(Name = "Quantity of coffee")]
         public int Quantity { get; set; }
     }
 }

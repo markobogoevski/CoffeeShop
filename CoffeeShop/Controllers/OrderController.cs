@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web.Mvc;
-using CoffeeShop.Models;
-using CoffeeShop.Models.Order;
-using CoffeeShop.Services;
-using Microsoft.AspNet.Identity;
-
-namespace CoffeeShop.Controllers
+﻿namespace CoffeeShop.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+    using System.Web.Mvc;
+    using CoffeeShop.Enumerations;
+    using CoffeeShop.Models.Order;
+    using CoffeeShop.Services;
+    using Microsoft.AspNet.Identity;
+
+    [Authorize]
     public class OrderController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
         private Repository _repository;
 
         public OrderController()
@@ -24,13 +23,22 @@ namespace CoffeeShop.Controllers
         // GET: Order
         public ActionResult Index()
         {
-            var orders = _repository.GetOrders(User.Identity.GetUserId());
-            if (orders.Count == 0)
-                ViewBag.Empty = true;
-            ViewBag.OrderStatus = _repository.GetAllOrderStatuses();
-            var cancellables = _repository.GetOrderCancels(orders, User.Identity.GetUserId());
-            ViewBag.Cancellable = cancellables;
-            return View(orders);
+            try
+            {
+                var orders = _repository.GetOrdersForUser(User.Identity.GetUserId())
+                                        .ToList();
+                if (orders.Count() == 0)
+                    ViewBag.Empty = true;
+                ViewBag.OrderStatus = _repository.GetAllOrderStatuses().ToList();
+                var cancellables = _repository.GetOrderCancels(orders).ToList();
+                ViewBag.Cancellable = cancellables;
+                return View(orders);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+         
         }
 
         // GET: Order/Details/5
@@ -40,12 +48,15 @@ namespace CoffeeShop.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            OrderModel orderModel = db.Orders.Find(id);
-            if (orderModel == null)
+            try
+            {
+                var order = _repository.FindOrder(id);
+                return View(order);
+            }
+            catch (Exception)
             {
                 return HttpNotFound();
             }
-            return View(orderModel);
         }
 
         // GET: Order/Create
@@ -65,42 +76,18 @@ namespace CoffeeShop.Controllers
             }
             else
             {
-                _repository.CreateOrder(OrderItems, User.Identity.GetUserId(), Address);
-                Response.StatusCode = (int)HttpStatusCode.OK;
-                Session["cart"] = null;
-                return Json(new { message = "Your order has been placed" });
+                try
+                {
+                    _repository.CreateOrder(OrderItems, User.Identity.GetUserId(), Address);
+                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    Session["cart"] = null;
+                    return Json(new { message = "Your order has been placed" });
+                }
+                catch (Exception)
+                {
+                    return HttpNotFound();
+                }
             }
-        }
-
-        // GET: Order/Edit/5
-        public ActionResult Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            OrderModel orderModel = db.Orders.Find(id);
-            if (orderModel == null)
-            {
-                return HttpNotFound();
-            }
-            return View(orderModel);
-        }
-
-        // POST: Order/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "OrderId,Address,OrderStatus,OrderTime,OrderRating")] OrderModel orderModel)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(orderModel).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(orderModel);
         }
 
         // GET: Order/Cancel/5
@@ -122,6 +109,7 @@ namespace CoffeeShop.Controllers
         }
 
         // GET: Order/Rate
+        [Authorize(Roles = UserRoles.User)]
         public ActionResult RateOrder(string id, string grade)
         {
             if (id == null)
@@ -130,7 +118,7 @@ namespace CoffeeShop.Controllers
             }
             try
             {
-                _repository.RateOrder(id, grade);
+                _repository.RateOrder(Guid.Parse(id), grade);
                 return RedirectToAction("Index");
             }
             catch (Exception)
@@ -140,6 +128,7 @@ namespace CoffeeShop.Controllers
         }
 
         // GET: Order/Finish/5
+        [Authorize(Roles = UserRoles.Owner + "," + UserRoles.Admin)]
         public ActionResult Finish(Guid? id)
         {
             if (id == null)
@@ -158,6 +147,7 @@ namespace CoffeeShop.Controllers
         }
 
         // GET: Order/ForceCancel/5
+        [Authorize(Roles = UserRoles.Owner + "," + UserRoles.Admin)]
         public ActionResult ForceCancel(Guid? id)
         {
             if (id == null)
@@ -176,6 +166,7 @@ namespace CoffeeShop.Controllers
         }
 
         // GET: Order/Discard/5
+        [Authorize(Roles = UserRoles.User)]
         public ActionResult Discard(Guid? id)
         {
             if (id == null)
@@ -194,6 +185,7 @@ namespace CoffeeShop.Controllers
         }
 
         // GET: Order/Activate/5
+        [Authorize(Roles = UserRoles.User)]
         public ActionResult Activate(Guid? id)
         {
             if (id == null)
@@ -220,7 +212,7 @@ namespace CoffeeShop.Controllers
             }
             try
             {
-                _repository.DeleteOrder(id);
+                _repository.DeleteOrder(id,User.Identity.GetUserId());
                 return RedirectToAction("Index");
             }
             catch (Exception)
