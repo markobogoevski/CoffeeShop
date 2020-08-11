@@ -11,6 +11,7 @@ namespace CoffeeShop.Services
     using System.Linq;
     using System.Reflection;
     using System.Web.UI.WebControls;
+    using System.Data.Entity;
 
     public class Repository
     {
@@ -279,6 +280,17 @@ namespace CoffeeShop.Services
 
                     var toDelete = _db.IngredientInCoffee.Where(ingc => ingc.CoffeeId == coffeeToDelete.CoffeeId).ToList();
                     _db.IngredientInCoffee.RemoveRange(toDelete);
+
+                    // Deleting/cancelling orders which have this coffee as an order item 
+
+                    var orders = _db.Orders.Where(ord => ord.OrderItems.Select(ordI => ordI.Coffee.CoffeeId)
+                                                                     .ToList()
+                                                                     .Contains(coffeeId.Value)).ToList();
+                    foreach(var order in orders)
+                    {
+                        DeleteOrder(order.OrderId,null);
+                    }
+
                     _db.Coffee.Remove(coffeeToDelete);
                     _db.SaveChanges();
                 }
@@ -946,19 +958,22 @@ namespace CoffeeShop.Services
 
         // Deletes an order according to its order id. Can be done either by user if the order is inactive or
         // by admin/owner if the order is finished or cancelled
-        public void DeleteOrder(Guid? orderId)
+        public void DeleteOrder(Guid? orderId, string userId)
         {
             var order = _db.Orders.Find(orderId);
-            if (order != null)
+            if(userId==null || (_userManager.IsInRole(userId, UserRoles.Admin) || _userManager.IsInRole(userId, UserRoles.Owner)) || (_userManager.IsInRole(userId, UserRoles.User) && order.OrderStatus == OrderStatus.INACTIVE))
             {
-                // Also removes every order item in it
-                _db.OrderItems.RemoveRange(order.OrderItems);
-                _db.Orders.Remove(order);
-                _db.SaveChanges();
-            }
-            else
-            {
-                throw new Exception();
+                if (order != null)
+                {
+                    // Also removes every order item in it
+                    _db.OrderItems.RemoveRange(order.OrderItems);
+                    _db.Orders.Remove(order);
+                    _db.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
         }
 
@@ -1000,7 +1015,7 @@ namespace CoffeeShop.Services
         // Discarding doesn't delete the order from database in order to keep the orders history.
         public void DiscardOrder(Guid? orderId)
         {
-            var order = _db.Orders.Find(orderId);
+            var order = _db.Orders.Include(ord => ord.User).First(ord => ord.OrderId == orderId);
             if (order != null)
             {
                 order.User = null;

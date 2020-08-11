@@ -23,7 +23,7 @@
     </div>
 }
 
-<div style="margin:auto; width:50%; border:3px solid gray; padding:10px" class="bg-primary card text-center" style="width: 18rem;">
+<div style="margin:auto; width:50%; border:3px solid gray; padding:10px" class="bg-primary card text-center">
     @ViewBag.Title<br /><br />
     <img class="card-img-top" src="@Model.ImgUrl" alt="Coffee" width="100%">
     <div class="card-body">
@@ -64,7 +64,10 @@
              }
              else
              {
-                 @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = @Model.CoffeeId }, new { @class = "btn btn-success btn-block" })
+                 if (User.IsInRole(UserRoles.User))
+                 {
+                     @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = @Model.CoffeeId }, new { @class = "btn btn-success btn-block" })
+                 }
                  @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "btn btn-info btn-block" })
              }
              @{

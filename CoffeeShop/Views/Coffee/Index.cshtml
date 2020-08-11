@@ -127,11 +127,16 @@
                     if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
                     {
                         @Html.ActionLink("Edit", "Edit", new { id = item.CoffeeId }, new { @class = "btn btn-info" })
-                        <button data-coffee-id="@item.CoffeeId" class="btn btn-danger js-delete">Delete</button> 
+                        <button data-coffee-id="@item.CoffeeId" class="btn btn-danger js-delete">Delete</button>
                     }
                 }
-                @Html.ActionLink("Details", "Details", new { id = item.CoffeeId }, new { @class = "btn btn-info" }) |
-                @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = item.CoffeeId }, new { @class = "btn btn-success" })
+                @Html.ActionLink("Details", "Details", new { id = item.CoffeeId }, new { @class = "btn btn-info" })
+                @{
+                    if (User.IsInRole(UserRoles.User))
+                    {
+                        @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = item.CoffeeId }, new { @class = "btn btn-success" })
+                    }
+                }
             </td>
         </tr>
         }

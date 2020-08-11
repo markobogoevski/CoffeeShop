@@ -3,10 +3,12 @@
     using System;
     using System.Linq;
     using System.Web.Mvc;
+    using CoffeeShop.Enumerations;
     using CoffeeShop.Models.Order;
     using CoffeeShop.Services;
+    using Microsoft.AspNet.Identity;
 
-    [Authorize]
+    [Authorize(Roles=UserRoles.User)]
     public class CartController : Controller
     {
         private Repository _repository;
@@ -20,23 +22,51 @@
         // GET: Cart
         public ActionResult Index()
         {
-            object sessionCart = Session["cart"];
-            if(sessionCart == null)
+            try
             {
-                ViewBag.Valid = "False";
+                OrderModel sessionCart = (OrderModel)Session["cart"];
+                if (sessionCart == null)
+                {
+                    ViewBag.Valid = "False";
+                    return View(sessionCart);
+                }
+
+                var allCoffeeIds = _repository.GetAllCoffeeForUser(User.Identity.GetUserId())
+                                            .Select(cof => cof.CoffeeId)
+                                            .ToList();
+
+                // Filtering out order items which have deleted coffees in them
+                var toRemove = sessionCart.OrderItems.Where(ordI => !(allCoffeeIds.Contains(ordI.Coffee.CoffeeId)))
+                                                        .Select(ordI => ordI.OrderItemId)
+                                                        .ToList();
+                foreach (var id in toRemove)
+                {
+                    RemoveOrderItemFromCart(id.ToString());
+                }
+
+                OrderModel cart = (OrderModel)Session["cart"];
+                if (cart == null)
+                {
+                    ViewBag.Valid = "False";
+                }
+                else
+                {
+                    ViewBag.Valid = "True";
+                }
+                return View(cart);
             }
-            else
+            catch (Exception)
             {
-                ViewBag.Valid = "True";
+                return HttpNotFound();
             }
-            return View(sessionCart);
         }
 
         // POST: Cart/AddToCart
-        public ActionResult AddToCart(string coffeeId, string quantity)
+        public ActionResult AddToCart(string coffeeId, string quantity, string daily)
         {
             try
             {
+                bool dailyCoffee = Boolean.Parse(daily);
                 Guid coffeeGuid = Guid.Parse(coffeeId);
                 var coffee = _repository.FindCoffee(coffeeGuid);
                 object sessionCart = Session["cart"];
@@ -48,25 +78,39 @@
                     if (cart.OrderItems.Any(item => item.Coffee.CoffeeId == coffeeGuid))
                     {
                         cart.OrderItems.Find(item => item.Coffee.CoffeeId == coffeeGuid).Quantity += quantityNumber;
+                        if(dailyCoffee)
+                            cart.OrderItems.Find(item => item.Coffee.CoffeeId == coffeeGuid).Coffee.TotalPrice *= 0.7m;
                     }
                     else
                     {
-                        cart.OrderItems.Add(new OrderItemModel
+                        var orderItem = new OrderItemModel
                         {
                             Quantity = quantityNumber,
-                            Coffee = coffee
-                        });
+                            Coffee = coffee,
+                            OrderItemId = Guid.NewGuid()
+                        };
+
+                        if (dailyCoffee)
+                            orderItem.Coffee.TotalPrice *= 0.7m;
+
+                        cart.OrderItems.Add(orderItem);
                     }
                     Session["cart"] = cart;
                 }
                 else
                 {
                     var cart = new OrderModel();
-                    cart.OrderItems.Add(new OrderItemModel
+                    var orderItem = new OrderItemModel
                     {
                         Quantity = quantityNumber,
-                        Coffee = coffee
-                    });
+                        Coffee = coffee,
+                        OrderItemId = Guid.NewGuid()
+                    };
+
+                    if (dailyCoffee)
+                        orderItem.Coffee.TotalPrice *= 0.7m;
+
+                    cart.OrderItems.Add(orderItem);
                     Session["cart"] = cart;
                 }
                 return View("Index");

@@ -9,52 +9,57 @@
 
     @Html.AntiForgeryToken()
     <input type="hidden" name="id" value="@Model.Coffee.CoffeeId" />
-    <div class="form-horizontal">
         <h4>OrderItemModel</h4>
         <hr />
 
-        <div style="margin:auto; width:50%; border:3px solid gray; padding:10px" class="bg-primary card text-center" style="width: 18rem;">
+        <div style="margin:auto; width:50%; border:3px solid gray; padding:10px" class="bg-primary card text-center">
             Currently ordering: <br /><br />
+
             <img class="card-img-top" src="@Model.Coffee.ImgUrl" alt="Coffee" width="100%">
+            <br />
             <div class="card-body">
                 <br />
                 <h5 class="card-title">Ingredients: </h5>
-                <p class="card-text">
-                    @{
-                        foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
-                        {
-                            <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity, Price: @(ingredientQuantity.Ingredient.Price*ingredientQuantity.Quantity) </strong>
-                            <br />
-                        }
-                    }<br />
-                </p>
+                @{
+                    if (ViewBag.IngredientsForCoffee.Count == 0)
+                    {
+                        <p class="card-text">Basic coffee (no ingredients)</p>
+                        <br />
+                    }
+                    else
+                    {
+                        <p class="card-text">
+                            @{
+                                foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
+                                {
+                                    <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity, Price: @(ingredientQuantity.Ingredient.Price * ingredientQuantity.Quantity) </strong>
+                                    <br />
+                                }
+                            }<br />
+                        </p>
+                    }
+                }
             </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item bg-danger">Name: @Model.Coffee.Name</li>
-                <li class="list-group-item bg-danger">Price: @Model.Coffee.TotalPrice denars.</li>
-                <li class="list-group-item bg-danger">Size: @Model.Coffee.Size</li>
-                <li class="list-group-item bg-danger">Description: @Model.Coffee.Description</li>
-            </ul><br />
-            <div class="form-group">
-                @Html.LabelFor(model => model.Quantity, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-6" style="float:left">
-                    @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { min = "1", @Value = "1", @class = "form-control quantity-order" } })
-                    @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-md-6" style="float:left">
-                    <input data-button-id="@Model.Coffee.CoffeeId" type="submit" value="Order" class="btn btn-success add-order-item" />
-                </div>
-            </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-danger">Name: @Model.Coffee.Name</li>
+                    <li class="list-group-item bg-danger">Price on discount: @Model.Coffee.TotalPrice denars.</li>
+                    <li class="list-group-item bg-danger">Size: @Model.Coffee.Size</li>
+                    <li class="list-group-item bg-danger">Description: @Model.Coffee.Description</li>
+                </ul><br />
+                     <div class="card-body">
+                         <div class="form-group col-md-6" style="float:left">
+                             @Html.LabelFor(model => model.Quantity, htmlAttributes: new { @class = "control-label" })
+                                 @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { min = "1", @Value = "1", @class = "form-control quantity-order" } })
+                                 @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+                         </div>
+                         <div class="form-group col-md-6" style="float:right; padding-top:3%">
+                             <input data-button-id="@Model.Coffee.CoffeeId" type="submit" value="Order" class="btn btn-success add-order-item" />
+                             @Html.ActionLink("Back to List", "Index", "Coffee", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info" })
+                         </div>
+                         <div class="form-group" style="padding-top:10%">
+                         </div>
+                     </div>
         </div>
-
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-        <div class="container" style="padding-top:5%">
-            @Html.ActionLink("Back to List", "Index", "Coffee", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info" })
-        </div>
-    </div>
 
 @section Styles{
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
@@ -80,7 +85,7 @@
                     if (result) {
                         $.ajax({
                             method: "POST",
-                            data: { "id": button.attr("data-button-id"), "quantity": quantity },
+                            data: { "id": button.attr("data-button-id"), "quantity": quantity, "daily":@ViewBag.Daily },
                             url: "/OrderItem/Create/",
                             error: function () {
                                 bootbox.alert({

@@ -1,5 +1,7 @@
 ﻿@model CoffeeShop.Models.CoffeeModel
 @using CoffeeShop.Models
+@using CoffeeShop.Enumerations
+
 @{
     if (ViewBag.Empty == true)
     {
@@ -23,7 +25,7 @@
                         <em>Description: </em>@Model.Description
                     </p>
                     <p>
-                        <em>Price: </em>
+                        <em>Price on discount: </em>
                         @String.Format("{0:F}", Model.TotalPrice)
                     </p>
                     <h5 class="panel-footer">Ingredients: </h5>
@@ -37,8 +39,13 @@
                         }<br />
                     </p>
                 </div>
-                @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = Model.CoffeeId }, new { @class = "btn btn-success btn-block" })
-                <br />
+                @{
+                    if (User.IsInRole(UserRoles.User))
+                    {
+                        @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = Model.CoffeeId, daily = true }, new { @class = "btn btn-success btn-block" })
+                        <br />
+                    }
+                }
                 @Ajax.ActionLink("Hide",
                                  "HideDeal",
                                  null,

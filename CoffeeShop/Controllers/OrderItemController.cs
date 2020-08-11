@@ -36,12 +36,15 @@
         }
 
         // GET: OrderItem/Create
-        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
-        public ActionResult Create(string id)
+        [Authorize(Roles = UserRoles.User)]
+        public ActionResult Create(string id, bool? daily)
         {
             try
             {
                 var coffee = _repository.FindCoffee(Guid.Parse(id));
+                if (daily.HasValue && daily.Value==true)
+                    coffee.TotalPrice *= 0.7m;
+
                 OrderItemModel newOrderItemModel = new OrderItemModel()
                 {
                     Coffee = coffee
@@ -49,6 +52,15 @@
                 var ingredientsForCoffee = _repository.GetIngredientsInCoffee(coffee.CoffeeId)
                                                       .ToList();
                 ViewBag.IngredientsForCoffee = ingredientsForCoffee;
+                if (daily.HasValue)
+                {
+                    ViewBag.Daily = "true";
+                }
+                else
+                {
+                    ViewBag.Daily = "false";
+                }
+
                 return View(newOrderItemModel);
             }
             catch (Exception)
@@ -58,10 +70,10 @@
         }
 
         [HttpPost]
-        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
-        public ActionResult Create(string id, string quantity)
+        [Authorize(Roles = UserRoles.User)]
+        public ActionResult Create(string id, string quantity, string daily)
         {
-            return RedirectToAction("AddToCart", "Cart", new { coffeeId = id, quantity });
+            return RedirectToAction("AddToCart", "Cart", new { coffeeId = id, quantity, daily });
         }
 
         protected override void Dispose(bool disposing)

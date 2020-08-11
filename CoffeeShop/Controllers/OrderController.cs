@@ -147,7 +147,7 @@
         }
 
         // GET: Order/ForceCancel/5
-        [Authorize(Roles = UserRoles.Owner + "," + UserRoles.User)]
+        [Authorize(Roles = UserRoles.Owner + "," + UserRoles.Admin)]
         public ActionResult ForceCancel(Guid? id)
         {
             if (id == null)
@@ -204,7 +204,6 @@
         }
 
         // GET: Order/Delete/5
-        [Authorize(Roles = UserRoles.Owner + "," + UserRoles.Admin)]
         public ActionResult Delete(Guid? id)
         {
             if (id == null)
@@ -213,7 +212,7 @@
             }
             try
             {
-                _repository.DeleteOrder(id);
+                _repository.DeleteOrder(id,User.Identity.GetUserId());
                 return RedirectToAction("Index");
             }
             catch (Exception)
