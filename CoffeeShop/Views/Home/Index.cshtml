@@ -2,15 +2,21 @@
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron" style="margin-top:5%">
+<div class="">
     <div class="text-center text-capitalize">
-        <h1>Coffee Shop</h1>
-    </div> 
+        <h2>Coffee Shop</h2>
+    </div>
 </div>
 
-<div class="jumbotron">
-    <div class="text-center">
-        Content
+<div class="">
+    <div>
+        <ul style="font-size: 20px;">
+            <li>Sourcing the finest fresh-roasted beans.</li>
+            <li>Using only the highest quality espresso machine and related equipment such as grinders, water filtration systems, etc.</li>
+            <li>Serving fresh pastries and snacks.</li>
+            <li>All coffees prepared by a skilled barista, we think that is essential to the craft of coffee.</li>
+            <li>We offer a mix of customer favorites (frappés, chai lattes, etc.) and your own unique creations.</li>
+        </ul>
     </div>
 </div>
 
@@ -20,7 +26,7 @@
         <p>
             About blabla
         </p>
-        @Html.ActionLink("About", "About", "Home",new { @class = "btn btn-default" })
+        @Html.ActionLink("About", "About", "Home", new { @class = "btn btn-default" })
     </div>
     <div class="col-md-6 text-center" style="float:right">
         <h2>Contact</h2>

@@ -4,19 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link rel="icon" href="\Content\Images\Logo\coffee-logo.png">
+
+    @Styles.Render("~/Content/custom.css")
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
+
+
 </head>
-<body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
+<body class="back-img" style=" overflow: hidden">
+    <div class="navbar navbar-inverse navbar-fixed-top navbar-custom">
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
+                <img src="Content\Images\Logo\coffee-logo.png" width="30" height="30" class="d-inline-block logo-coffee" alt="">
                 @Html.ActionLink("Coffee Shop ", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
@@ -26,22 +27,18 @@
                     <li>@Html.ActionLink("Ingredients", "Index", "Ingredient")</li>
                     <li>@Html.ActionLink("Orders", "Index", "Order")</li>
                 </ul>
-                
+
                 @Html.Partial("_LoginPartial")
             </div>
         </div>
     </div>
-    <div class="container body-content">
+    <div class="container jumbotron transparent-card" style="border-radius: 20px;">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Footer</p>
-        </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
-    @RenderSection("Styles",required:false)
+    @RenderSection("Styles", required: false)
 </body>
 </html>

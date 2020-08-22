@@ -1,0 +1,19 @@
+﻿.back-img {
+    background-image: url(/Content/Images/Logo/back-cofee.jpg);
+    min-height: 50px;
+    min-width: 50px;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.logo-coffee{
+    margin-left:-110%;
+    margin-top:5%;
+}
+
+.transparent-card.jumbotron {
+    background-color: rgba(255, 255, 255, 0.76);
+    margin-top: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
