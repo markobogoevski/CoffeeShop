@@ -6,34 +6,36 @@
     ViewBag.Title = "Orders";
 }
 
-<h2>@ViewBag.Title</h2>
+<h2 class="text-center">@ViewBag.Title</h2>
 
+<div class="hr"><hr /></div>
 
 @{
     if (ViewBag.Empty == null)
     {
-        <div class="container">
-            <div class="col-md-6" style="float:left"></div>
-            <div class="col-md-6" style="float:right">
-                <strong>Filter orders by status: </strong><br /><br />
-                @{
-                    foreach (var orderStatus in (List<string>)ViewBag.OrderStatus)
-                    {
-                        <div class="form-group">
-                            <div class="m-1 d-inline-block">
-                                <label class="container_new" for="@orderStatus">
-                                    <em>@orderStatus</em>
-                                    <input data-id="@orderStatus" class="ing_check" type="checkbox" value="@orderStatus" name="@orderStatus" id="@orderStatus" autocomplete="off" />
-                                    <span class="checkmark"></span>
-                                </label>
-                            </div>
-                        </div>
+    <div class="container align-btns" style="float: left;">
+        <h4 style="font-weight: bold;">Filter orders by status: </h4>
+        <span style="display: inline; ">
+            @{
 
-                    }
+                foreach (var orderStatus in (List<string>)ViewBag.OrderStatus)
+                {
+                    <span class="form-group">
+                        <span class="checkbox-inline">
+                            <label class="container_new" for="@orderStatus">
+                                <em>@orderStatus</em>
+                                <input data-id="@orderStatus" class="form-check-input" type="checkbox" value="@orderStatus" name="@orderStatus" id="@orderStatus" autocomplete="off" />
+                                <span class="checkmark checkmark-color"></span>
+                            </label>
+                        </span>
+                    </span>
+
                 }
-            </div>
-        </div>
-
+            }
+        </span>
+        
+    </div>
+    <div class="hr"><hr /></div>
         <table class="table" id="table1">
             <thead>
                 <tr>

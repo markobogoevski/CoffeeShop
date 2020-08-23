@@ -195,45 +195,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HtmlHelpers.cs" />
-    <Compile Include="Migrations\202008041716596_initial.cs" />
-    <Compile Include="Migrations\202008041716596_initial.designer.cs">
-      <DependentUpon>202008041716596_initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202008041838559_update1.cs" />
-    <Compile Include="Migrations\202008041838559_update1.designer.cs">
-      <DependentUpon>202008041838559_update1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202008051358180_BasePrice.cs" />
-    <Compile Include="Migrations\202008051358180_BasePrice.designer.cs">
-      <DependentUpon>202008051358180_BasePrice.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202008061407526_Statistics_Quantity.cs" />
-    <Compile Include="Migrations\202008061407526_Statistics_Quantity.designer.cs">
-      <DependentUpon>202008061407526_Statistics_Quantity.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202008061925541_QuantityIngredient.cs" />
-    <Compile Include="Migrations\202008061925541_QuantityIngredient.designer.cs">
-      <DependentUpon>202008061925541_QuantityIngredient.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202008090155363_ingredientFix.cs" />
-    <Compile Include="Migrations\202008090155363_ingredientFix.designer.cs">
-      <DependentUpon>202008090155363_ingredientFix.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202008090254559_UserWork.cs" />
-    <Compile Include="Migrations\202008090254559_UserWork.designer.cs">
-      <DependentUpon>202008090254559_UserWork.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202008090447285_IngredientTotalUsed.cs" />
-    <Compile Include="Migrations\202008090447285_IngredientTotalUsed.designer.cs">
-      <DependentUpon>202008090447285_IngredientTotalUsed.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202008090709151_OrderTimeEnd.cs" />
-    <Compile Include="Migrations\202008090709151_OrderTimeEnd.designer.cs">
-      <DependentUpon>202008090709151_OrderTimeEnd.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202008101611526_ModelValidation1.cs" />
-    <Compile Include="Migrations\202008101611526_ModelValidation1.designer.cs">
-      <DependentUpon>202008101611526_ModelValidation1.cs</DependentUpon>
+    <Compile Include="Migrations\202008160726391_initial.cs" />
+    <Compile Include="Migrations\202008160726391_initial.designer.cs">
+      <DependentUpon>202008160726391_initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -257,6 +221,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\custom.css" />
     <Content Include="Content\DataTables\css\autoFill.bootstrap.css" />
     <Content Include="Content\DataTables\css\autoFill.bootstrap.min.css" />
     <Content Include="Content\DataTables\css\autoFill.bootstrap4.css" />
@@ -593,35 +558,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202008041716596_initial.resx">
-      <DependentUpon>202008041716596_initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202008041838559_update1.resx">
-      <DependentUpon>202008041838559_update1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202008051358180_BasePrice.resx">
-      <DependentUpon>202008051358180_BasePrice.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202008061407526_Statistics_Quantity.resx">
-      <DependentUpon>202008061407526_Statistics_Quantity.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202008061925541_QuantityIngredient.resx">
-      <DependentUpon>202008061925541_QuantityIngredient.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202008090155363_ingredientFix.resx">
-      <DependentUpon>202008090155363_ingredientFix.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202008090254559_UserWork.resx">
-      <DependentUpon>202008090254559_UserWork.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202008090447285_IngredientTotalUsed.resx">
-      <DependentUpon>202008090447285_IngredientTotalUsed.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202008090709151_OrderTimeEnd.resx">
-      <DependentUpon>202008090709151_OrderTimeEnd.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202008101611526_ModelValidation1.resx">
-      <DependentUpon>202008101611526_ModelValidation1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202008160726391_initial.resx">
+      <DependentUpon>202008160726391_initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -5,41 +5,39 @@
 @{
     ViewBag.Title = "Coffee for sale";
 }
-<hr/>
-<h2>@ViewBag.Title</h2>
+<h2 class="text-center">@ViewBag.Title</h2>
+
+<div class="hr"><hr /></div>
+
 <div hidden data-coffee-count="@Model.Count()" id="div-count"  ></div>
 
 <div class="container">
-    <div class="col-md-6" style="float:left">
+    <div class ="container align-btns" style="float:left; display: inline-block" >
         @{
             if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
             {
-                <div>
-                    @Html.ActionLink("Create a new coffee", "Create", null, new { @class = "btn btn-primary" })
-                </div>
-                <br />
+                
+                    @Html.ActionLink("Create a new coffee", "Create", null, new { @class = "inline-btn btn btn-primary" })
+
                     if (Model.Count() != 0)
                     {
-                        <div>
-                            @Html.ActionLink("Check out coffee statistics", "CoffeeStatistics", null, new { @class = "btn btn-primary" })
-                        </div>
+                    @Html.ActionLink("Check out coffee statistics", "CoffeeStatistics", null, new { @class = "inline-btn btn btn-primary" })
+                    
                     }
+                
             }
         }
         @{
             if (User.IsInRole(UserRoles.User))
             {
-                <div>
-                    @Html.ActionLink("Create your own custom coffee!", "CreateCustom", null, new { @class = "btn btn-success" })
-                </div>
+                    @Html.ActionLink("Create your own custom coffee!", "CreateCustom", null, new { @class = "inline-btn btn btn-success" })
+                
             }
-            <br />
         }
 
         @{
             if (Model.Count() != 0)
             {
-                <div id="dailydeal" style="float:left;">
                     @Ajax.ActionLink("Check out the coffee of the day",
                                      "CoffeeDay",
                                      null,
@@ -49,8 +47,8 @@
                                          InsertionMode = InsertionMode.Replace,
                                          HttpMethod = "GET"
                                      },
-                                     new { @class = "btn btn-danger" })
-                </div>
+                                     new { @class = "inline-btn btn btn-danger", id="dailydeal"})
+            
             }
         }
     </div>
@@ -79,7 +77,7 @@
     }
 </div>
 
-<br />
+<div class="hr"><hr /></div>
 
 <table class="table" id="table1">
     <thead>
