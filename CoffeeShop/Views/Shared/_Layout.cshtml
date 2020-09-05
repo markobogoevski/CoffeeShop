@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
-    <link rel="icon" href="\Content\Images\Logo\coffee-logo.png">
+    <link rel="icon" href="~/Content/Images/Logo/coffee-logo.png">
 
     @Styles.Render("~/Content/custom.css")
     @Styles.Render("~/Content/css")
@@ -17,11 +17,15 @@
     <div class="navbar navbar-inverse navbar-fixed-top navbar-custom">
         <div class="container">
             <div class="navbar-header">
-                <img src="Content\Images\Logo\coffee-logo.png" width="30" height="30" class="d-inline-block logo-coffee" alt="">
+                <a href="/" class="logo-image">
+                    <img src="~/Content/Images/Logo/coffee-logo.png" href="Index/Home" width="30" height="30" class="d-inline-block logo-coffee" alt="">
+                  
+                </a>
+                
                 @Html.ActionLink("Coffee Shop ", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav links-navbar">
                     <li>@Html.ActionLink("Add user to role", "AddUserToRole", "Account")</li>
                     <li>@Html.ActionLink("Coffee", "Index", "Coffee")</li>
                     <li>@Html.ActionLink("Ingredients", "Index", "Ingredient")</li>

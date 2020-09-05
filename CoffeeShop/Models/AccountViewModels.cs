@@ -1,4 +1,4 @@
-﻿namespace CoffeeShop.Models
+﻿    namespace CoffeeShop.Models
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;

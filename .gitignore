@@ -12,3 +12,5 @@
 /CoffeeShop/Migrations/202008061455535_initial.cs
 /CoffeeShop/Migrations/202008061455535_initial.Designer.cs
 /CoffeeShop/Migrations/202008061455535_initial.resx
+/CoffeeShop/App_Data
+/CoffeeShop/Migrations

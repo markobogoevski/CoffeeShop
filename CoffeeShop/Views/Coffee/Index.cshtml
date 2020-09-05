@@ -1,85 +1,91 @@
-﻿@model IEnumerable<CoffeeShop.Models.CoffeeModel>
+﻿ @model IEnumerable<CoffeeShop.Models.CoffeeModel>
 @using CoffeeShop.Models;
 @using CoffeeShop.Enumerations;
 
 @{
     ViewBag.Title = "Coffee for sale";
 }
-<hr/>
-<h2>@ViewBag.Title</h2>
+<h2 class="text-center">@ViewBag.Title</h2>
+
+<div class="hr"><hr /></div>
+
 <div hidden data-coffee-count="@Model.Count()" id="div-count"  ></div>
 
 <div class="container">
-    <div class="col-md-6" style="float:left">
+    <div class="container align-btns" style="float:left; display: inline-block">
         @{
             if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
             {
-                <div>
-                    @Html.ActionLink("Create a new coffee", "Create", null, new { @class = "btn btn-primary" })
-                </div>
-                <br />
-                    if (Model.Count() != 0)
-                    {
-                        <div>
-                            @Html.ActionLink("Check out coffee statistics", "CoffeeStatistics", null, new { @class = "btn btn-primary" })
-                        </div>
-                    }
+
+                @Html.ActionLink("Create a new coffee", "Create", null, new { @class = "inline-btn btn btn-primary" })
+
+                if (Model.Count() != 0)
+                {
+                    @Html.ActionLink("Check out coffee statistics", "CoffeeStatistics", null, new { @class = "inline-btn btn btn-primary" })
+
+                }
+
             }
         }
         @{
             if (User.IsInRole(UserRoles.User))
             {
-                <div>
-                    @Html.ActionLink("Create your own custom coffee!", "CreateCustom", null, new { @class = "btn btn-success" })
-                </div>
+                @Html.ActionLink("Create your own custom coffee!", "CreateCustom", null, new { @class = "inline-btn btn btn-success" })
+
             }
-            <br />
         }
 
         @{
             if (Model.Count() != 0)
             {
-                <div id="dailydeal" style="float:left;">
-                    @Ajax.ActionLink("Check out the coffee of the day",
-                                     "CoffeeDay",
-                                     null,
-                                     new AjaxOptions
-                                     {
-                                         UpdateTargetId = "dailydeal",
-                                         InsertionMode = InsertionMode.Replace,
-                                         HttpMethod = "GET"
-                                     },
-                                     new { @class = "btn btn-danger" })
-                </div>
+                <button class="inline-btn btn btn-info" id="toggle-img">Toggle ingredient image</button>
+
+                @Ajax.ActionLink("Check out the coffee of the day",
+                      "CoffeeDay",
+                      null,
+                      new AjaxOptions
+                      {
+                          UpdateTargetId = "dailydeal",
+                          InsertionMode = InsertionMode.Replace,
+                          HttpMethod = "GET"
+                      },
+                      new { @class = "inline-btn btn btn-danger", id = "dailydeal" })
+
             }
         }
     </div>
     @{
         if (ViewBag.Ingredients.Count != 0)
         {
-            <div class="col-md-6" style="float:right">
-                <strong>Filter coffee by ingredients: </strong><br /><br />
-                @{
-                    foreach (IngredientModel ingredient in (List<IngredientModel>)ViewBag.Ingredients)
-                    {
-                        <div class="form-group">
-                            <div class="m-1 d-inline-block">
-                                <label class="container_new" for="@ingredient.IngredientId">
-                                    <em>@ingredient.Name</em>
-                                    <input data-id="@ingredient.IngredientId" class="ing_check" type="checkbox" value="@ingredient.IngredientId" name="@ingredient.Name" id="@ingredient.IngredientId" autocomplete="off" />
-                                    <span class="checkmark"></span>
-                                </label>
-                            </div>
+        <div class="col-md-6" style="float:right">
+            <strong>Filter coffee by ingredients: </strong><br /><br />
+            @{
+                foreach (IngredientModel ingredient in (List<IngredientModel>)ViewBag.Ingredients)
+                {
+                    <div class="form-group">
+                        <div class="m-1 d-inline-block">
+                            <label class="container_new" for="@ingredient.IngredientId">
+                                <em>@ingredient.Name</em>
+                                <input data-id="@ingredient.IngredientId" class="ing_check" type="checkbox" value="@ingredient.IngredientId" name="@ingredient.Name" id="@ingredient.IngredientId" autocomplete="off" />
+                                <span class="checkmark"></span>
+                            </label>
                         </div>
+                    </div>
 
-                    }
                 }
-            </div>
+            }
+           
+        </div>
         }
     }
+    
 </div>
-
-<br />
+@{ 
+    if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.User))
+    {
+        <div class="hr"><hr /></div>
+        }
+    }
 
 <table class="table" id="table1">
     <thead>
@@ -93,7 +99,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Size)
             </th>
-            <th>
+            <th class="hidden-img">
                 @Html.DisplayNameFor(model => model.ImgUrl)
             </th>
             <th>
@@ -116,8 +122,8 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Size)
             </td>
-            <td>
-                <img alt="@item.Name" src="@Url.Content(item.ImgUrl)" width="300px" />
+            <td class="img-field hidden-img">
+                <img alt="@item.Name" src="@Url.Content(item.ImgUrl)" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
@@ -153,6 +159,10 @@
     <script type="text/javascript">
         $(document).ready(function () {
             var table = $("#table1").DataTable();
+            $('#toggle-img').on("click", function () {
+                $('.hidden-img').toggle('slow');
+            });
+
             $("#table1 .js-delete").click(function () {
                 var button = $(this);
                 bootbox.confirm("Дали сакате да го избришете кафето?", function (result) {

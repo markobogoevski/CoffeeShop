@@ -61,7 +61,7 @@
             var userEmails = UserManager.Users.Select(u => u.Email);
             ViewBag.Emails = userEmails;
             return View();
-        }
+        }   
 
         public ActionResult UserRole(string userEmail, string role)
         {

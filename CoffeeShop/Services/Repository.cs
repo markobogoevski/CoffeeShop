@@ -655,9 +655,16 @@ namespace CoffeeShop.Services
             }
             else
             {
-                ingredients = _db.Ingredients.Where(ing => _db.Coffee.SelectMany(cof => cof.Ingredients)
-                                                            .Select(ing_in => ing_in.IngredientId)
-                                                            .Contains(ing.IngredientId)).ToList();
+                try
+                {
+                    ingredients = _db.Ingredients.Where(ing => _db.Coffee.SelectMany(cof => cof.Ingredients)
+                                                                .Select(ing_in => ing_in.IngredientId)
+                                                                .Contains(ing.IngredientId)).ToList();
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
 
             if (ingredients != null)
