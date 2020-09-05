@@ -12,7 +12,7 @@
 }
 
 .transparent-card.jumbotron {
-    background-color: rgba(255, 255, 255, 0.76);
+    background-color: rgba(255, 255, 255, 0.85);
     margin-top: 20px;
     padding-top: 20px;
     padding-bottom: 20px;
@@ -58,4 +58,9 @@
     margin-bottom: 20px; 
     border: 0; 
     border-top: 1px solid rgb(161, 160, 160);
+}
+
+.img-field.hidden-img > img{
+    width: 150px;
+    max-height: 100px;
 }

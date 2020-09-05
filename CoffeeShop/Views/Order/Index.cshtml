@@ -33,9 +33,9 @@
                 }
             }
         </span>
-        
+        <div class="hr"><hr /></div>
     </div>
-    <div class="hr"><hr /></div>
+    
         <table class="table" id="table1">
             <thead>
                 <tr>
@@ -260,6 +260,9 @@
                         });
                     }
                 });
+            });
+            $('#toggle-img').on("click", function () {
+                $('.hidden-img').toggle('slow');
             });
 
             $("#table1 .btn-discard").click(function () {
