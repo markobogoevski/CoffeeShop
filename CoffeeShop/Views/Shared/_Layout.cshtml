@@ -13,29 +13,41 @@
 
 
 </head>
-<body class="back-img" style=" overflow: hidden">
-    <div class="navbar navbar-inverse navbar-fixed-top navbar-custom">
-        <div class="container">
-            <div class="navbar-header">
-                <a href="/" class="logo-image">
-                    <img src="~/Content/Images/Logo/coffee-logo.png" href="Index/Home" width="30" height="30" class="d-inline-block logo-coffee" alt="">
-                  
-                </a>
-                
-                @Html.ActionLink("Coffee Shop ", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav links-navbar">
-                    <li>@Html.ActionLink("Add user to role", "AddUserToRole", "Account")</li>
-                    <li>@Html.ActionLink("Coffee", "Index", "Coffee")</li>
-                    <li>@Html.ActionLink("Ingredients", "Index", "Ingredient")</li>
-                    <li>@Html.ActionLink("Orders", "Index", "Order")</li>
-                </ul>
 
-                @Html.Partial("_LoginPartial")
+<body class="back-img" style="overflow hidden; padding: 0px" ;>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top" style="margin-bottom: 20px;">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="~/Content/Images/Logo/coffee-logo.png" alt="" width="30" height="30">
+            </a>
+            <a class="navbar-brand" href="#">
+                <p>Coffee shop</p>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">
+                            Home
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
             </div>
         </div>
-    </div>
+    </nav>
+    
     <div class="container jumbotron transparent-card" style="border-radius: 20px;">
         @RenderBody()
     </div>
