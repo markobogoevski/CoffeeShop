@@ -12,7 +12,7 @@
 <div hidden data-coffee-count="@Model.Count()" id="div-count"  ></div>
 
 <div class="container">
-    <div class="container align-btns" style="float:left; display: inline-block">
+    <div class="container align-btns" style=" display: inline-block">
         @{
             if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
             {

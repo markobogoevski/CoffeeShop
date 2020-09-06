@@ -48,7 +48,10 @@
                     coffee = _repository.GetAllCoffeeForUser(User.Identity.GetUserId())
                                         .ToList();
                 }
-                return View(coffee);
+                if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+                    return View(coffee);
+                else
+                    return View("IndexUser", coffee);
             }
             catch (Exception)
             {

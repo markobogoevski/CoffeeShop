@@ -22,13 +22,13 @@ namespace CoffeeShop
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js",
-                      "~/Scripts/DataTables/dataTables.bootstrap.js",
+                      "~/Scripts/DataTables/dataTables.bootstrap4.js",
                       "~/Scripts/bootbox.all.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
-                      "~/Content/DataTables/css/dataTables.bootstrap.css"));
+                      "~/Content/DataTables/css/dataTables.bootstrap4.css"));
         }
     }
 }
