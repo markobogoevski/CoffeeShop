@@ -1,14 +1,22 @@
-﻿.back-img {
-    background-image: url(/Content/Images/Logo/back-cofee.jpg);
-    min-height: 50px;
-    min-width: 50px;
-    background-repeat: no-repeat;
+﻿
+
+#landImage {
+    background: url(/Content/Images/Logo/jumbo-img.jpg);
     background-size: cover;
+    background-repeat: no-repeat;
+    height: 100vh;
 }
 
-.logo-coffee{
-    margin-left:-110%;
-    margin-top:5.8%;
+.jumbotron {
+    background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url(/Content/Images/Logo/jumbo-img.jpg) no-repeat center center;
+    background-size: cover;
+    min-height: 300px;
+}
+
+
+.logo-coffee {
+    margin-left: -110%;
+    margin-top: 5.8%;
 }
 
 .transparent-card.jumbotron {
