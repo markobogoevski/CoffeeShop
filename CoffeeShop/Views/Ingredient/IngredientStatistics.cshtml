@@ -7,30 +7,36 @@
     <h2 class="text-center mt-3">Ingredient Statistics</h2>
     <div class="hr"><hr /></div>
     <div class="container align-btns text-center d-inline-block">
-            <div>
-                @Html.ActionLink("Check out the most used ingredient", "MostSold", null, new { @class = "btn btn-info" })
-            </div>
-            <br />
-            <div>
-                @Html.ActionLink("Check out the least used ingredient!", "LeastSold", null, new { @class = "btn btn-info" })
-            </div>
-            <div>
-                @Html.ActionLink("Check out the most used ingredient this week", "MostSoldWeek", null, new { @class = "btn btn-info" })
-            </div>
-            <br />
-            <div>
-                @Html.ActionLink("Check out the least used ingredient this week!", "LeastSoldWeek", null, new { @class = "btn btn-info" })
-            </div>
-            <a class="text-info fa fa-image fa-3x mr-5" id="toggle-img"></a>
+        <h4 class="col-md-6 float-left">
+            All time
+        </h4>
+
+        <h4 class="col-md-6 float-right">
+            This week
+        </h4>
+        <div class="col-md-6 float-left">
+            @Html.ActionLink("Most sold", "MostSold", null, new { @class = "btn btn-info" })
+
+            @Html.ActionLink("Least sold", "LeastSold", null, new { @class = "btn btn-info" })
+        </div>
+
+        <div class="col-md-6 float-right">
+            @Html.ActionLink("Most sold this week", "MostSoldWeek", null, new { @class = "btn btn-info" })
+
+            @Html.ActionLink("Least sold this week", "LeastSoldWeek", null, new { @class = "btn btn-info" })
+        </div>
+
+
+        <a class="text-info fa fa-image fa-3x mr-5" id="toggle-img"></a>
     </div>
     <div class="hr"><hr /></div>
-    <table class="table" id="table_ingredient_statistics">
-        <thead>
+    <table class="table table-hover table-striped" id="table_ingredient_statistics">
+        <thead class="bg-dark text-orange">
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.Name)
                 </th>
-                <th>
+                <th class="hidden-img   ">
                     @Html.DisplayNameFor(model => model.ImgUrl)
                 </th>
                 <th>
@@ -43,6 +49,7 @@
                     @Html.DisplayNameFor(model => model.TotalQuantityUsed)
                 </th>
                 <th>
+                    Stock Quantity
                 </th>
             </tr>
         </thead>
@@ -68,8 +75,8 @@
                         @Html.DisplayFor(modelItem => item.TotalQuantityUsed)
                     </td>
                     <td class="text-center">
-                        <button data-button-id=@item.IngredientId data-max-decrease=@item.QuantityInStock class="fa fa-chevron-up text-success btn_increase">Increase quantity in stock</button><br />
-                        <button data-button-id=@item.IngredientId data-max-decrease=@item.QuantityInStock class="fa fa-chevron-down text-danger btn_decrease">Decrease quantity in stock</button>
+                        <a data-button-id=@item.IngredientId data-max-decrease=@item.QuantityInStock class="fa fa-chevron-up fa-2x text-success btn_increase"></a><br />
+                        <a data-button-id=@item.IngredientId data-max-decrease=@item.QuantityInStock class="fa fa-chevron-down fa-2x text-danger btn_decrease"></a>
                     </td>
                 </tr>
 
