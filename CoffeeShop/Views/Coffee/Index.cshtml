@@ -5,161 +5,164 @@
 @{
     ViewBag.Title = "Coffee for sale";
 }
-<h2 class="text-center">@ViewBag.Title</h2>
-
-<div class="hr"><hr /></div>
-
-<div hidden data-coffee-count="@Model.Count()" id="div-count"  ></div>
-
 <div class="container">
-    <div class="container align-btns" style=" display: inline-block">
-        @{
-            if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
-            {
+    <h2 class="text-center mt-3">Coffee</h2>
+    <div class="hr"><hr /></div>
 
-                @Html.ActionLink("‎", "Create", null, new { @class = "inline-btn btn btn-primary fa fa-plus fa-3x" })
+    <div hidden data-coffee-count="@Model.Count()" id="div-count"></div>
+
+    <div class="container">
+        <div class="container align-btns" style=" display: inline-block">
+            @{
+                if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+                {
+
+                    @Html.ActionLink("‎", "Create", null, new { @class = "text-success fa fa-plus fa-3x mr-5" })
+                    if (Model.Count() != 0)
+                    {
+                        @Html.ActionLink("‎", "CoffeeStatistics", null, new { @class = "text-dark fa fa-bar-chart fa-3x mr-5" })
+                    }
+
+                }
+            }
+            @{
+                if (User.IsInRole(UserRoles.User))
+                {
+                    @Html.ActionLink("‎", "CreateCustom", null, new { @class = "text-primary fa fa-plus fa-3x mr-5" })
+
+                }
+            }
+
+            @{
                 if (Model.Count() != 0)
                 {
-                    @Html.ActionLink("‎", "CoffeeStatistics", null, new { @class = "inline-btn btn btn-primary fa fa-bar-chart fa-3x" })
+                    <a class="text-info fa fa-image fa-3x mr-5" id="toggle-img"></a>
+                    @*
+                        @Ajax.ActionLink("‎",
+                              "CoffeeDay",
+                              null,
+                              new AjaxOptions
+                              {
+                                  UpdateTargetId = "dailydeal",
+                                  InsertionMode = InsertionMode.Replace,
+                                  HttpMethod = "GET"
+                              },
+                              new { @class = "inline-btn btn btn-danger fa fa-calendar-check-o fa-3x", id = "dailydeal" })
+                    *@
+
+                    @Html.ActionLink("‎",
+                         "CoffeeDay",
+                         null,
+                         new AjaxOptions
+                         {
+                             UpdateTargetId = "dailydeal",
+                             InsertionMode = InsertionMode.Replace,
+                             HttpMethod = "GET"
+                         },
+                         new { @class = "text-danger fa fa-calendar-check-o fa-3x mr-5", id = "dailydeal" })
                 }
-
             }
-        }
+        </div>
         @{
-            if (User.IsInRole(UserRoles.User))
+            if (ViewBag.Ingredients.Count != 0)
             {
-                @Html.ActionLink("Create your own custom coffee!", "CreateCustom", null, new { @class = "inline-btn btn btn-success" })
+                <div class="col-md-12 text-center card mt-2">
+                    <h5 class="mb-1 mt-1">Include ingredient: </h5>
+                    <div class="form-group">
+                        @{
+                            foreach (IngredientModel ingredient in (List<IngredientModel>)ViewBag.Ingredients)
+                            {
 
+                                <div class="m-1 d-inline-block">
+                                    <label class="container_new" for="@ingredient.IngredientId">
+                                        <em class="border-right border-dark">@ingredient.Name&nbsp;&nbsp;&nbsp;</em>
+                                        <input data-id="@ingredient.IngredientId" class="ing_check" type="checkbox" value="@ingredient.IngredientId" name="@ingredient.Name" id="@ingredient.IngredientId" autocomplete="off" />
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+
+
+                            }
+                        }
+                    </div>
+                </div>
             }
         }
 
-        @{
-            if (Model.Count() != 0)
-            {
-                <button class="inline-btn btn btn-info fa fa-image fa-3x" id="toggle-img"></button>
-                @*
-                @Ajax.ActionLink("‎",
-                      "CoffeeDay",
-                      null,
-                      new AjaxOptions
-                      {
-                          UpdateTargetId = "dailydeal",
-                          InsertionMode = InsertionMode.Replace,
-                          HttpMethod = "GET"
-                      },
-                      new { @class = "inline-btn btn btn-danger fa fa-calendar-check-o fa-3x", id = "dailydeal" })
-                *@
-
-                @Html.ActionLink("‎",
-                     "CoffeeDay",
-                     null,
-                     new AjaxOptions
-                     {
-                         UpdateTargetId = "dailydeal",
-                         InsertionMode = InsertionMode.Replace,
-                         HttpMethod = "GET"
-                     },
-                     new { @class = "inline-btn btn btn-danger btn-color-brown fa fa-calendar-check-o fa-3x", id = "dailydeal" })
-            }
-        }
     </div>
     @{
-        if (ViewBag.Ingredients.Count != 0)
+        if (Request.IsAuthenticated)
         {
-        <div class="col-md-12 text-center card mt-2">
-            <strong>Filter coffee by ingredients: </strong><br />
-                <div class="form-group">
-                    @{
-                        foreach (IngredientModel ingredient in (List<IngredientModel>)ViewBag.Ingredients)
-                        {
+            <div class="hr"><hr /></div>
+        }
+    }
 
-                            <div class="m-1 d-inline-block">
-                                <label class="container_new" for="@ingredient.IngredientId">
-                                    <em>@ingredient.Name</em>
-                                    <input data-id="@ingredient.IngredientId" class="ing_check" type="checkbox" value="@ingredient.IngredientId" name="@ingredient.Name" id="@ingredient.IngredientId" autocomplete="off" />
-                                    <span class="checkmark"></span>
-                                </label>
-                            </div>
-
-
+    <table class="table" id="table1">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TotalPrice)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Size)
+                </th>
+                <th class="hidden-img no-sort">
+                    @Html.DisplayNameFor(model => model.ImgUrl)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th class="no-sort">
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalPrice)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Size)
+                    </td>
+                    <td class="img-field hidden-img">
+                        <a href="/Coffee/Details/@item.CoffeeId">
+                            <img alt="@item.Name" src="@Url.Content(item.ImgUrl)" />
+                        </a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @{
+                            if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+                            {
+                                @Html.ActionLink("‎", "Edit", new { id = item.CoffeeId }, new { @class = "fa fa-edit fa-2x text-warning" })
+                                <a data-coffee-id="@item.CoffeeId" class="fa fa-remove js-delete fa-2x text-danger"></a>
+                            }
                         }
-                    }
-                </div>
-            </div>
-        }
-    }
-    
+                        @Html.ActionLink("‎", "Details", new { id = item.CoffeeId }, new { @class = "fa fa-info-circle fa-2x text-success" })
+                        @{
+                            if (User.IsInRole(UserRoles.User))
+                            {
+                                @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = item.CoffeeId }, new { @class = "btn btn-success" })
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
 </div>
-@{ 
-    if (Request.IsAuthenticated)
-    {
-        <div class="hr"><hr /></div>
-        }
-    }
-
-<table class="table" id="table1">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Size)
-            </th>
-            <th class="hidden-img no-sort">
-                @Html.DisplayNameFor(model => model.ImgUrl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th class="no-sort">
-                Actions 
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Size)
-            </td>
-            <td class="img-field hidden-img">
-                <img alt="@item.Name" src="@Url.Content(item.ImgUrl)" />
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @{
-                    if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
-                    {
-                        @Html.ActionLink("‎", "Edit", new { id = item.CoffeeId }, new { @class = "fa fa-edit fa-2x text-warning" })
-                        <a data-coffee-id="@item.CoffeeId" class="fa fa-remove js-delete fa-2x text-danger"></a>
-                    }
-                }
-                @Html.ActionLink("‎", "Details", new { id = item.CoffeeId }, new { @class = "fa fa-info-circle fa-2x text-success" })
-                @{
-                    if (User.IsInRole(UserRoles.User))
-                    {
-                        @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = item.CoffeeId }, new { @class = "btn btn-success" })
-                    }
-                }
-            </td>
-        </tr>
-        }
-    </tbody>
-
-</table>
 
 @section Styles {
     <link href="@Url.Content("~/Styles/Checkbox.css")" rel="stylesheet" type="text/css" />

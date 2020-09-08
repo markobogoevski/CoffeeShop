@@ -67,7 +67,7 @@
     border-top: 1px solid rgb(161, 160, 160);
 }
 
-.img-field.hidden-img > img{
+.img-field.hidden-img > * img{
     width: 150px;
     max-height: 100px;
 }
