@@ -8,11 +8,13 @@
 /CoffeeShop/Migrations
 /CoffeeShop/Debug
 /CoffeeShop/bin
+/CoffeeShop/obj
+
 ###################
 # compiled source #
 ###################
-.vs
-
+.vs\*
+.vs/*
 *.com
 *.class
 *.dll
