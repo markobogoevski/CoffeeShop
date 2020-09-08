@@ -237,8 +237,6 @@ C:\Users\mlade\Projects\CoffeeShopV2\CoffeeShop\CoffeeShop\CoffeeShop\obj\Debug\
 C:\Users\mlade\Projects\CoffeeShopV2\CoffeeShop\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.CopyComplete
 C:\Users\mlade\Projects\CoffeeShopV2\CoffeeShop\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.dll
 C:\Users\mlade\Projects\CoffeeShopV2\CoffeeShop\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.pdb
-C:\Users\mlade\Projects\CoffeeShopV2\CoffeeShop\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.initial.resources
-C:\Users\mlade\Projects\CoffeeShopV2\CoffeeShop\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.GenerateResource.cache
 C:\Users\David Galevski\Source\Repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csprojAssemblyReference.cache
 C:\Users\David Galevski\Source\Repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.dll
 C:\Users\David Galevski\Source\Repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.pdb
@@ -355,3 +353,5 @@ C:\Users\David Galevski\Source\Repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.
 C:\Users\David Galevski\Source\Repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.CopyComplete
 C:\Users\David Galevski\Source\Repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.initial.resources
 C:\Users\David Galevski\Source\Repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.GenerateResource.cache
+C:\Users\mlade\Projects\CoffeeShopV2\CoffeeShop\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.intitial.resources
+C:\Users\mlade\Projects\CoffeeShopV2\CoffeeShop\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.GenerateResource.cache
