@@ -7,83 +7,100 @@
 }
 <div class="container">
     <br />
-
-    @if (ViewBag.Statistics != null)
-    {
-        <div>
-            Statistics about coffee:
+    <div class="card bg-dark">
+        <div class="card-header bg-dark">
+            <span class="text-orange text-uppercase">Details</span>
         </div>
-        <div>
-            <ul>
-                <li>Number of total times sold: @Model.TotalQuantitySold</li>
-                <li>Number of total times sold this week: @Model.QuantitySoldLastWeek</li>
-                <li>Number of items in stock: @Model.QuantityInStock</li>
-                <li>Total profit achieved: @ViewBag.TotalProfit</li>
-                <li>Total profit achieved this week: @ViewBag.TotalProfitWeek</li>
-            </ul>
-        </div>
-    }
-
-        <div class="card bg-dark">
-            <div class="card-header bg-dark">
-                <span class="text-orange text-uppercase">Details</span>
-            </div>
-            <div class="card-body pr-5">
-                <div class="row">
-                    <div class="col-5 align-middle my-auto h-100 text-center">
-                        <img class="img-fluid d-inline-block" src="@Model.ImgUrl" />
-                    </div>
-                    <div class="col text-white">
-                        <h1 class="text-orange">@Model.Name <span class="float-right">@Model.TotalPrice den.</span></h1>
-                        <h5 class="text-orange">@Model.Size</h5>
-                        <hr class="red ml-0" />
-                        <div class="row">
-                            <div class="col-5">
-                                <h4>Ingredients:</h4>
-                                <p>
-                                    @{
-                                        foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
-                                        {
-                                            <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity, Price: @(ingredientQuantity.Ingredient.Price*ingredientQuantity.Quantity) </strong>
-                                            <br />
-                                        }
-                                    }<br />
-                                </p>
-                            </div>
-                            <div class="col">
-                                <h4>Description:</h4>
-                                <p class="text-justify">
-                                    @Model.Description
-                                </p>
-                            </div>
+        <div class="card-body pr-5">
+            <div class="row">
+                <div class="col-5 align-middle my-auto h-100 text-center">
+                    <img class="img-fluid d-inline-block" src="@Model.ImgUrl" />
+                </div>
+                <div class="col text-white">
+                    <h1 class="text-orange">@Model.Name <span class="float-right">@Model.TotalPrice den.</span></h1>
+                    <h5 class="text-orange">@Model.Size</h5>
+                    <hr class="red ml-0" />
+                    <div class="row">
+                        <div class="col-5">
+                            <h4>Ingredients:</h4>
+                            <p>
+                                @{
+                                    foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
+                                    {
+                                        <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity, Price: @(ingredientQuantity.Ingredient.Price*ingredientQuantity.Quantity) </strong>
+                                        <br />
+                                    }
+                                }<br />
+                            </p>
+                        </div>
+                        <div class="col">
+                            <h4>Description:</h4>
+                            <p class="text-justify">
+                                @Model.Description
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="card-footer bg-dark">
-                <div class="row mr-auto">
-                    @if (ViewBag.Statistics != null)
-                    {
-                        @Html.ActionLink("Back to Statistics", "CoffeeStatistics", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info btn-block col-2 m-2" })
+        </div>
+        <div class="card-footer bg-dark">
+            <div class="row mr-auto">
+                @if (ViewBag.Statistics != null)
+                {
+                    @Html.ActionLink("Back to Statistics", "CoffeeStatistics", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info btn-block col-2 m-2" })
 
-                    }
-                    else
+                }
+                else
+                {
+                    if (User.IsInRole(UserRoles.User))
                     {
-                        if (User.IsInRole(UserRoles.User))
-                        {
-                            @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = @Model.CoffeeId }, new { @class = "btn btn-primary btn-block col-2 m-2" })
-                        }
-                        @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "btn btn-info btn-block col-2  m-2" })
+                        @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = @Model.CoffeeId }, new { @class = "btn btn-primary btn-block col-2 m-2" })
                     }
-                    @{
-                        if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
-                        {
-                            @Html.ActionLink("Edit", "Edit", new { id = Model.CoffeeId }, new { @class = "btn btn-warning btn-block col-2 m-2" })
-                        }
+                    @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "btn btn-info btn-block col-2  m-2" })
+                }
+                @{
+                    if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+                    {
+                        @Html.ActionLink("Edit", "Edit", new { id = Model.CoffeeId }, new { @class = "btn btn-warning btn-block col-2 m-2" })
                     }
-                </div>
+                }
             </div>
         </div>
+    </div>
+    @if (ViewBag.Statistics != null)
+    {
+        <table class="table table-hover table-striped mt-3">
+            <thead class="bg-dark text-orange text-center">
+                <tr>
+                    <th>Statistic</th>
+                    <th>Number</th>
+                </tr>
+            </thead>
+            <tr>
+                <td>Number of total times sold</td>
+                <td>@Model.TotalQuantitySold</td>
+            </tr>
+            <tr>
+                <td>Number of total times sold this week</td>
+                <td>@Model.QuantitySoldLastWeek</td>
+            </tr>
+            <tr>
+                <td>Number of items in stock</td>
+                <td>@Model.QuantityInStock</td>
+            </tr>
+            <tr>
+                <td>Total profit achieved</td>
+                <td>@ViewBag.TotalProfit</td>
+            </tr>
+            <tr>
+                <td>Total profit achieved this week</td>
+                <td>@ViewBag.TotalProfitWeek</td>
+            </tr>
+
+        </table>
+
+
+    }
 
 
 </div>
