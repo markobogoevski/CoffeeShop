@@ -10,3 +10,191 @@
     </div>
 </div>
 
+<section id="menu" class="full-row bg-dark py-4">
+    <div class="container text-right">
+        <div class="row">
+            <div class="col-6 align-self-center">
+                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        @{
+
+                        }
+
+                    </ol>
+                    <div class="carousel-inner">
+                        @{
+
+                        }
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-6">
+                <h1 class="text-uppercase text-orange">Our top sellers</h1>
+                <hr class="red my-2 mr-0" />
+                <p class="text-justify text-white">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tempus tempus iaculis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque scelerisque sem id risus interdum, id molestie nisi bibendum.
+                </p>
+                <p class="text-justify text-white">
+                    We're sure this info helped if you haven't made your mind and will lead to you having the perfect cup of coffee for the day!
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="row text-center align-content-center">
+        <div class="col-2 mx-auto">
+            <a class="btn bg-orange text-white mt-4 font-weight-bold btn-block" href="@Url.Action("Index", "Coffee")">Menu &#187;</a>
+        </div>
+    </div>
+</section>
+
+<section id="customersValues">
+    <h1 class="text-uppercase text-center">What our costumers value</h1>
+    <hr class="red mx-auto mb-5" />
+    <div class="row text-center">
+        <div class="col">
+            <i class="fa fa-coffee fa-3x circle-icon"></i>
+            <h4>Product quality</h4>
+            <p class="text-justify">
+                We've gained a reputation for never cutting corners and working with the finest quality ingredients no matter what.
+            </p>
+        </div>
+        <div class="col">
+            <i class="fa fa-hourglass-half fa-3x"></i>
+            <h4>Always on time</h4>
+            <p class="text-justify">
+                The best thing about eating pizza is feeling the cheese melting in your mouth. We can get you that feeling either you're waiting home for the pizza delivery or you're grabbing one at our place!
+            </p>
+        </div>
+        <div class="col">
+            <i class="fa fa-3x fa-truck"></i>
+            <h4>Doorstep delivery</h4>
+            <p class="text-justify">
+                For those ones that are lazy while their stomach is aching from hunger, don't think you're going to wait for us whole day, you're getting your wood oven pizza on your doorstep immediately!
+            </p>
+        </div>
+        <div class="col">
+            <i class="fa fa-3x fa-lightbulb-o"></i>
+            <h4>Customize your taste</h4>
+            <p class="text-justify">
+                Tired of the classic pizza menu? Wanna mix some ingredients and make your own delicious pizza?
+                Try that pleasure by using our online menu!
+            </p>
+        </div>
+    </div>
+</section>
+
+
+<section id="About">
+    <div class="row">
+        <div class="col-7">
+            <h1 class="text-uppercase">About us</h1>
+            <hr class="red my-2 ml-0" />
+            <p class="text-justify">
+                We're a tradtional pizza restaurant in Skopje since 1988.
+                The sourdough is the beating heart of our restaurant. Slowly fermenting organic Macedonian flour, on its way to become pizza.
+                We believe in sourcing artisanal produce - local when available, but always delicious, sustainable and natural. We chose produce we love, and are transparent about it. We help our guests fight against a greedy food industry one bite at the time – and having a blast doing so!
+                Don’t get us wrong. Downing pitchers of Prosecco, dashing Skopje Bitters and munching a mega tasty, fermented dough Pizza - it’s definitely still a guilty pleasure! But doesn’t it feel great to know that somebody else is benefiting from your sins?
+                We call this the principle of “sin win”. You have fun and cash is generated for quality producers.
+                Our restaurant enables you to help - not quite in your sleep -  but in booze and food.
+                Come and join our little revolution!
+                Let’s dine and drink for good.
+            </p>
+            <p class="text-justify">
+                We've gained a reputation for never cutting corners and working with the finest quality ingredients no matter what.
+                For those ones that are lazy while their stomach is aching from hunger, don't think you're going to wait for us whole day, you're getting your wood oven pizza on your doorstep immediately!
+                The best thing is that you can follow your order by checking the current state on your website!
+            </p>
+        </div>
+        <div class="col-5">
+            <img class="mt-4 pt-4 img-fluid" src="~/Content/Images/pizza-making-event.jpg" />
+        </div>
+    </div>
+</section>
+
+
+
+<section id="contactForm">
+    <h1 class="text-uppercase">Drop us a line</h1>
+    <hr class="red ml-0" />
+    <div class="row">
+        <div class="col">
+
+            <div class="row">
+                <h3>Phone: </h3>
+                <h3>Instagram: </h3>
+                </div>
+                <div class="form-group col">
+                    <label for="LastName" class="col-form-label font-weight-bold">Last name:</label>
+                    <input type="text" class="form-control" id="LastName" name="LastName" placeholder="Last Name" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col">
+                    <label for="Email" class="col-form-label font-weight-bold">Email:</label>
+                    <input type="email" class="form-control" name="Email" id="Email" placeholder="Email" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col">
+                    <label for="Message" class="col-form-label font-weight-bold">Any comments, questions, or concerns, let us know below.</label>
+                    <textarea rows="8" id="Message" class="form-control" name="Message" placeholder="Enter some message..."></textarea>
+                </div>
+            </div>
+            <p>
+                <button id="contact" class="btn bg-orange text-white">Post</button>
+            </p>
+        </div>
+        <div class="mapouter col-6">
+            <div class="gmap_canvas"><iframe width="500" height="500" id="gmap_canvas" src="https://maps.google.com/maps?q=Finki&t=&z=15&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe></div>
+        </div>
+    </div>
+
+</section>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            if ($("#totalRat").text() != "0") {
+                var totalRat = parseInt($("#totalRat").html());
+                $(".ratingStar").each(function () {
+                    if (parseInt($(this).attr("rating")) <= totalRat) {
+                        $(this).removeClass("fa-star-o").addClass("fa-star");
+                    }
+                })
+            }
+            $("#contact").on('click', function () {
+                var obj = {
+                    Name: $("#Name").val(),
+                    LastName: $("#LastName").val(),
+                    Email: $("#Email").val(),
+                    Message: $("#Message").val()
+                };
+                $("#Name").val("");
+                $("#LastName").val("");
+                $("#Email").val("");
+                $("#Message").val("");
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/Contact",
+                    data: obj,
+                    success: function (res) {
+                        bootbox.alert(JSON.parse(res.responseText).responseText)
+                    },
+                    error: function (res) {
+                        bootbox.alert(JSON.parse(res.responseText).responseText)
+                    },
+                    dataType: "application/json"
+                })
+            })
+        })
+    </script>
+}
+
