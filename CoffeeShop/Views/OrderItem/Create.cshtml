@@ -4,62 +4,64 @@
 @{
     ViewBag.Title = "Create";
 }
-<br /><br />
-<h2>Create</h2>
+<div class="container">
+    <br /><br />
+    <h2>Create</h2>
 
     @Html.AntiForgeryToken()
     <input type="hidden" name="id" value="@Model.Coffee.CoffeeId" />
-        <h4>OrderItemModel</h4>
-        <hr />
+    <h4>OrderItemModel</h4>
+    <hr />
 
-        <div style="margin:auto; width:50%; border:3px solid gray; padding:10px" class="bg-primary card text-center">
-            Currently ordering: <br /><br />
+    <div style="margin:auto; width:50%; border:3px solid gray; padding:10px" class="bg-primary card text-center">
+        Currently ordering: <br /><br />
 
-            <img class="card-img-top" src="@Model.Coffee.ImgUrl" alt="Coffee" width="100%">
+        <img class="card-img-top" src="@Model.Coffee.ImgUrl" alt="Coffee" width="100%">
+        <br />
+        <div class="card-body">
             <br />
-            <div class="card-body">
-                <br />
-                <h5 class="card-title">Ingredients: </h5>
-                @{
-                    if (ViewBag.IngredientsForCoffee.Count == 0)
-                    {
-                        <p class="card-text">Basic coffee (no ingredients)</p>
-                        <br />
-                    }
-                    else
-                    {
-                        <p class="card-text">
-                            @{
-                                foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
-                                {
-                                    <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity, Price: @(ingredientQuantity.Ingredient.Price * ingredientQuantity.Quantity) </strong>
-                                    <br />
-                                }
-                            }<br />
-                        </p>
-                    }
+            <h5 class="card-title">Ingredients: </h5>
+            @{
+                if (ViewBag.IngredientsForCoffee.Count == 0)
+                {
+                    <p class="card-text">Basic coffee (no ingredients)</p>
+                    <br />
                 }
-            </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item bg-danger">Name: @Model.Coffee.Name</li>
-                    <li class="list-group-item bg-danger">Price on discount: @Model.Coffee.TotalPrice denars.</li>
-                    <li class="list-group-item bg-danger">Size: @Model.Coffee.Size</li>
-                    <li class="list-group-item bg-danger">Description: @Model.Coffee.Description</li>
-                </ul><br />
-                     <div class="card-body">
-                         <div class="form-group col-md-6" style="float:left">
-                             @Html.LabelFor(model => model.Quantity, htmlAttributes: new { @class = "control-label" })
-                                 @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { min = "1", @Value = "1", @class = "form-control quantity-order" } })
-                                 @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
-                         </div>
-                         <div class="form-group col-md-6" style="float:right; padding-top:3%">
-                             <input data-button-id="@Model.Coffee.CoffeeId" type="submit" value="Order" class="btn btn-success add-order-item" />
-                             @Html.ActionLink("Back to List", "Index", "Coffee", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info" })
-                         </div>
-                         <div class="form-group" style="padding-top:10%">
-                         </div>
-                     </div>
+                else
+                {
+                    <p class="card-text">
+                        @{
+                            foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
+                            {
+                                <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity, Price: @(ingredientQuantity.Ingredient.Price * ingredientQuantity.Quantity) </strong>
+                                <br />
+                            }
+                        }<br />
+                    </p>
+                }
+            }
         </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-danger">Name: @Model.Coffee.Name</li>
+            <li class="list-group-item bg-danger">Price on discount: @Model.Coffee.TotalPrice denars.</li>
+            <li class="list-group-item bg-danger">Size: @Model.Coffee.Size</li>
+            <li class="list-group-item bg-danger">Description: @Model.Coffee.Description</li>
+        </ul><br />
+        <div class="card-body">
+            <div class="form-group col-md-6" style="float:left">
+                @Html.LabelFor(model => model.Quantity, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { min = "1", @Value = "1", @class = "form-control quantity-order" } })
+                @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-6" style="float:right; padding-top:3%">
+                <input data-button-id="@Model.Coffee.CoffeeId" type="submit" value="Order" class="btn btn-success add-order-item" />
+                @Html.ActionLink("Back to List", "Index", "Coffee", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info" })
+            </div>
+            <div class="form-group" style="padding-top:10%">
+            </div>
+        </div>
+    </div>
+</div>
 
 @section scripts{
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>

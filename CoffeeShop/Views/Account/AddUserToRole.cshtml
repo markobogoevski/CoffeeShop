@@ -3,14 +3,17 @@
     ViewBag.Title = "AddUserToRole";
 }
 
-<div class="form-group">
-    <h3>Add a user to a role according to their email address</h3>
-    @using (Html.BeginForm("UserRole", "Account"))
-    {
-        @Html.DropDownList("userEmail", new SelectList(ViewBag.Emails),new { @class = "form-control" })<br />
-        @Html.DropDownList("role", new SelectList(ViewBag.Roles), new { @class = "form-control" })<br />
+<div class="container">
+    <div class="form-group">
+        <h3>Add a user to a role according to their email address</h3>
+        @using (Html.BeginForm("UserRole", "Account"))
+        {
+            @Html.DropDownList("userEmail", new SelectList(ViewBag.Emails), new { @class = "form-control" })<br />
+            @Html.DropDownList("role", new SelectList(ViewBag.Roles), new { @class = "form-control" })<br />
 
-        <button class="btn btn-primary">Add</button>
-    }
+            <button class="btn btn-primary">Add</button>
+        }
+    </div>
+
 </div>
 

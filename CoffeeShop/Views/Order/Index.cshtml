@@ -6,183 +6,185 @@
     ViewBag.Title = "Orders";
 }
 
-<h2 class="text-center">@ViewBag.Title</h2>
+<div class="container">
+    <h2 class="text-center">@ViewBag.Title</h2>
 
-<div class="hr"><hr /></div>
+    <div class="hr"><hr /></div>
 
-@{
-    if (ViewBag.Empty == null)
-    {
-    <div class="container align-btns" style="float: left;">
-        <h4 style="font-weight: bold;">Filter orders by status: </h4>
-        <span style="display: inline; ">
-            @{
-
-                foreach (var orderStatus in (List<string>)ViewBag.OrderStatus)
-                {
-                    <span class="form-group">
-                        <span class="checkbox-inline">
-                            <label class="container_new" for="@orderStatus">
-                                <em>@orderStatus</em>
-                                <input data-id="@orderStatus" class="form-check-input" type="checkbox" value="@orderStatus" name="@orderStatus" id="@orderStatus" autocomplete="off" />
-                                <span class="checkmark checkmark-color"></span>
-                            </label>
-                        </span>
-                    </span>
-
-                }
-            }
-        </span>
-        <div class="hr"><hr /></div>
-    </div>
-    
-        <table class="table" id="table1">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Address)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.OrderStatus)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.OrderTime)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.OrderFinishTime)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.OrderRating)
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Address)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.OrderStatus)
-                        </td>
-                        <td>
-                            @{
-                                if (item.OrderStatus != OrderStatus.INACTIVE)
-                                {
-                                    @Html.DisplayFor(modelItem => item.OrderTime);
-                                }
-                                else
-                                {
-                                    <em>Yet to be activated</em>
-                                }
-
-                            }
-                        </td>
-                        <td>
-                            @{
-                                if (item.OrderStatus == OrderStatus.FINISHED)
-                                {
-                                    @Html.DisplayFor(modelItem => item.OrderFinishTime);
-                                }
-                                else if (item.OrderStatus == OrderStatus.CANCELLED)
-                                {
-                                    if (User.IsInRole(UserRoles.User))
-                                    {
-                                        <em>I am sorry. Your order has been cancelled...</em>
-                                    }
-                                    else
-                                    {
-                                        <em>Cancelled</em>
-                                    }
-                                }
-                                else
-                                {
-                                    <em>Yet to be finished</em>
-                                }
-
-                            }
-                        </td>
-                        <td>
-                            @{
-                                if (item.OrderRating != 0)
-                                {
-                                    @Html.DisplayFor(modelItem => item.OrderRating);
-                                }
-                                else if (item.OrderStatus == OrderStatus.CANCELLED)
-                                {
-                                    if (User.IsInRole(UserRoles.User))
-                                    {
-                                        <em>I am sorry. Your order has been cancelled...</em>
-                                    }
-                                    else
-                                    {
-                                        <em>Cancelled</em>
-                                    }
-                                }
-                                else
-                                {
-                                    <em>Yet to be rated</em>
-                                }
-
-                            }
-                        </td>
-                        <td>
-                            @Html.ActionLink("‎", "Details", new { id = item.OrderId }, new { @class = "fa fa-info-circle fa-2x text-success" })
-                            @{
-                                List<CancelOrderViewModel> cancellable = ViewBag.Cancellable;
-                                bool canCancel = cancellable.Where(can => can.OrderId == item.OrderId).First().Cancellable;
-                                if (canCancel && User.IsInRole(UserRoles.User) && (item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED))
-                                {
-                                    canCancel = !canCancel;
-                                }
-                                bool canActivate = item.OrderStatus == OrderStatus.INACTIVE ? true : false;
-                                bool canFinish = item.OrderStatus == OrderStatus.PENDING ? true : false;
-                                bool canRate = (item.OrderRating == 0 && item.OrderStatus == OrderStatus.FINISHED) ? true : false;
-                                bool canDiscard = (item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED) ? true : false;
-                                if (canFinish && !User.IsInRole(UserRoles.User))
-                                {
-                                    canCancel = false;
-                                }
-                                string btnDeactivateName = (item.OrderStatus == OrderStatus.INACTIVE || item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED) ? "Remove" : "Cancel";
-                            }
-                            <button data-hide=@canCancel data-order-id=@item.OrderId class="fa fa-remove fa-2x text-danger">@btnDeactivateName</button>
-
-                            @{
-                                if (User.IsInRole(UserRoles.User))
-                                {
-                                    <button data-hide=@canActivate data-order-id=@item.OrderId class="fa fa-check text-success">Activate</button>
-                                    <button data-hide=@canDiscard data-order-id=@item.OrderId class="fa fa-remove js-delete fa-2x text-danger">Discard</button>
-                                    <button data-hide=@canRate data-order-id=@item.OrderId class="fa fa-star text-warning">Rate</button>
-                                }
-                            }
-                            @{
-                                if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
-                                {
-                                    <button data-hide=@canFinish data-order-id=@item.OrderId class="fa fa-check text-success">Finish order</button>
-                                    <button data-hide=@canFinish data-order-id=@item.OrderId class="fa fa-bolt text-warning">Cancel order</button>
-                                }
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-
-        </table>
-    }
-    else
-    {
-        if (User.IsInRole(UserRoles.User))
+    @{
+        if (ViewBag.Empty == null)
         {
-            <h1>You have no orders!</h1>
+            <div class="container align-btns" style="float: left;">
+                <h4 style="font-weight: bold;">Filter orders by status: </h4>
+                <span style="display: inline; ">
+                    @{
+
+                        foreach (var orderStatus in (List<string>)ViewBag.OrderStatus)
+                        {
+                            <span class="form-group">
+                                <span class="checkbox-inline">
+                                    <label class="container_new" for="@orderStatus">
+                                        <em>@orderStatus</em>
+                                        <input data-id="@orderStatus" class="form-check-input" type="checkbox" value="@orderStatus" name="@orderStatus" id="@orderStatus" autocomplete="off" />
+                                        <span class="checkmark checkmark-color"></span>
+                                    </label>
+                                </span>
+                            </span>
+
+                        }
+                    }
+                </span>
+                <div class="hr"><hr /></div>
+            </div>
+
+            <table class="table" id="table1">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Address)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OrderStatus)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OrderTime)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OrderFinishTime)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OrderRating)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Address)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.OrderStatus)
+                            </td>
+                            <td>
+                                @{
+                                    if (item.OrderStatus != OrderStatus.INACTIVE)
+                                    {
+                                        @Html.DisplayFor(modelItem => item.OrderTime);
+                                    }
+                                    else
+                                    {
+                                        <em>Yet to be activated</em>
+                                    }
+
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    if (item.OrderStatus == OrderStatus.FINISHED)
+                                    {
+                                        @Html.DisplayFor(modelItem => item.OrderFinishTime);
+                                    }
+                                    else if (item.OrderStatus == OrderStatus.CANCELLED)
+                                    {
+                                        if (User.IsInRole(UserRoles.User))
+                                        {
+                                            <em>I am sorry. Your order has been cancelled...</em>
+                                        }
+                                        else
+                                        {
+                                            <em>Cancelled</em>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <em>Yet to be finished</em>
+                                    }
+
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    if (item.OrderRating != 0)
+                                    {
+                                        @Html.DisplayFor(modelItem => item.OrderRating);
+                                    }
+                                    else if (item.OrderStatus == OrderStatus.CANCELLED)
+                                    {
+                                        if (User.IsInRole(UserRoles.User))
+                                        {
+                                            <em>I am sorry. Your order has been cancelled...</em>
+                                        }
+                                        else
+                                        {
+                                            <em>Cancelled</em>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <em>Yet to be rated</em>
+                                    }
+
+                                }
+                            </td>
+                            <td>
+                                @Html.ActionLink("‎", "Details", new { id = item.OrderId }, new { @class = "fa fa-info-circle fa-2x text-success" })
+                                @{
+                                    List<CancelOrderViewModel> cancellable = ViewBag.Cancellable;
+                                    bool canCancel = cancellable.Where(can => can.OrderId == item.OrderId).First().Cancellable;
+                                    if (canCancel && User.IsInRole(UserRoles.User) && (item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED))
+                                    {
+                                        canCancel = !canCancel;
+                                    }
+                                    bool canActivate = item.OrderStatus == OrderStatus.INACTIVE ? true : false;
+                                    bool canFinish = item.OrderStatus == OrderStatus.PENDING ? true : false;
+                                    bool canRate = (item.OrderRating == 0 && item.OrderStatus == OrderStatus.FINISHED) ? true : false;
+                                    bool canDiscard = (item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED) ? true : false;
+                                    if (canFinish && !User.IsInRole(UserRoles.User))
+                                    {
+                                        canCancel = false;
+                                    }
+                                    string btnDeactivateName = (item.OrderStatus == OrderStatus.INACTIVE || item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED) ? "Remove" : "Cancel";
+                                }
+                                <button data-hide=@canCancel data-order-id=@item.OrderId class="fa fa-remove fa-2x text-danger">@btnDeactivateName</button>
+
+                                @{
+                                    if (User.IsInRole(UserRoles.User))
+                                    {
+                                        <button data-hide=@canActivate data-order-id=@item.OrderId class="fa fa-check text-success">Activate</button>
+                                        <button data-hide=@canDiscard data-order-id=@item.OrderId class="fa fa-remove js-delete fa-2x text-danger">Discard</button>
+                                        <button data-hide=@canRate data-order-id=@item.OrderId class="fa fa-star text-warning">Rate</button>
+                                    }
+                                }
+                                @{
+                                    if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+                                    {
+                                        <button data-hide=@canFinish data-order-id=@item.OrderId class="fa fa-check text-success">Finish order</button>
+                                        <button data-hide=@canFinish data-order-id=@item.OrderId class="fa fa-bolt text-warning">Cancel order</button>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
         }
         else
         {
-            <h1>No orders to show...</h1>
+            if (User.IsInRole(UserRoles.User))
+            {
+                <h1>You have no orders!</h1>
+            }
+            else
+            {
+                <h1>No orders to show...</h1>
+            }
         }
     }
-}
+</div>
 
 @section Styles {
     <link href="@Url.Content("~/Styles/Checkbox.css")" rel="stylesheet" type="text/css" />
