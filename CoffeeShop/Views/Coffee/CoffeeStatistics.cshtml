@@ -3,28 +3,34 @@
 @{
     ViewBag.Title = "CoffeeStatistics";
 }
+<div class="container">
+    <h2 class="text-center mt-3">Coffee Statistics</h2>
+    <div class="hr"><hr /></div>
+    <div class="container align-btns text-center d-inline-block">
+        <h4 class="col-md-6 float-left">
+            All time
+        </h4>
 
-<h2>CoffeeStatistics</h2>
-<div style="padding-bottom:10%">
-    <div class="col-md-6" style="float:left">
-        <div>
-            @Html.ActionLink("Check out the most sold coffee", "MostSold", null, new { @class = "btn btn-info" })
+        <h4 class="col-md-6 float-right">
+            This week
+        </h4>
+        <div class="col-md-6 float-left">
+            @Html.ActionLink("Most sold", "MostSold", null, new { @class = "btn btn-info" })
+
+            @Html.ActionLink("Least sold", "LeastSold", null, new { @class = "btn btn-info" })
         </div>
-        <br />
-        <div>
-            @Html.ActionLink("Check out the least sold coffee!", "LeastSold", null, new { @class = "btn btn-info" })
+
+        <div class="col-md-6 float-right">
+            @Html.ActionLink("Most sold this week", "MostSoldWeek", null, new { @class = "btn btn-info" })
+
+            @Html.ActionLink("Least sold this week", "LeastSoldWeek", null, new { @class = "btn btn-info" })
         </div>
+
+
+        <a class="text-info fa fa-image fa-3x mr-5" id="toggle-img"></a>
     </div>
-    <div class="col-md-6" style="float:right">
-        <div>
-            @Html.ActionLink("Check out the most sold coffee this week", "MostSoldWeek", null, new { @class = "btn btn-info" })
-        </div>
-        <br />
-        <div>
-            @Html.ActionLink("Check out the least sold coffee this week!", "LeastSoldWeek", null, new { @class = "btn btn-info" })
-        </div>
-    </div>
-</div>
+
+    <div class="hr"><hr /></div>
 
     <table class="table" id="table_coffee_statistics">
         <thead>
@@ -45,6 +51,7 @@
                     @Html.DisplayNameFor(model => model.Coffee.TotalQuantitySold)
                 </th>
                 <th>
+                    Stock Quantity
                 </th>
             </tr>
         </thead>
@@ -55,8 +62,10 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Coffee.Name)
                     </td>
-                    <td>
-                        <img alt="@item.Coffee.Name" src="@Url.Content(item.Coffee.ImgUrl)" width="300px" />
+                    <td class="img-field hidden-img">
+                        <a href="/Coffee/Details/@item.Coffee.CoffeeId">
+                            <img alt="@item.Coffee.Name" src="@Url.Content(item.Coffee.ImgUrl)" />
+                        </a>
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Coffee.QuantityInStock)
@@ -67,9 +76,9 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Coffee.TotalQuantitySold)
                     </td>
-                    <td>
-                        <button data-button-id=@item.Coffee.CoffeeId data-max-decrease=@item.Coffee.QuantityInStock data-max-increase="@item.MaxIncreaseStock" class="btn btn-success btn_increase">Increase quantity in stock</button>|
-                        <button data-button-id=@item.Coffee.CoffeeId data-max-decrease=@item.Coffee.QuantityInStock data-max-increase="@item.MaxIncreaseStock" class="btn btn-danger btn_decrease">Decrease quantity in stock</button>
+                    <td class="text-center">
+                        <a data-button-id=@item.Coffee.CoffeeId data-max-decrease=@item.Coffee.QuantityInStock data-max-increase="@item.MaxIncreaseStock" class="fa fa-chevron-up fa-2x text-success btn_increase"></a><br />
+                        <a data-button-id=@item.Coffee.CoffeeId data-max-decrease=@item.Coffee.QuantityInStock data-max-increase="@item.MaxIncreaseStock" class="fa fa-chevron-down fa-2x text-danger btn_decrease"></a>
                     </td>
                 </tr>
 
@@ -77,14 +86,17 @@
         </tbody>
     </table>
 
-<div>
-    @Html.ActionLink("Back to list", "Index", null, new { @class = "btn btn-info" })
+    <div>
+        @Html.ActionLink("Back to list", "Index", null, new { @class = "btn btn-info" })
+    </div>
 </div>
-
 @section scripts{
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <script type="text/javascript">
-            var table = $("#table_coffee_statistics").DataTable();
+        var table = $("#table_coffee_statistics").DataTable();
+        $('#toggle-img').on("click", function () {
+            $('.hidden-img').toggle('slow');
+        });
             $("#table_coffee_statistics .btn_increase").click(function () {
                 var button = $(this);
                 bootbox.prompt({

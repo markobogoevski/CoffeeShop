@@ -27,13 +27,13 @@
         [JsonIgnore]
         public virtual List<CoffeeModel> Coffees { get; set; }
 
-        [Display(Name = "Quantity of ingredient in stock")]
+        [Display(Name = "Ingredients in stock")]
         public int QuantityInStock { get; set; }
 
-        [Display(Name = "Quantity of ingredient used this week")]
+        [Display(Name = "Ingredients used this week")]
         public int QuantityUsedLastWeek { get; set; }
 
-        [Display(Name = "Total quantity of ingredient used throughout time")]
+        [Display(Name = "Total ingredients used")]
         public int TotalQuantityUsed { get; set; }
     }
 }
