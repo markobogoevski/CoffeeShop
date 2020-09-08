@@ -13,6 +13,7 @@
 ###################
 # compiled source #
 ###################
+applicationhost.config
 .vs\*
 .vs/*
 *.com
