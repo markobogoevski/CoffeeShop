@@ -129,7 +129,7 @@
                             }
                         </td>
                         <td>
-                            @Html.ActionLink("Details", "Details", new { id = item.OrderId }, new { @class = "btn btn-info" })
+                            @Html.ActionLink("‎", "Details", new { id = item.OrderId }, new { @class = "fa fa-info-circle fa-2x text-success" })
                             @{
                                 List<CancelOrderViewModel> cancellable = ViewBag.Cancellable;
                                 bool canCancel = cancellable.Where(can => can.OrderId == item.OrderId).First().Cancellable;
@@ -147,20 +147,21 @@
                                 }
                                 string btnDeactivateName = (item.OrderStatus == OrderStatus.INACTIVE || item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED) ? "Remove" : "Cancel";
                             }
-                            <button data-hide=@canCancel data-order-id=@item.OrderId class="btn btn-danger btn-cancel">@btnDeactivateName</button>
+                            <button data-hide=@canCancel data-order-id=@item.OrderId class="fa fa-remove fa-2x text-danger">@btnDeactivateName</button>
+
                             @{
                                 if (User.IsInRole(UserRoles.User))
                                 {
-                                    <button data-hide=@canActivate data-order-id=@item.OrderId class="btn btn-warning btn-activate">Activate</button>
-                                    <button data-hide=@canDiscard data-order-id=@item.OrderId class="btn btn-danger btn-discard">Discard</button>
-                                    <button data-hide=@canRate data-order-id=@item.OrderId class="btn btn-success btn-rate">Rate</button>
+                                    <button data-hide=@canActivate data-order-id=@item.OrderId class="fa fa-check text-success">Activate</button>
+                                    <button data-hide=@canDiscard data-order-id=@item.OrderId class="fa fa-remove js-delete fa-2x text-danger">Discard</button>
+                                    <button data-hide=@canRate data-order-id=@item.OrderId class="fa fa-star text-warning">Rate</button>
                                 }
                             }
                             @{
                                 if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
                                 {
-                                    <button data-hide=@canFinish data-order-id=@item.OrderId class="btn btn-success btn-finish">Finish order</button>
-                                    <button data-hide=@canFinish data-order-id=@item.OrderId class="btn btn-warning btn-force">Cancel order</button>
+                                    <button data-hide=@canFinish data-order-id=@item.OrderId class="fa fa-check text-success">Finish order</button>
+                                    <button data-hide=@canFinish data-order-id=@item.OrderId class="fa fa-bolt text-warning">Cancel order</button>
                                 }
                             }
                         </td>

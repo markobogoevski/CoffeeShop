@@ -75,12 +75,11 @@
                     @{
                         if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
                         {
-                            @Html.ActionLink("Edit", "Edit", new { id = item.IngredientId }, new { @class = "btn btn-info" })
-                            <button data-ingredient-id="@item.IngredientId" class="btn btn-danger js-delete">Delete</button>
+                            @Html.ActionLink("‎", "Edit", new { id = item.IngredientId }, new { @class = "fa fa-edit fa-2x text-warning" })
+                            <a data-coffee-id="@item.IngredientId" class="fa fa-remove js-delete fa-2x text-danger"></a>
                         }
                     }
-                    @Html.ActionLink("Details", "Details", new { id = item.IngredientId }, new { @class = "btn btn-info" })
-                </td>
+                    @Html.ActionLink("‎", "Details", new { id = item.IngredientId }, new { @class = "fa fa-info-circle fa-2x text-success" })
             </tr>
 
         }
