@@ -305,8 +305,7 @@
         }
 
         // POST: Coffee/Delete
-        //[Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
-        [AllowAnonymous]
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
         public ActionResult Delete(Guid id)
         {
             if (id == null)
