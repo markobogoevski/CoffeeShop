@@ -2,21 +2,17 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/CoffeeShop/App_Data/aspnet-CoffeeShop-20200803043421.mdf
-/CoffeeShop/App_Data/aspnet-CoffeeShop-20200803043421_log.ldf
-/CoffeeShop/App_Data/aspnet-CoffeeShop-20200803043422.mdf
-/CoffeeShop/App_Data/aspnet-CoffeeShop-20200803043422_log.ldf
-/CoffeeShop/Content/Images/esspreso_ethiopia.jpg
-/CoffeeShop/Images/brown_sugar.jpg
-/CoffeeShop/Images/esspreso_ethiopia.jpg
-/CoffeeShop/Migrations/202008061455535_initial.cs
-/CoffeeShop/Migrations/202008061455535_initial.Designer.cs
-/CoffeeShop/Migrations/202008061455535_initial.resx
+/CoffeeShop/App_Data/*
+/CoffeeShop/Migrations/*
 /CoffeeShop/App_Data
 /CoffeeShop/Migrations
+/CoffeeShop/Debug
+/CoffeeShop/bin
 ###################
 # compiled source #
 ###################
+.vs
+
 *.com
 *.class
 *.dll
