@@ -1,16 +1,8 @@
 ﻿
-
-#landImage {
-    background: url(/Content/Images/Logo/jumbo-img.jpg);
-    background-size: cover;
-    background-repeat: no-repeat;
-    height: 100vh;
-}
-
 .jumbotron {
-    background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url(/Content/Images/Logo/jumbo-img.jpg) no-repeat center center;
+    background: linear-gradient(rgba(0, 0, 0, .4), rgba(52, 58, 64, 1)), url(/Content/Images/Logo/jumbo-img.jpg) no-repeat center center;
     background-size: cover;
-    min-height: 300px;
+    min-height: 400px;
 }
 
 .dataTable > thead > tr > th[class*="sorting"].no-sort::before,
@@ -116,4 +108,13 @@ a.custom-card-link:hover {
     height: 48px;
     margin: auto;
     text-align: center;
+}
+
+.text-orange {
+    color: rgb(255, 140, 0)
+}
+
+hr.red {
+    border-top: darkred 5px solid;
+    width: 25%;
 }

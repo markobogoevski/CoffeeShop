@@ -2,7 +2,7 @@
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron jumbotron-fluid">
+<div class="jumbotron jumbotron-fluid mb-0">
     <div class="text-center text-white">
         <h1 class="display-4">Specialty coffee made by real baristas.</h1>
         <p class="lead">Our coffee meets the highest expectations</p>
@@ -10,7 +10,7 @@
     </div>
 </div>
 
-<section id="menu" class="full-row bg-dark py-4">
+<section id="menu" class="full-row bg-dark py-4 mb-5">
     <div class="container text-right">
         <div class="row">
             <div class="col-6 align-self-center">
@@ -55,7 +55,7 @@
     </div>
 </section>
 
-<section id="customersValues">
+<section id="customersValues" class="container">
     <h1 class="text-uppercase text-center">What our costumers value</h1>
     <hr class="red mx-auto mb-5" />
     <div class="row text-center">
@@ -92,7 +92,7 @@
 </section>
 
 
-<section id="About">
+<section id="About" class="container mt-5">
     <div class="row">
         <div class="col-7">
             <h1 class="text-uppercase">About us</h1>
@@ -102,10 +102,7 @@
                 The sourdough is the beating heart of our restaurant. Slowly fermenting organic Macedonian flour, on its way to become pizza.
                 We believe in sourcing artisanal produce - local when available, but always delicious, sustainable and natural. We chose produce we love, and are transparent about it. We help our guests fight against a greedy food industry one bite at the time – and having a blast doing so!
                 Don’t get us wrong. Downing pitchers of Prosecco, dashing Skopje Bitters and munching a mega tasty, fermented dough Pizza - it’s definitely still a guilty pleasure! But doesn’t it feel great to know that somebody else is benefiting from your sins?
-                We call this the principle of “sin win”. You have fun and cash is generated for quality producers.
-                Our restaurant enables you to help - not quite in your sleep -  but in booze and food.
-                Come and join our little revolution!
-                Let’s dine and drink for good.
+
             </p>
             <p class="text-justify">
                 We've gained a reputation for never cutting corners and working with the finest quality ingredients no matter what.
@@ -114,50 +111,11 @@
             </p>
         </div>
         <div class="col-5">
-            <img class="mt-4 pt-4 img-fluid" src="~/Content/Images/pizza-making-event.jpg" />
+            <img class="mt-5 pt-4 img-fluid" src="~/Content/Images/Coffee/machiatto.jpg" />
         </div>
     </div>
 </section>
 
-
-
-<section id="contactForm">
-    <h1 class="text-uppercase">Drop us a line</h1>
-    <hr class="red ml-0" />
-    <div class="row">
-        <div class="col">
-
-            <div class="row">
-                <h3>Phone: </h3>
-                <h3>Instagram: </h3>
-                </div>
-                <div class="form-group col">
-                    <label for="LastName" class="col-form-label font-weight-bold">Last name:</label>
-                    <input type="text" class="form-control" id="LastName" name="LastName" placeholder="Last Name" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col">
-                    <label for="Email" class="col-form-label font-weight-bold">Email:</label>
-                    <input type="email" class="form-control" name="Email" id="Email" placeholder="Email" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col">
-                    <label for="Message" class="col-form-label font-weight-bold">Any comments, questions, or concerns, let us know below.</label>
-                    <textarea rows="8" id="Message" class="form-control" name="Message" placeholder="Enter some message..."></textarea>
-                </div>
-            </div>
-            <p>
-                <button id="contact" class="btn bg-orange text-white">Post</button>
-            </p>
-        </div>
-        <div class="mapouter col-6">
-            <div class="gmap_canvas"><iframe width="500" height="500" id="gmap_canvas" src="https://maps.google.com/maps?q=Finki&t=&z=15&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe></div>
-        </div>
-    </div>
-
-</section>
 
 @section scripts{
     <script>

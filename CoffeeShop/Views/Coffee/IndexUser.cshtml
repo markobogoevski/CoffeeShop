@@ -3,57 +3,57 @@
 @{
     ViewBag.Title = "IndexUser";
 }
+<div class="container">
+    <h1>Coffee Menu</h1>
+    <div class="hr"><hr /></div>
 
-<h1>Coffee Menu</h1>
-<div class="hr"><hr /></div>
-
-<div class="row">
-    <div class="col-lg-4 col-md-4 col-sm-12">
-        <div class="card hoverable text-white m-2" style="background: linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4) ); border-radius: 20px;">
-            <a href=@Url.Action("CreateCustom") class="custom-card-link">
-                <div class="card-body" style="min-height: 250px">
-                    <h5 class="card-title text-center">Create new</h5>
-                    <hr class="red ml-0 mx-0" />
-                    <div class="text-center d-flex align-items-center justify-content-center" style="min-height: 100px">
-                        <i class="fa fa-plus fa-3x"></i>
-                    </div>
-                </div>
-            </a>
-        </div>
-    </div>
-
-    @foreach (var item in Model)
-    {
+    <div class="row">
         <div class="col-lg-4 col-md-4 col-sm-12">
-            <div class="card hoverable text-white m-2" style="background: linear-gradient( rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.0) ), url(@item.ImgUrl); object-fit:cover; background-repeat:no-repeat; background-position: center; background-size:cover ;border-radius: 30px;">
-                <a href=@Url.Action("Details", new { id=item.CoffeeId}) class="custom-card-link">
-                    <div class="card-header border-0">
-                        <h5 class="card-title text-center">@item.Name</h5>
-                        <hr class="red ml-0 mt-1 mb-1 " />
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text mt-2 font-italic" style="height: 90px;">
-                            @string.Join(", ", item.Ingredients.Select(x => x.Name).ToList())
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        <div class="float-left">
-                            <a href=@Url.Action("CreateCustom", "Coffee",new { id = item.CoffeeId } ) class="btn btn-light pt-2 pb-2 buttonsDown" style="background-color: rgba(255, 255, 255, 0.95)"><i class="fa fa-2x fa-edit"></i></a>
-                        </div>
-                        <div class="float-left">
-                            <button data-coffee-id="@item.CoffeeId" class="delete-coffee btn btn-light pt-2 pb-2 buttonsDown ml-1" style="background-color: rgba(200, 2, 2, 0.95)"><i class="fa fa-2x fa-remove"></i></button>
-                        </div>
-                        <div class="float-right">
-                            <a href=@Url.Action("Create", "OrderItem", new { id = item.CoffeeId }) class="btn btn-light pt-2 pb-2 buttonsDown" style="background-color: rgba(167, 107, 35, 0.95)"><i class="fa fa-2x fa-shopping-cart"></i></a>
+            <div class="card hoverable text-white m-2" style="background: linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4) ); border-radius: 20px;">
+                <a href=@Url.Action("CreateCustom") class="custom-card-link">
+                    <div class="card-body" style="min-height: 250px">
+                        <h5 class="card-title text-center">Create custom coffee</h5>
+                        <hr class="red mx-auto" />
+                        <div class="text-center d-flex align-items-center justify-content-center" style="min-height: 100px">
+                            <i class="fa fa-plus fa-3x"></i>
                         </div>
                     </div>
                 </a>
             </div>
         </div>
-    }
 
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4 col-md-4 col-sm-12">
+                <div class="card hoverable text-white m-2" style="background: linear-gradient( rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.0) ), url(@item.ImgUrl); object-fit:cover; background-repeat:no-repeat; background-position: center; background-size:cover ;border-radius: 30px;">
+                    <a href=@Url.Action("Details", new { id=item.CoffeeId}) class="custom-card-link">
+                        <div class="card-header border-0">
+                            <h5 class="card-title text-center">@item.Name</h5>
+                            <hr class="red mx-auto mt-1 mb-1" />
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text mt-2 font-italic" style="height: 90px;">
+                                @string.Join(", ", item.Ingredients.Select(x => x.Name).ToList())
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="float-left">
+                                <a href=@Url.Action("CreateCustom", "Coffee",new { id = item.CoffeeId } ) class="btn btn-light pt-2 pb-2 buttonsDown" style="background-color: rgba(255, 255, 255, 0.95)"><i class="fa fa-2x fa-edit"></i></a>
+                            </div>
+                            <div class="float-left">
+                                <button data-coffee-id="@item.CoffeeId" class="delete-coffee btn btn-light pt-2 pb-2 buttonsDown ml-1" style="background-color: rgba(200, 2, 2, 0.95)"><i class="fa fa-2x fa-remove"></i></button>
+                            </div>
+                            <div class="float-right">
+                                <a href=@Url.Action("Create", "OrderItem", new { id = item.CoffeeId }) class="btn btn-light pt-2 pb-2 buttonsDown" style="background-color: rgba(167, 107, 35, 0.95)"><i class="fa fa-2x fa-shopping-cart"></i></a>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
+
+    </div>
 </div>
-
 
 @section scripts{
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
