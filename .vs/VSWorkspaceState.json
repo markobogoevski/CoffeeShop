@@ -2,13 +2,11 @@
   "ExpandedNodes": [
     "",
     "\\CoffeeShop",
-    "\\CoffeeShop\\Content",
-    "\\CoffeeShop\\Content\\Images",
     "\\CoffeeShop\\Content\\Images\\Coffee",
-    "\\CoffeeShop\\Views",
+    "\\CoffeeShop\\Views\\Cart",
     "\\CoffeeShop\\Views\\Home",
     "\\CoffeeShop\\Views\\Shared"
   ],
-  "SelectedNode": "\\CoffeeShop\\Views\\Shared\\_Layout.cshtml",
+  "SelectedNode": "\\.gitignore",
   "PreviewInSolutionExplorer": false
 }
