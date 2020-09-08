@@ -1,6 +1,14 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\CoffeeShop",
+    "\\CoffeeShop\\Content",
+    "\\CoffeeShop\\Content\\Images",
+    "\\CoffeeShop\\Content\\Images\\Coffee",
+    "\\CoffeeShop\\Views",
+    "\\CoffeeShop\\Views\\Home",
+    "\\CoffeeShop\\Views\\Shared"
   ],
+  "SelectedNode": "\\CoffeeShop\\Views\\Shared\\_Layout.cshtml",
   "PreviewInSolutionExplorer": false
 }

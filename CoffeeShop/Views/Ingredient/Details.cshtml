@@ -4,59 +4,61 @@
 @{
     ViewBag.Title = "Details";
 }
+<div class="container">
+    <h2>Ingredient details</h2>
 
-<h2>Ingredient details</h2>
+    <div>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
 
-<div>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Price)
+            </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Price)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Price)
-        </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.ImgUrl)
+            </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ImgUrl)
-        </dt>
+            <dd>
+                <img src="@Model.ImgUrl" alt="@Model.Name" width="300" />
+            </dd>
 
-        <dd>
-            <img src="@Model.ImgUrl" alt="@Model.Name" width="300" />
-        </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Description)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-    </dl>
-</div>
-<p>
-    @if (ViewBag.Statistics != null)
-    {
-        @Html.ActionLink("Back to Statistics", "IngredientStatistics", routeValues: null, htmlAttributes: new { @class = "btn btn-info" })
-    }
-    else
-    {
-        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-info" })
-    }
-    @{
-        if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+        </dl>
+    </div>
+    <p>
+        @if (ViewBag.Statistics != null)
         {
-            @Html.ActionLink("Edit", "Edit", new { id = Model.IngredientId }, new { @class = "btn btn-warning" })
+            @Html.ActionLink("Back to Statistics", "IngredientStatistics", routeValues: null, htmlAttributes: new { @class = "btn btn-info" })
         }
-    }
-</p>
+        else
+        {
+            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-info" })
+        }
+        @{
+            if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = Model.IngredientId }, new { @class = "btn btn-warning" })
+            }
+        }
+    </p>
+
+</div>
