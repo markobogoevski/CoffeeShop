@@ -33,13 +33,13 @@
         
         public virtual List<IngredientModel> Ingredients { get; set; }
 
-        [Display(Name = "Quantity of coffee in stock")]
+        [Display(Name = "Coffee in stock")]
         public int QuantityInStock { get; set; }
 
-        [Display(Name = "Quantity of coffee sold this week")]
+        [Display(Name = "Coffee sold this week")]
         public int QuantitySoldLastWeek { get; set; }
 
-        [Display(Name = "Total quantity of coffee sold throughout time")]
+        [Display(Name = "Total coffee sold")]
         public int TotalQuantitySold { get; set; }
 
         [Required]
