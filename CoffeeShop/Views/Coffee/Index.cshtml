@@ -57,31 +57,32 @@
     @{
         if (ViewBag.Ingredients.Count != 0)
         {
-        <div class="col-md-6" style="float:right">
-            <strong>Filter coffee by ingredients: </strong><br /><br />
-            @{
-                foreach (IngredientModel ingredient in (List<IngredientModel>)ViewBag.Ingredients)
-                {
-                    <div class="form-group">
-                        <div class="m-1 d-inline-block">
-                            <label class="container_new" for="@ingredient.IngredientId">
-                                <em>@ingredient.Name</em>
-                                <input data-id="@ingredient.IngredientId" class="ing_check" type="checkbox" value="@ingredient.IngredientId" name="@ingredient.Name" id="@ingredient.IngredientId" autocomplete="off" />
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                    </div>
+        <div class="col-md-12 text-center card mt-2">
+            <strong>Filter coffee by ingredients: </strong><br />
+                <div class="form-group">
+                    @{
+                        foreach (IngredientModel ingredient in (List<IngredientModel>)ViewBag.Ingredients)
+                        {
 
-                }
-            }
-           
-        </div>
+                            <div class="m-1 d-inline-block">
+                                <label class="container_new" for="@ingredient.IngredientId">
+                                    <em>@ingredient.Name</em>
+                                    <input data-id="@ingredient.IngredientId" class="ing_check" type="checkbox" value="@ingredient.IngredientId" name="@ingredient.Name" id="@ingredient.IngredientId" autocomplete="off" />
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+
+
+                        }
+                    }
+                </div>
+            </div>
         }
     }
     
 </div>
 @{ 
-    if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.User))
+    if (Request.IsAuthenticated)
     {
         <div class="hr"><hr /></div>
         }
