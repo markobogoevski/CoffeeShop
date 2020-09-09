@@ -21,29 +21,26 @@
                    new { @class = "text-danger fa fa-calendar-check-o fa-3x m-3 ", style = "display:block" })
             <span>See the daily deal!</span>
         </div>
-        <div class="container mb-4">
+        <div class="container mt-3 mb-3">
             @{
                 if (ViewBag.Ingredients.Count != 0)
                 {
-                    <div class="col-md-12 text-center card mt-2">
-                        <h5 class="mb-1 mt-1">Filter by ingredient: </h5>
-                        <div class="form-group">
-                            @{
-                                foreach (IngredientModel ingredient in (List<IngredientModel>)ViewBag.Ingredients)
-                                {
-
-                                    <div class="m-1 d-inline-block">
+                    <div class="col-md-12 mt-3">
+                        <h5 class="mb-3 mt-4">Filter by ingredient: </h5>
+                        @{
+                            foreach (IngredientModel ingredient in (List<IngredientModel>)ViewBag.Ingredients)
+                            {
+                                <div class="form-group" style="width:100%">
+                                    <div class="m-1 inline-block float-left">
                                         <label class="container_new" for="@ingredient.IngredientId">
-                                            <em class="border-right border-dark">@ingredient.Name&nbsp;&nbsp;&nbsp;</em>
+                                            <em class="border-right border-dark">@ingredient.Name&nbsp;&nbsp;&nbsp;</em>&nbsp;
                                             <input data-id="@ingredient.IngredientId" class="ing_check" type="checkbox" value="@ingredient.IngredientId" name="@ingredient.Name" id="@ingredient.IngredientId" autocomplete="off" />
                                             <span class="checkmark"></span>
                                         </label>
                                     </div>
-
-
-                                }
+                                </div>
                             }
-                        </div>
+                        }
                     </div>
                 }
                 else
@@ -53,6 +50,8 @@
             }
         </div>
     </div>
+    <div class="hr"><hr /></div>
+
     <div class="row">
         @if (User.IsInRole(CoffeeShop.Enumerations.UserRoles.User))
         {
@@ -73,7 +72,7 @@
 
         @foreach (var item in Model)
         {
-            <div class="col-lg-4 col-md-4 col-sm-12">
+            <div class="col-lg-4 col-md-4 col-sm-12 my_coffee_card" id="@item.CoffeeId">
                 <div class="card hoverable text-white m-2" style="background: linear-gradient( rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.0) ), url(@item.ImgUrl); object-fit:cover; background-repeat:no-repeat; background-position: center; background-size:cover ;border-radius: 30px;">
                     <a href=@Url.Action("Details", new { id=item.CoffeeId}) class="custom-card-link">
                         <div class="card-header border-0">
@@ -133,15 +132,14 @@
 @section scripts{
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <script type="text/javascript">
-        $(document).ready(function () {
-            $(".delete-coffee").each(function () {
-                var button = $(this);
-                if (button.attr("data-visible") == "False") {
-                    console.log("tuka")
-                    button.hide();
-                }
-            })
+        $(".delete-coffee").each(function () {
+            var button = $(this);
+            if (button.attr("data-visible") == "False") {
+                button.hide();
+            }
+        })
 
+        $(document).ready(function () {
             $(".delete-coffee").click(function () {
                 var button = $(this);
                 bootbox.confirm("Дали сакате да го избришете кафето?", function (result) {
@@ -155,6 +153,39 @@
                         });
                     }
                 });
+            });
+
+            $(".ing_check").click(function () {
+                var ids = {};
+                $('input[type=checkbox]:checked').each(function () {
+                    ids[$(this).attr("name")] = $(this).val();
+                });
+                if (!jQuery.isEmptyObject(ids)) {
+                    $.ajax({
+                        method: "GET",
+                        url: "/Coffee/apiCallFilter",
+                        data: ids,
+                        success: function (results) {
+                            $(".my_coffee_card").each(function () {
+                                var id = $(this).attr("id");
+                                console.log(id)
+                                if (results.indexOf(id) == -1) {
+                                    $(this).hide();
+                                }
+                                else {
+                                    $(this).show();
+                                }
+                            })
+                        },
+                        dataType: 'json',
+                        contentType: 'application/json'
+                    });
+                }
+                else {
+                    $(".my_coffee_card").each(function () {
+                        $(this).show();
+                    })
+                }
             });
         })
 

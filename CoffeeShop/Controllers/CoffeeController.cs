@@ -22,11 +22,11 @@
             _repository = Repository.GetInstance();
         }
 
-        // GET: Coffee
-        [AllowAnonymous]
-        public ActionResult Index()
+        // Post: ApiCallFilter
+        [HttpGet]
+        public ActionResult ApiCallFilter()
         {
-            try
+            if (Request.IsAjaxRequest())
             {
                 var ingredients = _repository.GetAllUsedIngredients(User.Identity.GetUserId())
                                              .ToList();
@@ -48,6 +48,25 @@
                     coffee = _repository.GetAllCoffeeForUser(User.Identity.GetUserId())
                                         .ToList();
                 }
+
+                return Json(coffee.Select(cof => cof.CoffeeId), JsonRequestBehavior.AllowGet);
+            }
+            else
+                return new HttpNotFoundResult();
+        }
+
+        [AllowAnonymous]
+        public ActionResult Index()
+        {
+            try
+            {
+                var ingredients = _repository.GetAllUsedIngredients(User.Identity.GetUserId())
+                                             .ToList();
+                ViewBag.Ingredients = ingredients;
+                List<CoffeeModel> coffee = null;
+                List<string> ingredientIds = new List<string>();
+                coffee = _repository.GetAllCoffeeForUser(User.Identity.GetUserId())
+                                        .ToList();
                 if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
                     return View(coffee);
                 else

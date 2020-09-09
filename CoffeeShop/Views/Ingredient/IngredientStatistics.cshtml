@@ -64,7 +64,7 @@
                             @Html.DisplayFor(modelItem => item.Name)
                         </td>
                         <td class="img-field hidden-img">
-                            <a href="/Coffee/Details/@item.IngredientId">
+                            <a href="/Ingredient/Details/@item.IngredientId">
                                 <img alt="@item.IngredientId" src="@Url.Content(item.ImgUrl)" />
                             </a>
                         </td>
@@ -87,7 +87,7 @@
             </tbody>
         </table>
     </div>
-    <div>
+    <div class="m-3">
         @Html.ActionLink("Back to list", "Index", null, new { @class = "btn btn-info" })
     </div>
 </div>

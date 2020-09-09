@@ -23,7 +23,7 @@
 
 /* Create a custom checkbox */
 .checkmark {
-    position: center;
+    position: absolute;
     top: 0;
     left: 0;
     height: 25px;
@@ -55,8 +55,8 @@
 
 /* Style the checkmark/indicator */
 .container_new .checkmark:after {
-    left: 9px;
-    top: 5px;
+    left: 10px;
+    top: 7px;
     width: 5px;
     height: 10px;
     border: solid white;

@@ -524,6 +524,19 @@ namespace CoffeeShop.Services
             return coffeeStatistics;
         }
 
+        public IEnumerable<CoffeeModel> GetTopCoffee()
+        {
+            List<CoffeeModel> coffees = _db.Coffee.OrderByDescending(cof => cof.TotalQuantitySold).Take(5).ToList();
+            if (coffees != null)
+            {
+                return coffees;
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+
         // Returns price multipler for coffee size (used for price for ingredients in coffee)
         private decimal GetPriceMultiplierForCoffeeSize(string coffeeSize)
         {

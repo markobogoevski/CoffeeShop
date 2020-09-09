@@ -4,16 +4,14 @@
 @{
     ViewBag.Title = "Details";
 }
-<div class="container">
+<div class="container text-center">
 
-    <h2>Details</h2>
-
+    <h2 class="mt-3">Order details</h2>
+    <div class="hr"><hr /></div>
     <div>
-        <h4>OrderModel</h4>
-        <hr />
         <dl class="dl-horizontal">
             <dt>
-                @Html.DisplayNameFor(model => model.Address)
+                @Html.DisplayNameFor(model => model.Address) :
             </dt>
 
             <dd>
@@ -21,7 +19,7 @@
             </dd>
 
             <dt>
-                @Html.DisplayNameFor(model => model.OrderStatus)
+                @Html.DisplayNameFor(model => model.OrderStatus) :
             </dt>
 
             <dd>
@@ -29,7 +27,7 @@
             </dd>
 
             <dt>
-                @Html.DisplayNameFor(model => model.OrderTime)
+                @Html.DisplayNameFor(model => model.OrderTime) :
             </dt>
 
             <dd>
@@ -46,7 +44,7 @@
             </dd>
 
             <dt>
-                @Html.DisplayNameFor(model => model.OrderFinishTime)
+                @Html.DisplayNameFor(model => model.OrderFinishTime) :
             </dt>
 
             <dd>
@@ -77,7 +75,7 @@
             </dd>
 
             <dt>
-                @Html.DisplayNameFor(model => model.OrderRating)
+                @Html.DisplayNameFor(model => model.OrderRating) :
             </dt>
 
             <dd>
@@ -108,48 +106,50 @@
             </dd>
 
         </dl>
-    </div>
-    <div>
-        <ul>
+        <strong>Order items: </strong><br /><br />
+        <div class="list-group w-50 text-center m-0 m-auto mt-5">
             @{
                 decimal totalPrice = 0;
                 var j = 1;
                 foreach (var orderItem in Model.OrderItems)
                 {
-                    <strong>Order item: @j</strong>
-                    j++;
-                    <li>Coffee: @orderItem.Coffee.Name</li>
+                        <a href="~/Coffee/Details/@orderItem.Coffee.CoffeeId" class="list-group-item list-group-item-action flex-column align-items-start text-left">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-4"><strong>Coffee name:</strong> @orderItem.Coffee.Name</h5>
+                            </div>
+                            @if (orderItem.Coffee.Ingredients.Count != 0)
+                            {
+                                <p class="mb-1"><strong>Ingredients:</strong> @String.Join(", ", orderItem.Coffee.Ingredients.Select(ing => ing.Name))</p>
 
-                    if (orderItem.Coffee.Ingredients.Count != 0)
-                    {
-                        <li>
-                            <ul>
-                                @{
-                                    <em>Ingredients: </em>
-                                    foreach (var ingredientItem in orderItem.Coffee.Ingredients)
-                                    {
-                                        <li>@ingredientItem.Name</li>
-                                    }
-                                }
-                            </ul>
-                        </li>
-                    }
-                    <li>Quantity: @orderItem.Quantity</li>
-                    var price = orderItem.Coffee.TotalPrice * orderItem.Quantity;
-                    totalPrice += price;
-                    <li>Order item price: @price</li>
+                            }
+                            <p class="mb-1">
+                                <strong>Quantity:</strong> @orderItem.Quantity
+                            </p>
+                            @{ 
+                                var price = orderItem.Coffee.TotalPrice * orderItem.Quantity;
+                                totalPrice += price;
+                            }
+                        <p class="mb-1"><strong>Order item price: </strong>@price</p>
+                        </a>
                 }
             }
-        </ul>
-        @{
+        </div><br />
 
-        }
         <em><strong>Total order price: @totalPrice</strong></em><br /><br />
-    </div>
+    
+</div>
 
 
-    <p>
-        @Html.ActionLink("Back to orders", "Index", null, new { @class = "btn btn-info" })
-    </p>
+<p>
+    @Html.ActionLink("Back to orders", "Index", null, new { @class = "btn btn-info" })
+</p>
 
 </div>
+
+@section Styles{
+    <style>
+        .list-group a:nth-child(odd) {
+            background-color: lightgray;
+        }
+    </style>
+}
