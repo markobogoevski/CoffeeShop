@@ -12,19 +12,23 @@
     <div class="container align-btns text-center">
         @{ if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
             {
-                @Html.ActionLink("‎", "Create", null, new { @class = "fa fa-plus fa-3x  mr-5 text-success" })
+                <a href="@Url.Action("Create", "Ingredient",null)" class="text-success fa fa-plus fa-3x m-3">
+                    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true">Create a new ingredient</span>
+                </a>
                 if (Model.Count() != 0)
                 {
-                    @Html.ActionLink("‎", "IngredientStatistics", null, new { @class = "fa fa-bar-chart fa-3x mr-5 text-dark" })
-
+                    <a href="@Url.Action("IngredientStatistics", "Ingredient",null)" class="text-dark fa fa-bar-chart fa-3x m-3">
+                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true">Check out ingredient statistics</span>
+                    </a>
                 }
             }
         }
         @{
             if (Model.Count() != 0)
             {
-                <a class="fa fa-image fa-3x mr-5 text-info" id="toggle-img"></a>
-
+                <a class="text-info fa fa-image fa-3x m-3" id="toggle-img">
+                    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true">Toggle ingredient image</span>
+                </a>
             }
         }
 
@@ -35,7 +39,8 @@
             <div class="hr"><hr /></div>
         }
     }
-    <table class="table table-hover table-striped" id="table1">
+<div class="table-responsive">
+    <table class="table table-hover table-striped dt-responsive display nowrap" id="table1" style="width:100%">
         <thead class="bg-dark text-orange">
             <tr>
                 <th>
@@ -71,17 +76,24 @@
                         </a>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Description)
+                        @if (item.Description != null)
+                        {
+                            @Html.DisplayFor(modelItem => item.Description)
+                        }
+                        else
+                        {
+                            <p>Currently there is no available description...</p>
+                        }
                     </td>
                     <td>
                         @{
                             if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
                             {
-                                @Html.ActionLink("‎", "Edit", new { id = item.IngredientId }, new { @class = "fa fa-edit fa-2x text-warning" })
-                                <a data-coffee-id="@item.IngredientId" class="fa fa-remove js-delete fa-2x text-danger"></a>
+                                @Html.ActionLink("‎", "Edit", new { id = item.IngredientId }, new { @class = "fa fa-edit fa-2x text-warning", @title = "Edit ingredient" })
+                                <a data-ingredient-id="@item.IngredientId" class="fa fa-remove js-delete fa-2x text-danger" title="Delete ingredient"></a>
                             }
                         }
-                        @Html.ActionLink("‎", "Details", new { id = item.IngredientId }, new { @class = "fa fa-info-circle fa-2x text-success" })
+                        @Html.ActionLink("‎", "Details", new { id = item.IngredientId }, new { @class = "fa fa-info-circle fa-2x text-success", @title = "Ingredient details" })
                 </tr>
 
             }
@@ -89,36 +101,66 @@
 
     </table>
     </div>
-    @section scripts{
-        <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function () {
-                var table = $("#table1").DataTable();
-                $('#toggle-img').on("click", function () {
-                    $('.hidden-img').toggle('slow');
-                });
+</div>
 
-                $(".js-delete").click(function () {
-                    var button = $(this);
-                    bootbox.confirm("Дали сигурна сакате да ја избришете состојката?", function (result) {
-                        if (result) {
-                            $.ajax({
-                                method: "POST",
-                                url: "/Ingredient/Delete/" + button.attr("data-ingredient-id"),
-                                success: function () {
-                                    table.row(button.parents("tr")).remove().draw();
-                                    var div = $("#div-count");
-                                    var value = div.attr("data-ingredient-count");
-                                    var newValue = parseInt(value) - 1;
-                                    div.attr("data-ingredient-count", newValue)
-                                    if (parseInt(div.attr("data-ingredient-count")) == 0) {
-                                        location.reload();
-                                    }
-                                },
-                            });
-                        }
-                    })
-                });
+@section Styles {
+    <link href="@Url.Content("~/Styles/Checkbox.css")" rel="stylesheet" type="text/css" />
+    <style>
+        a {
+            text-decoration: none;
+            height: 100%;
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+
+            a span {
+                color: black;
+                font-size: 10px;
+                padding: 5px 0 10px 0;
+                display: block;
+                text-transform: uppercase;
+                font-weight: bolder;
+                font-family: 'Josefin Sans';
+            }
+    </style>
+}
+
+@section scripts{
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var table = $("#table1").DataTable();
+            $('#toggle-img').on("click", function () {
+                if ($('.hidden-img').is(':hidden')) {
+                    $('.hidden-img').toggle('slow');
+                }
+                else {
+                    $('.hidden-img').toggle();
+                }
             });
-        </script>
-    }
+
+            $(".js-delete").click(function () {
+                var button = $(this);
+                bootbox.confirm("Дали сигурно сакате да ја избришете состојката?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            method: "POST",
+                            url: "/Ingredient/Delete/" + button.attr("data-ingredient-id"),
+                            success: function () {
+                                table.row(button.parents("tr")).remove().draw();
+                                var div = $("#div-count");
+                                var value = div.attr("data-ingredient-count");
+                                var newValue = parseInt(value) - 1;
+                                div.attr("data-ingredient-count", newValue)
+                                if (parseInt(div.attr("data-ingredient-count")) == 0) {
+                                    location.reload();
+                                }
+                            },
+                        });
+                    }
+                })
+            });
+        });
+    </script>
+}

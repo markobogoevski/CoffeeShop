@@ -6,58 +6,88 @@
     if (ViewBag.Empty == true)
     {
         <p>There are currently no coffees for you...</p>
+        <div class="row text-center">
+            @Ajax.ActionLink("Hide",
+                                                                                           "HideDeal",
+                                                                                           null,
+                                                                                           new AjaxOptions
+                                                                                           {
+                                                                                               UpdateTargetId = "dailydeal",
+                                                                                               InsertionMode = InsertionMode.Replace,
+                                                                                               HttpMethod = "GET"
+                                                                                           },
+                                                                                           new { @class = "btn btn-info btn-block", style="margin: 0 auto; width:30%" })
+        </div>
     }
     else
     {
-        <div class="panel panel-primary col-md-5 block">
-            <div class="panel-heading">
-                <h3 class="panel-title">Your daily deal: @Model.Name</h3>
-            </div>
-            <div class="panel-body">
-                <p>
-                    <img alt="@Model.Name" src="@Url.Content(Model.ImgUrl)" width="80%" />
-                </p>
-                <div>
-                    <p>
-                        <em>Size: </em>@Model.Size
-                    </p>
-                    <p>
-                        <em>Description: </em>@Model.Description
-                    </p>
-                    <p>
-                        <em>Price on discount: </em>
-                        @String.Format("{0:F}", Model.TotalPrice)
-                    </p>
-                    <h5 class="panel-footer">Ingredients: </h5>
-                    <p>
-                        @{
-                            foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
-                            {
-                                <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity</strong>
-                                <br />
-                            }
-                        }<br />
-                    </p>
+        <div class="container">
+            <br />
+            <div class="card bg-dark">
+                <div class="card-header bg-dark">
+                    <span class="text-orange text-uppercase">Your daily deal: </span>
                 </div>
-                @{
-                    if (User.IsInRole(UserRoles.User))
-                    {
-                        @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = Model.CoffeeId, daily = true }, new { @class = "btn btn-success btn-block" })
-                        <br />
-                    }
-                }
-                @Ajax.ActionLink("Hide",
-                                 "HideDeal",
-                                 null,
-                                 new AjaxOptions
-                                 {
-                                     UpdateTargetId = "dailydeal",
-                                     InsertionMode = InsertionMode.Replace,
-                                     HttpMethod = "GET"
-                                 },
-                                 new { @class = "btn btn-info btn-block" })
+                <div class="card-body pr-5">
+                    <div class="row">
+                        <div class="col-5 align-middle my-auto h-100 text-center">
+                            <img class="img-fluid d-inline-block" src="@Model.ImgUrl" width="80%" />
+                        </div>
+                        <div class="col text-white">
+                            <h1 class="text-orange">
+                                Coffee : @Model.Name
+                            </h1>
+                            <span class="text-orange">Price on discount:  @String.Format("{0:F}", Model.TotalPrice)</span>
+                            <h5 class="text-orange text-left">Size: @Model.Size</h5>
+                            <hr class="red ml-0" />
+                            <div class="row">
+                                <div class="col-5">
+                                    <h4>Ingredients:</h4>
+                                    <p>
+                                        @{
+                                            foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
+                                            {
+                                                <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity</strong>
+                                                <br />
+                                            }
+                                        }<br />
+                                    </p>
+                                </div>
+                                <div class="col">
+                                    <h4>Description:</h4>
+                                    <p class="text-justify">
+                                        @if (Model.Description != null)
+                                        {
+                                            @Model.Description
+                                        }
+                                        else
+                                        {
+                                            <span>Currently there is no available description...</span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-dark">
+                    <div class="row mr-auto">
+                        @if (User.IsInRole(UserRoles.User))
+                        {
+                            @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = @Model.CoffeeId, daily = true }, new { @class = "btn btn-primary btn-block" })
+                        }
+                        @Ajax.ActionLink("Hide",
+                                                                                                       "HideDeal",
+                                                                                                       null,
+                                                                                                       new AjaxOptions
+                                                                                                       {
+                                                                                                           UpdateTargetId = "dailydeal",
+                                                                                                           InsertionMode = InsertionMode.Replace,
+                                                                                                           HttpMethod = "GET"
+                                                                                                       },
+                                                                                                       new { @class = "btn btn-info btn-block" })
+                    </div>
+                </div>
             </div>
         </div>
     }
 }
-

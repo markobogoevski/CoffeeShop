@@ -4,61 +4,106 @@
 @{
     ViewBag.Title = "Details";
 }
-<div class="container">
-    <h2>Ingredient details</h2>
+    <div class="container mt-3">
+        <h2>Ingredient details</h2>
 
-    <div>
-        <hr />
-        <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.Name)
-            </dt>
+        <div class="container col-md-4">
+            <hr />
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.Name)
-            </dd>
+                <dd>
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.Price)
-            </dt>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Price)
+                </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.Price)
-            </dd>
+                <dd>
+                    @Html.DisplayFor(model => model.Price)
+                </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.ImgUrl)
-            </dt>
+                <dt>
+                    @Html.DisplayNameFor(model => model.ImgUrl)
+                </dt>
 
-            <dd>
-                <img src="@Model.ImgUrl" alt="@Model.Name" width="300" />
-            </dd>
+                <dd>
+                    <img src="@Model.ImgUrl" alt="@Model.Name" width="100%" />
+                </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.Description)
-            </dt>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Description)
+                </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.Description)
-            </dd>
+                <dd>
+                    @if (Model.Description != null)
+                    {
+                        @Model.Description
+                    }
+                    else
+                    {
+                        <span>Currently there is no available description...</span>
+                    }
+                </dd>
 
-        </dl>
-    </div>
-    <p>
-        @if (ViewBag.Statistics != null)
-        {
-            @Html.ActionLink("Back to Statistics", "IngredientStatistics", routeValues: null, htmlAttributes: new { @class = "btn btn-info" })
-        }
-        else
-        {
-            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-info" })
-        }
-        @{
-            if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+            </dl>
+        </div>
+        <div class="col-md-8">
+            @if (ViewBag.Statistics != null)
             {
-                @Html.ActionLink("Edit", "Edit", new { id = Model.IngredientId }, new { @class = "btn btn-warning" })
-            }
-        }
-    </p>
+                <table class="table table-hover table-striped mt-3">
+                    <thead class="bg-dark text-orange text-center">
+                        <tr>
+                            <th>Statistic</th>
+                            <th>Number</th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td>Number of total times sold</td>
+                        <td>@Model.TotalQuantityUsed</td>
+                    </tr>
+                    <tr>
+                        <td>Number of total times sold this week</td>
+                        <td>@Model.QuantityUsedLastWeek</td>
+                    </tr>
+                    <tr>
+                        <td>Number of items in stock</td>
+                        <td>@Model.QuantityInStock</td>
+                    </tr>
+                    <tr>
+                        <td>Total profit achieved</td>
+                        <td>@ViewBag.TotalProfit</td>
+                    </tr>
+                    <tr>
+                        <td>Total profit achieved this week</td>
+                        <td>@ViewBag.TotalProfitWeek</td>
+                    </tr>
 
-</div>
+                </table>
+            }
+            <p>
+                @if (ViewBag.Statistics != null)
+                {
+                    @Html.ActionLink("Back to Statistics", "IngredientStatistics", routeValues: null, htmlAttributes: new { @class = "btn btn-info" })
+                }
+                else
+                {
+                    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-info" })
+                }
+                @{
+                    if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+                    {
+                        @Html.ActionLink("Edit", "Edit", new { id = Model.IngredientId }, new { @class = "btn btn-warning" })
+                    }
+                }
+            </p>
+        </div>
+        
+    </div>
+
+@section Styles{
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+}

@@ -36,7 +36,14 @@
                         <div class="col">
                             <h4>Description:</h4>
                             <p class="text-justify">
-                                @Model.Description
+                                @if (Model.Description != null)
+                                {
+                                    @Model.Description
+                                }
+                                else
+                                {
+                                <span>Currently there is no available description...</span>
+                                }
                             </p>
                         </div>
                     </div>
@@ -98,8 +105,6 @@
             </tr>
 
         </table>
-
-
     }
 
 
