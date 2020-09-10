@@ -10,8 +10,6 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
-
-
 </head>
 
 
@@ -126,7 +124,10 @@
                 </div>
                 <!-- Grid column -->
 
-
+                @Scripts.Render("~/bundles/jquery")
+                @Scripts.Render("~/bundles/bootstrap")
+                @RenderSection("scripts", required: false)
+                @RenderSection("Styles", required: false)
                 <!-- Grid column -->
                 <div class="col my-auto">
                     <div class="mapouter">
@@ -143,9 +144,6 @@
 
     </footer>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
-    @RenderSection("Styles", required: false)
+    
 </body>
 </html>

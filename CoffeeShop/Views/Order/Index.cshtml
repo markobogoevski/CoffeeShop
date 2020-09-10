@@ -7,170 +7,179 @@
 }
 
 <div class="container">
-    <h2 class="text-center">@ViewBag.Title</h2>
+    <h2 class="text-center mt-3">@ViewBag.Title</h2>
 
     <div class="hr"><hr /></div>
 
     @{
         if (ViewBag.Empty == null)
         {
-            <div class="container align-btns" style="float: left;">
-                <h4 style="font-weight: bold;">Filter orders by status: </h4>
-                <span style="display: inline; ">
-                    @{
+            <div class="container align-btns">
+                <h4 class="mb-3" style="font-weight: bold;">Filter orders by status: </h4>
+                @{
 
-                        foreach (var orderStatus in (List<string>)ViewBag.OrderStatus)
-                        {
-                            <span class="form-group">
-                                <span class="checkbox-inline">
-                                    <label class="container_new" for="@orderStatus">
-                                        <em>@orderStatus</em>
-                                        <input data-id="@orderStatus" class="form-check-input" type="checkbox" value="@orderStatus" name="@orderStatus" id="@orderStatus" autocomplete="off" />
-                                        <span class="checkmark checkmark-color"></span>
-                                    </label>
-                                </span>
-                            </span>
+                    foreach (var orderStatus in (List<string>)ViewBag.OrderStatus)
+                    {
+                        <div class="wrapper col-2" style="display:inline-block">
+                            <div class="w-100 col-6 float-left pr-0" >
+                                <div class="switch_box box_4">
+                                    <div class="input_wrapper">
+                                        <input autocomplete="off" data-id="@orderStatus" value="@orderStatus" name="@orderStatus" id="@orderStatus" type="checkbox" class="switch_4 ing_check" />
+                                        <svg class="is_checked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 426.67 426.67">
+                                            <path d="M153.504 366.84c-8.657 0-17.323-3.303-23.927-9.912L9.914 237.265c-13.218-13.218-13.218-34.645 0-47.863 13.218-13.218 34.645-13.218 47.863 0l95.727 95.727 215.39-215.387c13.218-13.214 34.65-13.218 47.86 0 13.22 13.218 13.22 34.65 0 47.863L177.435 356.928c-6.61 6.605-15.27 9.91-23.932 9.91z" />
+                                        </svg>
+                                        <svg class="is_unchecked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 212.982 212.982">
+                                            <path d="M131.804 106.49l75.936-75.935c6.99-6.99 6.99-18.323 0-25.312-6.99-6.99-18.322-6.99-25.312 0L106.49 81.18 30.555 5.242c-6.99-6.99-18.322-6.99-25.312 0-6.99 6.99-6.99 18.323 0 25.312L81.18 106.49 5.24 182.427c-6.99 6.99-6.99 18.323 0 25.312 6.99 6.99 18.322 6.99 25.312 0L106.49 131.8l75.938 75.937c6.99 6.99 18.322 6.99 25.312 0 6.99-6.99 6.99-18.323 0-25.313l-75.936-75.936z" fill-rule="evenodd" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="m-2 w-100 col-4 p-0 text-left float-right">
+                                <em>@orderStatus</em>
+                            </div>
+                        </div>
 
-                        }
                     }
-                </span>
+                }
                 <div class="hr"><hr /></div>
             </div>
-
-            <table class="table table-hover table-striped" id="table1">
-                <thead class="bg-dark text-orange">
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Address)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.OrderStatus)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.OrderTime)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.OrderFinishTime)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.OrderRating)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+            <div class="container table-responsive">
+                <table class="table table-hover table-striped dt-responsive display nowrap" id="table1" style="width:100%">
+                    <thead class="bg-dark text-orange">
                         <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Address)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.OrderStatus)
-                            </td>
-                            <td>
-                                @{
-                                    if (item.OrderStatus != OrderStatus.INACTIVE)
-                                    {
-                                        @Html.DisplayFor(modelItem => item.OrderTime);
-                                    }
-                                    else
-                                    {
-                                        <em>Yet to be activated</em>
-                                    }
-
-                                }
-                            </td>
-                            <td>
-                                @{
-                                    if (item.OrderStatus == OrderStatus.FINISHED)
-                                    {
-                                        @Html.DisplayFor(modelItem => item.OrderFinishTime);
-                                    }
-                                    else if (item.OrderStatus == OrderStatus.CANCELLED)
-                                    {
-                                        if (User.IsInRole(UserRoles.User))
-                                        {
-                                            <em>I am sorry. Your order has been cancelled...</em>
-                                        }
-                                        else
-                                        {
-                                            <em>Cancelled</em>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <em>Yet to be finished</em>
-                                    }
-
-                                }
-                            </td>
-                            <td>
-                                @{
-                                    if (item.OrderRating != 0)
-                                    {
-                                        @Html.DisplayFor(modelItem => item.OrderRating);
-                                    }
-                                    else if (item.OrderStatus == OrderStatus.CANCELLED)
-                                    {
-                                        if (User.IsInRole(UserRoles.User))
-                                        {
-                                            <em>I am sorry. Your order has been cancelled...</em>
-                                        }
-                                        else
-                                        {
-                                            <em>Cancelled</em>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <em>Yet to be rated</em>
-                                    }
-
-                                }
-                            </td>
-                            <td>
-                                @Html.ActionLink("‎", "Details", new { id = item.OrderId }, new { @class = "fa fa-info-circle fa-2x text-success" })
-                                @{
-                                    List<CancelOrderViewModel> cancellable = ViewBag.Cancellable;
-                                    bool canCancel = cancellable.Where(can => can.OrderId == item.OrderId).First().Cancellable;
-                                    if (canCancel && User.IsInRole(UserRoles.User) && (item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED))
-                                    {
-                                        canCancel = !canCancel;
-                                    }
-                                    bool canActivate = item.OrderStatus == OrderStatus.INACTIVE ? true : false;
-                                    bool canFinish = item.OrderStatus == OrderStatus.PENDING ? true : false;
-                                    bool canRate = (item.OrderRating == 0 && item.OrderStatus == OrderStatus.FINISHED) ? true : false;
-                                    bool canDiscard = (item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED) ? true : false;
-                                    if (canFinish && !User.IsInRole(UserRoles.User))
-                                    {
-                                        canCancel = false;
-                                    }
-                                    string btnDeactivateName = (item.OrderStatus == OrderStatus.INACTIVE || item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED) ? "Remove" : "Cancel";
-                                }
-                                <button data-hide=@canCancel data-order-id=@item.OrderId class="fa fa-remove fa-2x text-danger">@btnDeactivateName</button>
-
-                                @{
-                                    if (User.IsInRole(UserRoles.User))
-                                    {
-                                        <button data-hide=@canActivate data-order-id=@item.OrderId class="fa fa-check text-success">Activate</button>
-                                        <button data-hide=@canDiscard data-order-id=@item.OrderId class="fa fa-remove js-delete fa-2x text-danger">Discard</button>
-                                        <button data-hide=@canRate data-order-id=@item.OrderId class="fa fa-star text-warning">Rate</button>
-                                    }
-                                }
-                                @{
-                                    if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
-                                    {
-                                        <button data-hide=@canFinish data-order-id=@item.OrderId class="fa fa-check text-success">Finish order</button>
-                                        <button data-hide=@canFinish data-order-id=@item.OrderId class="fa fa-bolt text-warning">Cancel order</button>
-                                    }
-                                }
-                            </td>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Address)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.OrderStatus)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.OrderTime)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.OrderFinishTime)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.OrderRating)
+                            </th>
+                            <th class="no-sort text-center">Actions</th>
                         </tr>
-                    }
-                </tbody>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Address)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.OrderStatus)
+                                </td>
+                                <td>
+                                    @{
+                                        if (item.OrderStatus != OrderStatus.INACTIVE)
+                                        {
+                                            @Html.DisplayFor(modelItem => item.OrderTime);
+                                        }
+                                        else
+                                        {
+                                            <em>Yet to be activated</em>
+                                        }
 
-            </table>
+                                    }
+                                </td>
+                                <td>
+                                    @{
+                                        if (item.OrderStatus == OrderStatus.FINISHED)
+                                        {
+                                            @Html.DisplayFor(modelItem => item.OrderFinishTime);
+                                        }
+                                        else if (item.OrderStatus == OrderStatus.CANCELLED)
+                                        {
+                                            if (User.IsInRole(UserRoles.User))
+                                            {
+                                                <em>I am sorry. Your order has been cancelled...</em>
+                                            }
+                                            else
+                                            {
+                                                <em>Cancelled</em>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <em>Yet to be finished</em>
+                                        }
+
+                                    }
+                                </td>
+                                <td>
+                                    @{
+                                        if (item.OrderRating != 0)
+                                        {
+                                            @Html.DisplayFor(modelItem => item.OrderRating);
+                                        }
+                                        else if (item.OrderStatus == OrderStatus.CANCELLED)
+                                        {
+                                            if (User.IsInRole(UserRoles.User))
+                                            {
+                                                <em>I am sorry. Your order has been cancelled...</em>
+                                            }
+                                            else
+                                            {
+                                                <em>Cancelled</em>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <em>Yet to be rated</em>
+                                        }
+
+                                    }
+                                </td>
+                                <td>
+                                    @Html.ActionLink("‎", "Details", new { id = item.OrderId }, new { @class = "fa fa-info-circle fa-2x text-success", @title = "Order details" })
+                                    @{
+                                        List<CancelOrderViewModel> cancellable = ViewBag.Cancellable;
+                                        bool canCancel = cancellable.Where(can => can.OrderId == item.OrderId).First().Cancellable;
+                                        if (canCancel && User.IsInRole(UserRoles.User) && (item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED))
+                                        {
+                                            canCancel = !canCancel;
+                                        }
+                                        bool canActivate = item.OrderStatus == OrderStatus.INACTIVE ? true : false;
+                                        bool canFinish = item.OrderStatus == OrderStatus.PENDING ? true : false;
+                                        bool canRate = (item.OrderRating == 0 && item.OrderStatus == OrderStatus.FINISHED) ? true : false;
+                                        bool canDiscard = (item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED) ? true : false;
+                                        if (canFinish && !User.IsInRole(UserRoles.User))
+                                        {
+                                            canCancel = false;
+                                        }
+                                        string btnDeactivateName = (item.OrderStatus == OrderStatus.INACTIVE || item.OrderStatus == OrderStatus.FINISHED || item.OrderStatus == OrderStatus.CANCELLED) ? "Remove" : "Cancel";
+                                    }
+                                    <button data-hide=@canCancel data-order-id=@item.OrderId class="fa fa-remove js-delete fa-2x text-danger btn-cancel" title="@btnDeactivateName" style="background-color: salmon"></button>
+
+                                    @{
+                                        if (User.IsInRole(UserRoles.User))
+                                        {
+                                            <button data-hide=@canActivate data-order-id=@item.OrderId class="fa fa-check text-success fa-2x btn-activate" title="Activate the order" style="background-color:lightgreen"></button>
+                                            <button data-hide=@canDiscard data-order-id=@item.OrderId class="fa fa-remove js-delete fa-2x text-danger btn-discard" title="Discard the order" style="background-color: salmon"></button>
+                                            <button data-hide=@canRate data-order-id=@item.OrderId class="fa fa-star text-warning fa-2x btn-rate" title="Rate the order" style="background-color: lightgoldenrodyellow"></button>
+                                        }
+                                    }
+                                    @{
+                                        if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+                                        {
+                                            <button data-hide=@canFinish data-order-id=@item.OrderId class="fa fa-check text-success fa-2x btn-finish" title="Finish the order" style="background-color:lightgreen"></button>
+                                            <button data-hide=@canFinish data-order-id=@item.OrderId class="fa fa-ban fa-2x btn-cancel" title="Cancel the order" style="background-color:lightgray; color:darkslategray"></button>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+
         }
         else
         {
@@ -187,27 +196,134 @@
 </div>
 
 @section Styles {
-    <link href="@Url.Content("~/Styles/Checkbox.css")" rel="stylesheet" type="text/css" />
+    <style>
+        .wrapper {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            margin: 10px;
+            width:100%;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+        }
+
+        .switch_box {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: end;
+            -ms-flex-pack: end;
+            justify-content: end;
+            -webkit-box-align: end;
+            -ms-flex-align: end;
+            align-items: end;
+            -webkit-box-flex: 1;
+            -ms-flex: 1;
+            flex: 1;
+        }
+
+        .input_wrapper {
+            width: 80px;
+            height: 40px;
+            position: relative;
+            cursor: pointer;
+        }
+
+            .input_wrapper input[type="checkbox"] {
+                width: 80px;
+                height: 40px;
+                cursor: pointer;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                background: #315e7f;
+                border-radius: 5px;
+                position: relative;
+                outline: 0;
+                -webkit-transition: all .2s;
+                transition: all .2s;
+            }
+
+                .input_wrapper input[type="checkbox"]:after {
+                    position: absolute;
+                    content: "";
+                    top: 3px;
+                    left: 3px;
+                    width: 34px;
+                    height: 34px;
+                    background: #dfeaec;
+                    z-index: 2;
+                    border-radius: 3px;
+                    -webkit-transition: all .35s;
+                    transition: all .35s;
+                }
+
+            .input_wrapper svg {
+                position: absolute;
+                top: 45%;
+                -webkit-transform-origin: 50% 50%;
+                transform-origin: 50% 50%;
+                fill: #fff;
+                -webkit-transition: all .35s;
+                transition: all .35s;
+                z-index: 1;
+            }
+
+            .input_wrapper .is_checked {
+                width: 18px;
+                left: 18%;
+                -webkit-transform: translateX(190%) translateY(-30%) scale(0);
+                transform: translateX(190%) translateY(-30%) scale(0);
+            }
+
+            .input_wrapper .is_unchecked {
+                width: 15px;
+                right: 15%;
+                -webkit-transform: translateX(0) translateY(-30%) scale(1);
+                transform: translateX(0) translateY(-30%) scale(1);
+            }
+
+            .input_wrapper input[type="checkbox"]:checked {
+                background: #23da87;
+            }
+
+                .input_wrapper input[type="checkbox"]:checked:after {
+                    left: calc(100% - 37px);
+                }
+
+                .input_wrapper input[type="checkbox"]:checked + .is_checked {
+                    -webkit-transform: translateX(0) translateY(-30%) scale(1);
+                    transform: translateX(0) translateY(-30%) scale(1);
+                }
+
+                .input_wrapper input[type="checkbox"]:checked ~ .is_unchecked {
+                    -webkit-transform: translateX(-190%) translateY(-30%) scale(0);
+                    transform: translateX(-190%) translateY(-30%) scale(0);
+                }
+    </style>
 }
+
 
 @section scripts{
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <script type="text/javascript">
+        $("#table1 .btn-cancel, .btn-activate, .btn-finish, .btn-discard, .btn-force, .btn-rate").each(function () {
+            var button = $(this);
+            if (button.attr("data-hide") == "False") {
+                button.hide();
+            }
+        })
         $(document).ready(function () {
             var table = $("#table1").DataTable();
-
-            $("#table1 .btn-cancel, .btn-activate, .btn-finish, .btn-discard, .btn-force, .btn-rate").each(function () {
-                var button = $(this);
-                if (button.attr("data-hide") == "False") {
-                    button.hide();
-                }
+            $(".wrapper").each(function () {
+                var div = $(this);
+                div.removeAttr('hidden');
             })
+
 
             $("#table1 .btn-cancel").click(function () {
                 var button = $(this);
-                var text = button.html();
-
-                if (text == "Cancel") {
+                var text = button.attr("title");
+                if (text == "Cancel the order") {
                     bootbox.confirm("Дали сакате да ја поништите нарачката?", function (result) {
                         if (result) {
                             $.ajax({
@@ -228,6 +344,8 @@
                                 url: "/Order/Delete/" + button.attr("data-order-id"),
                                 success: function () {
                                     table.row(button.parents("tr")).remove().draw();
+                                    if (table.page.info().recordsTotal == 0)
+                                        location.reload();
                                 }
                             });
                         }
@@ -277,6 +395,8 @@
                             url: "/Order/Discard/" + button.attr("data-order-id"),
                             success: function () {
                                 table.row(button.parents("tr")).remove().draw();
+                                if (table.page.info().recordsTotal == 0)
+                                    location.reload();
                             }
                         });
                     }
@@ -330,21 +450,26 @@
             });
 
             $(".ing_check").click(function () {
-                var ids = {};
-                $('input[type=checkbox]:checked').each(function () {
-                    ids[$(this).attr("name")] = $(this).val();
-                });
-                $.ajax({
-                    method: "GET",
-                    url: "/api/CoffeeApi",
-                    data: ids,
-                    success: function (result) {
-                        var validData = JSON.stringify(result);
-                        $('#table1').DataTable()["aaData"] = validData;
-                        table.draw();
-                    },
-                    dataType: 'json'
-                });
+                var col_index = 1;
+                var count = 0;
+                var statuses = []
+
+                $(".ing_check").each(function () {
+                    if ($(this).prop("checked") == true) {
+                        statuses.push('^'+$(this).attr("name")+'$');
+                        count += 1;
+                    }
+                })
+                console.log(statuses)
+                console.log(count)
+                if (count == 0) {
+                    table.columns(col_index).search('', true, false).draw();
+                }
+                else {
+                    var statusRegex = statuses.join("|");
+                    console.log(statusRegex)
+                    table.columns(col_index).search(statusRegex, true, false).draw();
+                }
             });
         });
     </script>

@@ -1,14 +1,14 @@
 ﻿@model CoffeeShop.Models.ViewModels.CreateCoffeeViewModel
 <div class="container">
-    <section style="margin-top: 80px">
+    <section">
         @using (Html.BeginForm("Edit", "Coffee", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             @Html.AntiForgeryToken()
             @Html.HiddenFor(x => x.CoffeeId);
             @Html.HiddenFor(x => x.QuantityInStock);
 
-            <h4>Edit coffee</h4>
-            <hr />
+            <h4 class="mt-3">Edit coffee</h4>
+            <div class="hr"><hr /></div>
             <div class="row container">
                 <div class="col-md-5">
                     <div class="form-group">
@@ -98,9 +98,9 @@
                     }
                 }
             </div>
-            <br /><br />
+            <br />
             <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
+                <div class="col-md-offset-2 col-md-10 ">
                     <input type="submit" value="Save" class="btn btn-warning" />
                     @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "btn btn-primary" })
                 </div>

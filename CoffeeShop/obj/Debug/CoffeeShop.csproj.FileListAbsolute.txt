@@ -106,23 +106,12 @@ C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\Microsoft.Owin.Security.Tw
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\Microsoft.Owin.Security.OAuth.xml
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.initial.resources
-C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.update1.resources
-C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.BasePrice.resources
-C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.Statistics_Quantity.resources
-C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.QuantityIngredient.resources
-C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.GenerateResource.cache
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.CoreCompileInputs.cache
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.CopyComplete
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.dll
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.pdb
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\bin\CoffeeShop.dll.config
-C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.ingredientFix.resources
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csprojAssemblyReference.cache
-C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.UserWork.resources
-C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.IngredientTotalUsed.resources
-C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.OrderTimeEnd.resources
-C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.ModelValidation1.resources
 C:\Users\mlade\Projects\CoffeeShopV2\CoffeeShop\CoffeeShop\CoffeeShop\bin\CoffeeShop.dll.config
 C:\Users\mlade\Projects\CoffeeShopV2\CoffeeShop\CoffeeShop\CoffeeShop\bin\CoffeeShop.dll
 C:\Users\mlade\Projects\CoffeeShopV2\CoffeeShop\CoffeeShop\CoffeeShop\bin\CoffeeShop.pdb
@@ -355,3 +344,5 @@ C:\Users\mlade\Projects\CoffeeShopV2\CoffeeShop\CoffeeShop\CoffeeShop\obj\Debug\
 C:\Users\mlade\Projects\CoffeeShopV2\CoffeeShop\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.GenerateResource.cache
 C:\Users\David Galevski\Source\Repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.initial.resources
 C:\Users\David Galevski\Source\Repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.GenerateResource.cache
+C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.initial.resources
+C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.GenerateResource.cache

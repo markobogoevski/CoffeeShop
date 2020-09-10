@@ -6,85 +6,88 @@
     ViewBag.Title = "Cart";
 }
 <div class="container">
-    <section style="margin-top: 80px" id="cartSection">
+    <section id="cartSection">
 
-    @{
-        if (ViewBag.Valid == "True")
-        {
-            <h1 class="mx-0">Items in cart</h1>
-            <table class="table table-hover table-striped mt-3" id="cartTable">
-                <thead class="bg-dark text-white p-0 m-0">
-                    <tr>
-                        <th>
-                            #
-                        </th>
-                        <th>
-                            Cart item
-                        </th>
-                        <th>
-                            Quantity in cart
-                        </th>
-                        <th>
-                            Size of item
-                        </th>
-                        <th>
-                            Price per item
-                        </th>
-                        <th>
-                            Total per item
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
-                        int j = 1;
-                        foreach (var item in Model.OrderItems)
-                        {
+        @{
+            if (ViewBag.Valid == "True")
+            {
+                <h1 class="mt-3">Items in cart</h1>
+                <div class="hr"><hr /></div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mt-3 dt-responsive display nowrap" id="cartTable" style="width:100%">
+                        <thead class="bg-dark text-white p-0 m-0">
                             <tr>
-                                <td>
-                                    <span>@j</span>
-                                </td>
-                                <td>
-                                    <span>@Html.DisplayFor(modelItem => item.Coffee.Name)</span>
-                                </td>
-                                <td>
-                                    <span class="quantity">@item.Quantity</span>
-                                </td>
-                                <td>
-                                    <span>@item.Coffee.Size</span>
-                                </td>
-                                <td>
-                                    <span>@item.Coffee.TotalPrice</span>
-                                </td>
-                                <td>
-                                    <span>
-                                        @((item.Coffee.TotalPrice * item.Quantity))
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="removeFromCart deleteOrder" cart-id="@item.OrderItemId">
-                                        <i class="fa btn fa-remove fa-lg delete text-danger"></i>
-                                    </span>|
-                                    <span class="deleteCoffee" cart-id="@item.Coffee.CoffeeId">
-                                        <i class="fa btn fa-cart-arrow-down fa-lg text-dark delete"></i>
-                                    </span>
-                                </td>
+                                <th>
+                                    #
+                                </th>
+                                <th>
+                                    Cart item
+                                </th>
+                                <th>
+                                    Quantity in cart
+                                </th>
+                                <th>
+                                    Size of item
+                                </th>
+                                <th>
+                                    Price per item
+                                </th>
+                                <th>
+                                    Total per item
+                                </th>
+                                <th></th>
                             </tr>
-                            j++;
-                        }
-                    }
-                </tbody>
-                <tfoot class="bg-dark text-white p-0 m-0 font-weight-bold">
-                    <tr>
-                        <td>Total:</td>
-                        <td>@Model.OrderItems.Select(x => x.Coffee.TotalPrice * x.Quantity).Sum() den.</td>
+                        </thead>
+                        <tbody>
+                            @{
+                                int j = 1;
+                                foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span>@j</span>
+                                        </td>
+                                        <td>
+                                            <span>@Html.DisplayFor(modelItem => item.Coffee.Name)</span>
+                                        </td>
+                                        <td>
+                                            <span class="quantity">@item.Quantity</span>
+                                        </td>
+                                        <td>
+                                            <span>@item.Coffee.Size</span>
+                                        </td>
+                                        <td>
+                                            <span>@item.Coffee.TotalPrice</span>
+                                        </td>
+                                        <td>
+                                            <span>
+                                                @((item.Coffee.TotalPrice * item.Quantity))
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="removeFromCart deleteOrder" cart-id="@item.OrderItemId">
+                                                <i class="fa btn fa-remove fa-lg delete text-danger" title="Remove item"></i>
+                                            </span>|
+                                            <span class="deleteCoffee" cart-id="@item.Coffee.CoffeeId">
+                                                <i class="fa btn fa-cart-arrow-down fa-lg text-dark delete" title="Decrease item quantity"></i>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    j++;
+                                }
+                            }
+                        </tbody>
+                        <tfoot class="bg-dark text-white p-0 m-0 font-weight-bold">
+                            <tr>
+                                <td>Total:</td>
+                                <td>@Model.OrderItems.Select(x => x.Coffee.TotalPrice * x.Quantity).Sum() den.</td>
 
-                    </tr>
-                </tfoot>
-            </table>
-            <hr class="mt-5" />
-            <div class="row pr-3">
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <hr class="mt-5" />
+                <div class="row pr-3">
 
                     <div class="form-group container">
                         <label for="Address" class="font-weight-bold my-0">Delivery address</label><br /><br />
@@ -100,7 +103,8 @@
             }
             else
             {
-                <h1>Your cart is empty!</h1>
+                <h1 class="mt-3">Your cart is empty!</h1>
+                <div class="hr"><hr /></div>
                 <h3>Are you full of energy or just haven't chosen a coffee yet?</h3>
             }
 

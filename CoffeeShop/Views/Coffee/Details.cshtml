@@ -9,7 +9,7 @@
     <br />
     <div class="card bg-dark">
         <div class="card-header bg-dark">
-            <span class="text-orange text-uppercase">Details</span>
+            <span class="text-orange text-uppercase">Coffee Details</span>
         </div>
         <div class="card-body pr-5">
             <div class="row">
@@ -36,7 +36,14 @@
                         <div class="col">
                             <h4>Description:</h4>
                             <p class="text-justify">
-                                @Model.Description
+                                @if (Model.Description != null)
+                                {
+                                    @Model.Description
+                                }
+                                else
+                                {
+                                <span>Currently there is no available description...</span>
+                                }
                             </p>
                         </div>
                     </div>
@@ -98,8 +105,6 @@
             </tr>
 
         </table>
-
-
     }
 
 
