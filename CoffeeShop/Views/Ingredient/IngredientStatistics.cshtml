@@ -3,11 +3,11 @@
 @{
     ViewBag.Title = "IngredientStatistics";
 }
-<div class="container">
+<div class="container" style="width:100%; max-width:80%">
     <h2 class="text-center mt-3">Ingredient Statistics</h2>
     <div class="hr"><hr /></div>
-    <div class="container align-btns text-center d-inline-block">
-        <div class="container col-md-6 float-left">
+    <div class="container align-btns text-center d-inline-block" style="width:100%; max-width:100%">
+        <div class="container col-md-4 float-left">
             <h4>All time</h4>
             <div>
                 @Html.ActionLink("Most used", "MostUsed", null, new { @class = "btn btn-info m-1" })
@@ -15,21 +15,22 @@
                 @Html.ActionLink("Least used", "LeastUsed", null, new { @class = "btn btn-info m-1" })
             </div>
         </div>
-        <div class="container col-md-6 float-right">
-            <h4>
-                This week
-            </h4>
-            <div>
-                @Html.ActionLink("Most used this week", "MostUsedWeek", null, new { @class = "btn btn-info m-1" })
-
-                @Html.ActionLink("Least used this week", "LeastUsedWeek", null, new { @class = "btn btn-info m-1" })
-            </div>
-        </div>
-        <div class="container" style="clear:both">
+        <div class="container col-md-4 float-left">
             <a class="text-info fa fa-image fa-3x m-3" id="toggle-img">
                 <span class="glyphicon glyphicon-plus-sign" aria-hidden="true">Toggle ingredient image</span>
             </a>
         </div>
+        <div class="container col-md-4 float-left">
+            <h4>
+                This week
+            </h4>
+            <div>
+                @Html.ActionLink("Most used, week", "MostUsedWeek", null, new { @class = "btn btn-info m-1" })
+
+                @Html.ActionLink("Least used, week", "LeastUsedWeek", null, new { @class = "btn btn-info m-1" })
+            </div>
+        </div>
+
     </div>
     <div class="hr"><hr /></div>
     <div class="table-responsive">

@@ -122,7 +122,7 @@
         }
 
         // POST: Cart/RemoveCoffeeFromOrder/id/quantity
-        public ActionResult RemoveCoffeeFromOrder(string id, string quantity)
+        public ActionResult ChangeCoffeeQuantityFromOrder(string id, string quantity)
         {
             OrderModel cart = (OrderModel)Session["cart"];
             if (cart == null)
@@ -135,7 +135,7 @@
             if (coffeeToRemove == null)
                 return HttpNotFound();
 
-            coffeeToRemove.Quantity -= Convert.ToInt32(quantity);
+            coffeeToRemove.Quantity += Convert.ToInt32(quantity);
             if (coffeeToRemove.Quantity == 0)
             {
                 cart.OrderItems.Remove(coffeeToRemove);

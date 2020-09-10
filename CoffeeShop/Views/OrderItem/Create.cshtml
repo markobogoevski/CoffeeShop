@@ -58,7 +58,7 @@
                 <div class="row mr-auto">
                     <div class="container col-md-6 float-left">
                         @Html.LabelFor(model => model.Quantity, htmlAttributes: new { @class = "control-label text-orange m-2" })
-                        @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { min = "1", @Value = "1", @class = "form-control quantity-order" } })
+                        @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { max=Model.Coffee.QuantityInStock,min = "1", @Value = "1", @class = "form-control quantity-order" } })
                         @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
                     </div>
                     <div class="container col-md-6 float-right">

@@ -68,7 +68,10 @@
                                             <span class="removeFromCart deleteOrder" cart-id="@item.OrderItemId">
                                                 <i class="fa btn fa-remove fa-lg delete text-danger" title="Remove item"></i>
                                             </span>|
-                                            <span class="deleteCoffee" cart-id="@item.Coffee.CoffeeId">
+                                            <span data-max-increase="@item.Coffee.QuantityInStock" class="increaseCoffee" cart-id="@item.Coffee.CoffeeId">
+                                                <i class="fa btn fa-cart-plus fa-lg text-dark" title="Increase item quantity"></i>
+                                            </span>|
+                                            <span class="decreaseCoffee" cart-id="@item.Coffee.CoffeeId">
                                                 <i class="fa btn fa-cart-arrow-down fa-lg text-dark delete" title="Decrease item quantity"></i>
                                             </span>
                                         </td>
@@ -173,12 +176,11 @@
                     }
                 })
             });
-            $(".deleteCoffee").click(function () {
+            $(".decreaseCoffee").click(function () {
                 var button = $(this);
                 var row = button.parentsUntil("#cartTable tr").parent();
                 var cell = $(row).find(" td:nth-child(3) span");
                 var cell_data = cell.html();
-                console.log(cell_data)
                 bootbox.prompt({
                     title: "Внесете колку сакате да намалите",
                     inputType: 'number',
@@ -189,8 +191,8 @@
                         if (result) {
                             $.ajax({
                                 method: "POST",
-                                data: { "id": button.attr("cart-id"), "quantity": result },
-                                url: "/Cart/RemoveCoffeeFromOrder",
+                                data: { "id": button.attr("cart-id"), "quantity": -result },
+                                url: "/Cart/ChangeCoffeeQuantityFromOrder",
                                 error: function () {
                                     cell.html(parseInt(cell_data) - parseInt(result))
                                     bootbox.alert({
@@ -204,6 +206,46 @@
                         }
                     }
                 });
+            });
+            $(".increaseCoffee").click(function () {
+                var button = $(this);
+                var row = button.parentsUntil("#cartTable tr").parent();
+                var cell = $(row).find(" td:nth-child(3) span");
+                var cell_data = cell.html();
+                var max_inc = button.attr("data-max-increase")
+                var maxEnd = parseInt(max_inc) - parseInt(cell_data);
+                if (maxEnd > 0) {
+                    bootbox.prompt({
+                        title: "Внесете колку сакате да зголемите",
+                        inputType: 'number',
+                        max: parseInt(max_inc) - parseInt(cell_data),
+                        min: 0,
+                        value: 0,
+                        callback: function (result) {
+                            if (result) {
+                                $.ajax({
+                                    method: "POST",
+                                    data: { "id": button.attr("cart-id"), "quantity": result },
+                                    url: "/Cart/ChangeCoffeeQuantityFromOrder",
+                                    error: function () {
+                                        cell.html(parseInt(cell_data) + parseInt(result))
+                                        bootbox.alert({
+                                            message: "Successfully updated cart!",
+                                            backdrop: true
+                                        });
+                                        location.reload();
+                                    },
+                                    dataType: 'json'
+                                });
+                            }
+                        }
+                    });
+                }
+                else {
+                    bootbox.alert({
+                        message: "Sorry. There is no more in stock of that coffee!"
+                    });
+                }
             });
         })
 

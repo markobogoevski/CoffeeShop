@@ -168,6 +168,7 @@
             try
             {
                 var ingredients = _repository.GetIngredients().ToList();
+                _repository.FixIngredientsQuantity(ingredients.Select(ing=>ing.IngredientId).ToList());
                 return View(ingredients);
             }
             catch (Exception)
@@ -200,6 +201,7 @@
             {
                 IngredientModel mostUsed = _repository.GetMostUsedIngredient();
                 ViewBag.Statistics = true;
+                _repository.FixIngredientQuantity(mostUsed.IngredientId);
                 return View("Details", mostUsed);
             }
             catch (Exception)
@@ -216,6 +218,7 @@
             {
                 IngredientModel leastUsed = _repository.GetLeastUsedIngredient();
                 ViewBag.Statistics = true;
+                _repository.FixIngredientQuantity(leastUsed.IngredientId);
                 return View("Details", leastUsed);
             }
             catch (Exception)
@@ -232,6 +235,7 @@
             {
                 IngredientModel mostUsed = _repository.GetMostUsedIngredientWeek();
                 ViewBag.Statistics = true;
+                _repository.FixIngredientQuantity(mostUsed.IngredientId);
                 return View("Details", mostUsed);
             }
             catch (Exception)
@@ -248,6 +252,7 @@
             {
                 IngredientModel leastUsed = _repository.GetLeastUsedIngredientWeek();
                 ViewBag.Statistics = true;
+                _repository.FixIngredientQuantity(leastUsed.IngredientId);
                 return View("Details", leastUsed);
             }
             catch (Exception)

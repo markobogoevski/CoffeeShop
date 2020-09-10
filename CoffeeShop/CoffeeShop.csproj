@@ -193,6 +193,7 @@
     <Compile Include="Enumerations\IngredientStock.cs" />
     <Compile Include="Enumerations\OrderStatus.cs" />
     <Compile Include="Enumerations\UserRoles.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

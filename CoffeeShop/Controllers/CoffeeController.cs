@@ -24,6 +24,7 @@
 
         // Post: ApiCallFilter
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult ApiCallFilter()
         {
             if (Request.IsAjaxRequest())
@@ -342,6 +343,33 @@
             }
         }
 
+        // POST: Coffee/DeleteCustom
+        [Authorize(Roles = UserRoles.User)]
+        public ActionResult DeleteCustom(Guid id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            try
+            {
+                var coffee = _repository.GetAllCoffeeForUser(User.Identity.GetUserId()).Where(cof=>cof.User!=null);
+                if (coffee.Select(cof => cof.CoffeeId).Contains(id))
+                {
+                    _repository.DeleteCoffee(id);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
         // GET: Coffee/CoffeeDay
         [AllowAnonymous]
         public ActionResult CoffeeDay()
@@ -384,6 +412,18 @@
                 var coffee = _repository.GetAllCoffeeForUser(User.Identity.GetUserId());
                 var coffeeStatistics = _repository.GetCoffeeStatistics(coffee)
                                                   .ToList();
+                List<decimal> totalCoffeeProfit = new List<decimal>();
+                List<decimal> totalCoffeeProfitWeek = new List<decimal>();
+
+                foreach (var coffeeStatistic in coffeeStatistics) 
+                {
+                    totalCoffeeProfit.Add(_repository.GetTotalProfitCoffee(coffeeStatistic.Coffee));
+                    totalCoffeeProfitWeek.Add(_repository.GetTotalProfitWeekCoffee(coffeeStatistic.Coffee));
+                }
+
+                ViewBag.TotalCoffeeProfit = totalCoffeeProfit;
+                ViewBag.TotalCoffeeProfitWeek = totalCoffeeProfitWeek;
+
                 return View(coffeeStatistics);
             }
             catch (Exception)
@@ -422,6 +462,7 @@
             {
                 CoffeeModel mostSold = _repository.GetMostSoldCoffee();
                 ViewBag.Statistics = true;
+                _repository.FixCoffeeQuantity(mostSold.CoffeeId);
                 ViewBag.TotalProfit = _repository.GetTotalProfitCoffee(mostSold);
                 ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeekCoffee(mostSold);
                 var ingredientsForCoffee = _repository.GetIngredientsInCoffee(mostSold.CoffeeId)
@@ -443,6 +484,7 @@
             {
                 CoffeeModel leastSold = _repository.GetLeastSoldCoffee();
                 ViewBag.Statistics = true;
+                _repository.FixCoffeeQuantity(leastSold.CoffeeId);
                 ViewBag.TotalProfit = _repository.GetTotalProfitCoffee(leastSold);
                 ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeekCoffee(leastSold);
                 var ingredientsForCoffee = _repository.GetIngredientsInCoffee(leastSold.CoffeeId)
@@ -464,6 +506,7 @@
             {
                 CoffeeModel mostSold = _repository.GetMostSoldCoffeeWeek();
                 ViewBag.Statistics = true;
+                _repository.FixCoffeeQuantity(mostSold.CoffeeId);
                 ViewBag.TotalProfit = _repository.GetTotalProfitCoffee(mostSold);
                 ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeekCoffee(mostSold);
                 var ingredientsForCoffee = _repository.GetIngredientsInCoffee(mostSold.CoffeeId)
@@ -485,6 +528,7 @@
             {
                 CoffeeModel leastSold = _repository.GetLeastSoldCoffeeWeek();
                 ViewBag.Statistics = true;
+                _repository.FixCoffeeQuantity(leastSold.CoffeeId);
                 ViewBag.TotalProfit = _repository.GetTotalProfitCoffee(leastSold);
                 ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeekCoffee(leastSold);
                 var ingredientsForCoffee = _repository.GetIngredientsInCoffee(leastSold.CoffeeId)

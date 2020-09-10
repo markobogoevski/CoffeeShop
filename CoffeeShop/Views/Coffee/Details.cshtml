@@ -61,9 +61,9 @@
                 {
                     if (User.IsInRole(UserRoles.User))
                     {
-                        @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = @Model.CoffeeId }, new { @class = "btn btn-primary btn-block col-2 m-2" })
+                        @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = @Model.CoffeeId }, new { @class = "btn btn-primary btn-block col-md-3 m-2 col-sm-12" })
                     }
-                    @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "btn btn-info btn-block col-2  m-2" })
+                    @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "btn btn-info btn-block col-md-3  m-2 col-sm-12" })
                 }
                 @{
                     if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
