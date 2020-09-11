@@ -91,10 +91,28 @@
                             @Html.DisplayFor(modelItem => item.Coffee.TotalQuantitySold)
                         </td>
                         <td>
-                            @coffeeProfit.ElementAt(count)
+                            @{ 
+                                if (coffeeProfit==null)
+                                {
+                                   <span>0</span>
+                                }
+                                else
+                                {
+                                    <span>@coffeeProfit.ElementAt(count)</span>
+                                }
+                            }
                         </td>
                         <td>
-                            @coffeeProfitWeek.ElementAt(count)
+                            @{
+                                if (coffeeProfitWeek == null)
+                                {
+                                    <span>0</span>
+                                }
+                                else
+                                {
+                                    <span>@coffeeProfitWeek.ElementAt(count)</span>
+                                }
+                             }
                         </td>
                         <td class="text-center">
                             <a data-button-id=@item.Coffee.CoffeeId data-max-decrease=@item.Coffee.QuantityInStock data-max-increase="@item.MaxIncreaseStock" class="fa fa-chevron-up fa-2x text-success btn_increase"></a><br />
