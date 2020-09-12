@@ -1,6 +1,5 @@
 ﻿namespace CoffeeShop.Models
 {
-    using CoffeeShop.Models.Order;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -22,10 +21,6 @@
         public decimal TotalPrice { get; set; }
 
         public decimal ProductionPrice { get; set; }
-
-        [Required]
-        [Display(Name = "Coffee size")]
-        public String  Size { get; set; }
 
         [Display(Name = "Coffee image")]
         public String ImgUrl { get; set; }

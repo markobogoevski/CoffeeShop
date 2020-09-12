@@ -206,6 +206,10 @@
     <Compile Include="Migrations\202009121449366_init2.designer.cs">
       <DependentUpon>202009121449366_init2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009121739533_SIZE.cs" />
+    <Compile Include="Migrations\202009121739533_SIZE.designer.cs">
+      <DependentUpon>202009121739533_SIZE.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CoffeeModel.cs" />
@@ -685,6 +689,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009121449366_init2.resx">
       <DependentUpon>202009121449366_init2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009121739533_SIZE.resx">
+      <DependentUpon>202009121739533_SIZE.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

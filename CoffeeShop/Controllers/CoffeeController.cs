@@ -10,6 +10,7 @@
     using System.Web.Mvc;
     using CoffeeShop.Enumerations;
     using CoffeeShop.Models;
+    using CoffeeShop.Models.Order;
     using CoffeeShop.Models.ViewModels;
     using CoffeeShop.Services;
     using Microsoft.AspNet.Identity;
@@ -72,7 +73,32 @@
                 if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
                     return View(coffee);
                 else
-                    return View("IndexUser", coffee);
+                {
+                    object sessionCart = Session["cart"];
+
+                    if (sessionCart != null)
+                    {
+                        List<CoffeeModel> endCoffee = new List<CoffeeModel>();
+                        var cart = (OrderModel)sessionCart;
+                        foreach(var cof in coffee)
+                        {
+                            int? quantityUsed = cart.OrderItems.Where(item => item.Coffee.CoffeeId == cof.CoffeeId)
+                                                               .Select(item => item.Quantity)
+                                                               .Sum();
+                            quantityUsed = quantityUsed.HasValue ? quantityUsed.Value : 0;
+                            if (cof.QuantityInStock-quantityUsed>0)
+                            {
+                                endCoffee.Add(cof);
+                            }
+                        }
+                        return View("IndexUser", endCoffee);
+                    }
+                    else
+                    {
+                        return View("IndexUser", coffee);
+
+                    }
+                }
             }
             catch (Exception)
             {
@@ -134,8 +160,6 @@
         {
             try
             {
-                var Sizes = _repository.GetAllCoffeeSizes().ToList();
-                ViewBag.Sizes = Sizes;
                 return View(createCoffeeViewModel(null));
             }
             catch (Exception)
@@ -154,8 +178,7 @@
                 {
                     return Create(coffeeViewModel, file, description, custom: true);
                 }
-                var Sizes = _repository.GetAllCoffeeSizes().ToList();
-                ViewBag.Sizes = Sizes;
+
                 coffeeViewModel.availableIngredients = _repository.GetAvailableIngredients(null).Select(item => new IngredientQuantityViewModel
                 {
                     Ingredient = item,
@@ -213,8 +236,6 @@
         {
             try
             {
-                var Sizes = _repository.GetAllCoffeeSizes().ToList();
-                ViewBag.Sizes = Sizes;
                 return View(createCoffeeViewModel(null));
             }
             catch (Exception)
@@ -281,8 +302,6 @@
                     return RedirectToAction("Index");
                 }
                 
-                var Sizes = _repository.GetAllCoffeeSizes().ToList();
-                ViewBag.Sizes = Sizes;
                 coffeeViewModel.availableIngredients = _repository.GetAvailableIngredients(null).Select(item => new IngredientQuantityViewModel
                 {
                     Ingredient = item,
@@ -313,8 +332,6 @@
             }
             try
             {
-                var Sizes = _repository.GetAllCoffeeSizes().ToList();
-                ViewBag.Sizes = Sizes;
                 return View(createCoffeeViewModel(id));
             }
             catch (Exception)
@@ -363,8 +380,6 @@
                     _repository.EditCoffee(coffeeViewModel);
                     return RedirectToAction("Index");
                 }
-                var Sizes = _repository.GetAllCoffeeSizes().ToList();
-                ViewBag.Sizes = Sizes;
                 return View(createCoffeeViewModel(coffeeViewModel.CoffeeId));
             }
             catch (Exception)
@@ -626,7 +641,6 @@
                     coffeeViewModel.Name = coffeeToEdit.Name;
                     coffeeViewModel.selectedIngredientsQuantity = _repository.GetSelectedIngredientQuantitiesForCoffee(id, coffeeViewModel.selectedIngredients)
                                                                              .ToList();
-                    coffeeViewModel.Size = coffeeToEdit.Size;
                     coffeeViewModel.IncomeCoef = coffeeToEdit.IncomeCoef;
                     coffeeViewModel.ImgUrl = coffeeToEdit.ImgUrl;
                     coffeeViewModel.BasePrice = coffeeToEdit.BasePrice;

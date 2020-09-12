@@ -62,7 +62,7 @@
         }
 
         // POST: Cart/AddToCart
-        public ActionResult AddToCart(string coffeeId, string quantity, string daily)
+        public ActionResult AddToCart(string coffeeId, string quantity, string daily, string size, string price)
         {
             try
             {
@@ -71,15 +71,15 @@
                 var coffee = _repository.FindCoffee(coffeeGuid);
                 object sessionCart = Session["cart"];
                 int quantityNumber = Convert.ToInt32(quantity);
+                decimal priceD = Convert.ToDecimal(price);
 
+                coffee.TotalPrice = priceD;
                 if (sessionCart != null)
                 {
                     var cart = (OrderModel)sessionCart;
-                    if (cart.OrderItems.Any(item => item.Coffee.CoffeeId == coffeeGuid))
+                    if (cart.OrderItems.Any(item => item.Coffee.CoffeeId == coffeeGuid && item.CoffeeSize == size))
                     {
                         cart.OrderItems.Find(item => item.Coffee.CoffeeId == coffeeGuid).Quantity += quantityNumber;
-                        if(dailyCoffee)
-                            cart.OrderItems.Find(item => item.Coffee.CoffeeId == coffeeGuid).Coffee.TotalPrice *= 0.7m;
                     }
                     else
                     {
@@ -87,12 +87,9 @@
                         {
                             Quantity = quantityNumber,
                             Coffee = coffee,
+                            CoffeeSize = size,
                             OrderItemId = Guid.NewGuid()
                         };
-
-                        if (dailyCoffee)
-                            orderItem.Coffee.TotalPrice *= 0.7m;
-
                         cart.OrderItems.Add(orderItem);
                     }
                     Session["cart"] = cart;
@@ -104,11 +101,9 @@
                     {
                         Quantity = quantityNumber,
                         Coffee = coffee,
+                        CoffeeSize = size,
                         OrderItemId = Guid.NewGuid()
                     };
-
-                    if (dailyCoffee)
-                        orderItem.Coffee.TotalPrice *= 0.7m;
 
                     cart.OrderItems.Add(orderItem);
                     Session["cart"] = cart;

@@ -126,7 +126,6 @@ namespace CoffeeShop.Services
                 BasePrice = coffeeViewModel.BasePrice,
                 TotalPrice = coffeeViewModel.BasePrice + ingredientPrice,
                 ImgUrl = coffeeViewModel.ImgUrl,
-                Size = coffeeViewModel.Size,
                 QuantityInStock = 1,
                 TotalQuantitySold = 0,
                 QuantitySoldLastWeek = 0,
@@ -199,7 +198,6 @@ namespace CoffeeShop.Services
                 coffee.IncomeCoef = coffeeViewModel.IncomeCoef;
                 coffee.QuantityInStock = coffeeViewModel.QuantityInStock;
                 coffee.ImgUrl = coffeeViewModel.ImgUrl;
-                coffee.Size = coffeeViewModel.Size;
                 coffee.BasePrice = coffeeViewModel.BasePrice;
                 _db.Entry(coffee).Collection(c => c.Ingredients).Load();
                 // Get the new ingredients selected for the coffee
@@ -468,6 +466,10 @@ namespace CoffeeShop.Services
             {
                 var randomCoffee = GetRandomCoffee();
                 randomCoffee.TotalPrice *= 0.7m;
+                if (Math.Ceiling(randomCoffee.TotalPrice) % 10 != 0)
+                {
+                    randomCoffee.TotalPrice = (((int)randomCoffee.TotalPrice / 10) + 1) * 10;
+                }
                 return randomCoffee;
             }
             catch (Exception)
@@ -902,8 +904,7 @@ namespace CoffeeShop.Services
                 try
                 {
                     var ingredient = FindIngredient(Guid.Parse(coffeeViewModel.selectedIngredients.ElementAt(i)));
-                    ingredientPrice += ingredient.Price * GetPriceMultiplierForCoffeeSize(coffeeViewModel.Size)
-                                                    * coffeeViewModel.selectedIngredientsQuantity.ElementAt(i);
+                    ingredientPrice += ingredient.Price * coffeeViewModel.selectedIngredientsQuantity.ElementAt(i);
                 }
                 catch (Exception)
                 {

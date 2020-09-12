@@ -77,9 +77,6 @@
                     <th>
                         @Html.DisplayNameFor(model => model.TotalPrice)
                     </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Size)
-                    </th>
                     <th class="hidden-img no-sort">
                         @Html.DisplayNameFor(model => model.ImgUrl)
                     </th>
@@ -100,9 +97,6 @@
                         </td>
                         <td>
                             @String.Format("{0:0.##} mkd.",item.TotalPrice)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Size)
                         </td>
                         <td class="img-field hidden-img">
                             <a href="/Coffee/Details/@item.CoffeeId">

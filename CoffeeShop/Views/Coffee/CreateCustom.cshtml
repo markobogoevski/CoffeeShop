@@ -19,13 +19,6 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(model => model.Size, htmlAttributes: new { @class = "control-label" })
-                    <div>
-                        @Html.DropDownListFor(model => model.Size, new SelectList(ViewBag.Sizes), new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.Size, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="form-group">
                     @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
                     <div>
                         <textarea class="form-control rounded-0" name="description" rows="3"></textarea>

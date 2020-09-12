@@ -15,5 +15,8 @@
         [Required]
         [Display(Name = "Quantity of coffee")]
         public int Quantity { get; set; }
+
+        [Display(Name="Coffee size")]
+        public string CoffeeSize { get; set; }
     }
 }
