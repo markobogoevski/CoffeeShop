@@ -49,9 +49,8 @@ namespace CoffeeShop.Services
             if (userId == null || _userManager.IsInRole(userId, UserRoles.User))
             {
                 coffee = coffee.Where(cof => cof.User == null || cof.User.Id == userId).ToList();
+                coffee = coffee.Where(cof => cof.QuantityInStock >= 1).ToList();
             }
-
-            coffee = coffee.Where(cof => cof.QuantityInStock >= 1).ToList();
 
             if (coffee != null)
             {
@@ -136,6 +135,21 @@ namespace CoffeeShop.Services
 
             if (userId != null)
             {
+                newCoffee.IncomeCoef = 1.5m;
+            }
+
+            newCoffee.ProductionPrice = newCoffee.TotalPrice;
+
+            newCoffee.TotalPrice *= newCoffee.IncomeCoef;
+            int remainder = (int)(Math.Floor(newCoffee.TotalPrice)) % 10;
+            if (remainder != 0)
+            {
+                int newMultiplier = ((int)newCoffee.TotalPrice / 10) + 1;
+                newCoffee.TotalPrice = newMultiplier * 10; 
+            }
+
+            if (userId != null)
+            {
                 // Add the coffee to a user if the coffee is custom made (userId is null)
                 newCoffee.User = _db.Users.Find(userId);
             }
@@ -213,10 +227,19 @@ namespace CoffeeShop.Services
                     // Calculating the new total price of the coffee
                     var ingredientPrice = GetIngredientPrice(coffeeViewModel);
                     coffee.TotalPrice = coffeeViewModel.BasePrice + ingredientPrice;
+
                 }
                 catch (Exception)
                 {
                     throw new Exception();
+                }
+                coffee.ProductionPrice = coffee.TotalPrice;
+                coffee.TotalPrice *= coffee.IncomeCoef;
+                int remainder = (int)(Math.Floor(coffee.TotalPrice)) % 10;
+                if (remainder != 0)
+                {
+                    int newMultiplier = ((int)coffee.TotalPrice / 10) + 1;
+                    coffee.TotalPrice = newMultiplier * 10;
                 }
 
                 // Deleting ingredient in coffee relations for the edited coffee
@@ -516,15 +539,13 @@ namespace CoffeeShop.Services
         // Gets the profit made this week from the coffee provided according to its income coefficient
         public decimal GetTotalProfitWeekCoffee(CoffeeModel coffee)
         {
-            var incomeCoef = coffee.User != null ? 1 : coffee.IncomeCoef;
-            return coffee.TotalPrice * coffee.QuantitySoldLastWeek * incomeCoef;
+            return (coffee.TotalPrice-coffee.ProductionPrice) * coffee.QuantitySoldLastWeek;
         }
 
         // Gets the total profit made from the coffee provided according to its income coefficient
         public decimal GetTotalProfitCoffee(CoffeeModel coffee)
         {
-            var incomeCoef = coffee.User != null ? 1 : coffee.IncomeCoef;
-            return coffee.TotalPrice * coffee.TotalQuantitySold * incomeCoef;
+            return (coffee.TotalPrice - coffee.ProductionPrice) * coffee.TotalQuantitySold;
         }
 
         // Gets statistics for the provided coffee

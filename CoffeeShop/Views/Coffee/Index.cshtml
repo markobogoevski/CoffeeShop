@@ -68,7 +68,7 @@
         }
     }
     <div class="table-responsive">
-        <table class="table table-hover table-striped dt-responsive display nowrap" id="table1" style="width:100%">
+        <table class="table table-hover table-striped dt-responsive display" id="table1" style="width:100%">
             <thead class="bg-dark text-orange">
                 <tr>
                     <th>
@@ -99,7 +99,7 @@
                             @Html.DisplayFor(modelItem => item.Name)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.TotalPrice)
+                            @String.Format("{0:0.##} mkd.",item.TotalPrice)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Size)
@@ -109,7 +109,7 @@
                                 <img alt="@item.Name" src="@Url.Content(item.ImgUrl)" />
                             </a>
                         </td>
-                        <td>
+                        <td style="word-break:break-all">
                             @if (item.Description != null)
                             {
                                 @Html.DisplayFor(modelItem => item.Description)

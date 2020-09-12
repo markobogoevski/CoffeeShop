@@ -21,6 +21,8 @@
         [Display(Name = "Price")]
         public decimal TotalPrice { get; set; }
 
+        public decimal ProductionPrice { get; set; }
+
         [Required]
         [Display(Name = "Coffee size")]
         public String  Size { get; set; }

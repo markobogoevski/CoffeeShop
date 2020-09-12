@@ -83,9 +83,13 @@
                             <p class="card-text mt-2 font-italic font-weight-bold" style="height: 15%;">
                                 Price: @item.TotalPrice
                             </p>
-                            <p class="card-text mt-2 font-italic font-weight-bold" style="height: 15%;">
-                                Ingredients: @string.Join(", ", item.Ingredients.Select(x => x.Name).ToList())
-                            </p>
+
+                            @if (item.Ingredients.Count != 0)
+                            {
+                                <p class="card-text mt-2 font-italic font-weight-bold" style="height: 15%;">
+                                    Ingredients: @String.Join(", ", item.Ingredients.Select(x => x.Name).ToList())
+                                </p>
+                            }
                         </div>
                     </a>
                     <div class="card-footer">

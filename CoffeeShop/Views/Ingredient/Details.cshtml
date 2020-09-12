@@ -16,7 +16,7 @@
                     <img class="img-fluid d-inline-block" src="@Model.ImgUrl" />
                 </div>
                 <div class="col text-white">
-                    <h1 class="text-orange">@Model.Name <span class="float-right">@Model.Price den.</span></h1>
+                    <h1 class="text-orange">@Model.Name <span class="float-right">@String.Format("{0:0.##} mkd.",Model.Price)</span></h1>
                     <hr class="red ml-0" />
                     <div class="row">
                         <div class="col-5">

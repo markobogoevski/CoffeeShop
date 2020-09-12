@@ -35,9 +35,9 @@
                             {
                             <div class="carousel-item @(first?Html.Raw("active"):Html.Raw(""))">
                                 <img class="d-block w-100" src="@coffee.ImgUrl" alt=@coffee.Name>
-                                <div class="carousel-caption d-none d-md-block mb-4" style="background-color:rgba(0, 0, 0, 0.3)">
-                                    <h5 class="text-orange">@coffee.Name</h5>
-                                    <p class="text-orange">Price: @coffee.TotalPrice</p>
+                                <div class="carousel-caption d-none d-md-block mb-4" style="background-color:rgba(0, 0, 0, 0.7)">
+                                    <h5 class="text-white">@coffee.Name</h5>
+                                    <p class="text-white">Price: @coffee.TotalPrice</p>
                                 </div>
                             </div>
                             first = false;

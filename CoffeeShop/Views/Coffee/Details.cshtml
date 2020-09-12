@@ -17,7 +17,7 @@
                     <img class="img-fluid d-inline-block" src="@Model.ImgUrl" />
                 </div>
                 <div class="col text-white">
-                    <h1 class="text-orange">@Model.Name <span class="float-right">@Model.TotalPrice den.</span></h1>
+                    <h1 class="text-orange">@Model.Name <span class="float-right">@String.Format("{0:0.##} mkd.",Model.TotalPrice)</span></h1>
                     <h5 class="text-orange">@Model.Size</h5>
                     <hr class="red ml-0" />
                     <div class="row">
@@ -27,7 +27,7 @@
                                 @{
                                     foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
                                     {
-                                        <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity, Price: @(ingredientQuantity.Ingredient.Price*ingredientQuantity.Quantity) </strong>
+                                                                <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity, Price: @String.Format("{0:0.##} mkd.",(ingredientQuantity.Ingredient.Price*ingredientQuantity.Quantity)) </strong>
                                         <br />
                                     }
                                 }<br />
@@ -97,11 +97,11 @@
             </tr>
             <tr>
                 <td>Total profit achieved</td>
-                <td>@ViewBag.TotalProfit</td>
+                <td>@String.Format("{0:0.##} mkd.",ViewBag.TotalProfit)</td>
             </tr>
             <tr>
                 <td>Total profit achieved this week</td>
-                <td>@ViewBag.TotalProfitWeek</td>
+                <td>@String.Format("{0:0.##} mkd.",@ViewBag.TotalProfitWeek)</td>
             </tr>
 
         </table>

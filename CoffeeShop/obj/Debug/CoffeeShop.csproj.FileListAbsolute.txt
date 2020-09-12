@@ -346,3 +346,4 @@ C:\Users\David Galevski\Source\Repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.
 C:\Users\David Galevski\Source\Repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.GenerateResource.cache
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.initial.resources
 C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.csproj.GenerateResource.cache
+C:\Users\Marko\source\repos\CoffeeShop\CoffeeShop\obj\Debug\CoffeeShop.Migrations.init2.resources

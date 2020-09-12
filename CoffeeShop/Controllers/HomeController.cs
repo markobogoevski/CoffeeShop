@@ -20,7 +20,7 @@
                 ViewBag.TopCoffee = _repository.GetTopCoffee();
                 return View();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new HttpNotFoundResult();
             }

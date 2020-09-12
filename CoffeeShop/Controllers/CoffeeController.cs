@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Security.Cryptography;
     using System.Web;
     using System.Web.Mvc;
     using CoffeeShop.Enumerations;
@@ -82,7 +83,7 @@
 
         // GET: Coffee/Details/5
         [AllowAnonymous]
-        public ActionResult Details(Guid id)
+        public ActionResult Details(Guid id, bool statistics=false)
         {
             if (id == null)
             {
@@ -94,8 +95,32 @@
                 var ingredientsForCoffee = _repository.GetIngredientsInCoffee(coffeeModel.CoffeeId)
                                                       .ToList();
                 ViewBag.IngredientsForCoffee = ingredientsForCoffee;
+                if (statistics)
+                {
+                    ViewBag.Statistics = true;
+                    ViewBag.TotalProfit = _repository.GetTotalProfitCoffee(coffeeModel);
+                    ViewBag.TotalProfitWeek = _repository.GetTotalProfitWeekCoffee(coffeeModel);
+                }
                 return View(coffeeModel);
 
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
+        // GET: Coffee/StatisticsDetails/5
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
+        public ActionResult StatisticsDetails(Guid id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            try
+            {
+                return RedirectToAction("Details",new { id,statistics = true});
             }
             catch (Exception)
             {
@@ -121,13 +146,13 @@
         
         [HttpPost]
         [Authorize(Roles = UserRoles.User)]
-        public ActionResult CreateCustomCoffee(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file)
+        public ActionResult CreateCustomCoffee(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file, string description)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    return Create(coffeeViewModel, file, custom: true);
+                    return Create(coffeeViewModel, file, description, custom: true);
                 }
                 var Sizes = _repository.GetAllCoffeeSizes().ToList();
                 ViewBag.Sizes = Sizes;
@@ -201,12 +226,26 @@
         // POST: Coffee/Create
         [HttpPost]
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
-        public ActionResult Create(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file, bool custom = false)
+        public ActionResult Create(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file, string description, bool custom = false)
         {
             try
             {
+                if (!custom)
+                {
+                    if (coffeeViewModel.BasePrice < 0)
+                    {
+                        ModelState.AddModelError("BasePrice", "Base price can't be negative");
+                    }
+                    if (coffeeViewModel.IncomeCoef < 1)
+                    {
+                        ModelState.AddModelError("IncomeCoef", "Income coefficient can't be less than 1.");
+                    }
+                }
+                
                 if (ModelState.IsValid)
                 {
+                    coffeeViewModel.Description = description;
+
                     if (file != null)
                     {
                         string pic = Path.GetFileName(file.FileName);
@@ -241,6 +280,7 @@
                     ViewBag.Title = "Coffee Shop blabla";
                     return RedirectToAction("Index");
                 }
+                
                 var Sizes = _repository.GetAllCoffeeSizes().ToList();
                 ViewBag.Sizes = Sizes;
                 coffeeViewModel.availableIngredients = _repository.GetAvailableIngredients(null).Select(item => new IngredientQuantityViewModel
@@ -286,12 +326,22 @@
         // POST: Coffee/Edit/5
         [HttpPost]
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
-        public ActionResult Edit(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file)
+        public ActionResult Edit(CreateCoffeeViewModel coffeeViewModel, HttpPostedFileBase file, string description)
         {
             try
             {
+                if (coffeeViewModel.BasePrice < 0)
+                {
+                    ModelState.AddModelError("BasePrice", "Base price can't be negative");
+                }
+                if (coffeeViewModel.IncomeCoef < 1)
+                {
+                    ModelState.AddModelError("IncomeCoef", "Income coefficient can't be less than 1.");
+                }
+
                 if (ModelState.IsValid)
                 {
+                    coffeeViewModel.Description = description;
                     if (file != null)
                     {
                         string pic = Path.GetFileName(file.FileName);
@@ -446,6 +496,19 @@
                 var coffee = _repository.GetAllCoffeeForUser(User.Identity.GetUserId());
                 var coffeeStatistics = _repository.GetCoffeeStatistics(coffee)
                                                   .ToList();
+
+                List<decimal> totalCoffeeProfit = new List<decimal>();
+                List<decimal> totalCoffeeProfitWeek = new List<decimal>();
+
+                foreach (var coffeeStatistic in coffeeStatistics)
+                {
+                    totalCoffeeProfit.Add(_repository.GetTotalProfitCoffee(coffeeStatistic.Coffee));
+                    totalCoffeeProfitWeek.Add(_repository.GetTotalProfitWeekCoffee(coffeeStatistic.Coffee));
+                }
+
+                ViewBag.TotalCoffeeProfit = totalCoffeeProfit;
+                ViewBag.TotalCoffeeProfitWeek = totalCoffeeProfitWeek;
+
                 return View("CoffeeStatistics", coffeeStatistics);
             }
             catch (Exception)

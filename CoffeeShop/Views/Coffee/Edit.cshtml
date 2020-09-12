@@ -28,7 +28,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
                         <div>
-                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                            <textarea class="form-control rounded-0" name="description" rows="3">@Model.Description</textarea>
                             @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                         @Html.HiddenFor(model => model.ImgUrl)
                         @Html.LabelFor(model => model.ImgUrl, htmlAttributes: new { @class = "control-label" })
                         Current image: <br />
-                        <img src="@Model.ImgUrl" class="editImg" width="300px" />
+                        <img src="@Model.ImgUrl" class="editImg" style="width:70%"/>
                         <br /><br />
                         <div class="form-group">
                             <label for="file">Upload new image:</label>
@@ -62,7 +62,7 @@
                     if (Model.availableIngredients.Count != 0)
                     {
                         <div class="col-md-7">
-                            <label class="row font-weight-bold ml-2">Choose your ingredients: </label><br /><br />
+                            <label class="row font-weight-bold ml-2">Choose your ingredients: </label><br />
                             @{var i = 0;}
                             @foreach (var item in Model.availableIngredients)
                             {
@@ -107,7 +107,6 @@
             </div>
 
         }
-    </section>
 </div>
 
 @section Styles {

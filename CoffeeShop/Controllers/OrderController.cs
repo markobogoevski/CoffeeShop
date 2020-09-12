@@ -83,7 +83,7 @@
                     Session["cart"] = null;
                     return Json(new { message = "Your order has been placed" });
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return HttpNotFound();
                 }

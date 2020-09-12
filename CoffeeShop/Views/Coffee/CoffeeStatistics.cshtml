@@ -77,7 +77,7 @@
                             @Html.DisplayFor(modelItem => item.Coffee.Name)
                         </td>
                         <td class="img-field hidden-img">
-                            <a href="/Coffee/Details/@item.Coffee.CoffeeId">
+                            <a href="/Coffee/StatisticsDetails/@item.Coffee.CoffeeId">
                                 <img alt="@item.Coffee.Name" src="@Url.Content(item.Coffee.ImgUrl)" />
                             </a>
                         </td>
@@ -91,10 +91,10 @@
                             @Html.DisplayFor(modelItem => item.Coffee.TotalQuantitySold)
                         </td>
                         <td>
-                            @coffeeProfit.ElementAt(count)
+                            @String.Format("{0:0.##} mkd.",@coffeeProfit.ElementAt(count))
                         </td>
                         <td>
-                            @coffeeProfitWeek.ElementAt(count)
+                            @String.Format("{0:0.##} mkd.",@coffeeProfitWeek.ElementAt(count))
                         </td>
                         <td class="text-center">
                             <a data-button-id=@item.Coffee.CoffeeId data-max-decrease=@item.Coffee.QuantityInStock data-max-increase="@item.MaxIncreaseStock" class="fa fa-chevron-up fa-2x text-success btn_increase"></a><br />

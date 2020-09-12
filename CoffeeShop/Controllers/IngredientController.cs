@@ -33,10 +33,10 @@
                 return HttpNotFound();
             }
         }
-       
+
         // GET: Ingredient/Details/5
         [AllowAnonymous]
-        public ActionResult Details(Guid? id)
+        public ActionResult Details(Guid? id, bool statistics = false)
         {
             if (id == null)
             {
@@ -45,7 +45,29 @@
             try
             {
                 var ingredient = _repository.FindIngredient(id);
+                if (statistics)
+                {
+                    ViewBag.Statistics=true;
+                }
                 return View(ingredient);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
+        // GET: Ingredient/StatisticsDetails/5
+        [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
+        public ActionResult StatisticsDetails(Guid id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            try
+            {
+                return RedirectToAction("Details", new { id, statistics = true });
             }
             catch (Exception)
             {
@@ -64,10 +86,16 @@
         // POST: Ingredient/Create
         [HttpPost]
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
-        public ActionResult Create(IngredientModel newIngredient, HttpPostedFileBase file)
+        public ActionResult Create(IngredientModel newIngredient, HttpPostedFileBase file, string description)
         {
+            if (newIngredient.Price < 0)
+            {
+                ModelState.AddModelError("Price", "Ingredient price can't be negative");
+            }
+
             if (ModelState.IsValid)
             {
+                newIngredient.Description = description;
                 if (file != null)
                 {
                     string pic = Path.GetFileName(file.FileName);
@@ -116,33 +144,43 @@
         // POST: Ingredient/Edit/5
         [HttpPost]
         [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Owner)]
-        public ActionResult Edit(IngredientModel _ingredient, HttpPostedFileBase file)
+        public ActionResult Edit(IngredientModel _ingredient, HttpPostedFileBase file, string description)
         {
-            if (file != null)
+            if (_ingredient.Price < 0)
             {
-                string pic = Path.GetFileName(file.FileName);
-                string path = Path.Combine(
-                Server.MapPath("~/Content/Images/Ingredient"), pic);
-                file.SaveAs(path);
-
-                // save the image path path to the database
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    file.InputStream.CopyTo(ms);
-                    byte[] array = ms.GetBuffer();
-                }
-
-                _ingredient.ImgUrl = "/Content/Images/Ingredient/" + pic;
+                ModelState.AddModelError("Price", "Ingredient price can't be negative");
             }
-            try
+
+            if (ModelState.IsValid)
             {
-                _repository.UpdateIngredient(_ingredient);
+                _ingredient.Description = description;
+                if (file != null)
+                {
+                    string pic = Path.GetFileName(file.FileName);
+                    string path = Path.Combine(
+                    Server.MapPath("~/Content/Images/Ingredient"), pic);
+                    file.SaveAs(path);
+
+                    // save the image path path to the database
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        file.InputStream.CopyTo(ms);
+                        byte[] array = ms.GetBuffer();
+                    }
+
+                    _ingredient.ImgUrl = "/Content/Images/Ingredient/" + pic;
+                }
+                try
+                {
+                    _repository.UpdateIngredient(_ingredient);
+                }
+                catch (Exception)
+                {
+                    return HttpNotFound();
+                }
                 return RedirectToAction("Index");
             }
-            catch (Exception)
-            {
-                return HttpNotFound();
-            }
+            return View(_ingredient);
         }
 
         [HttpPost]
