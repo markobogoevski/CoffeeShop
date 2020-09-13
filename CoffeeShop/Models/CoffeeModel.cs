@@ -1,6 +1,5 @@
 ﻿namespace CoffeeShop.Models
 {
-    using CoffeeShop.Models.Order;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -21,9 +20,7 @@
         [Display(Name = "Price")]
         public decimal TotalPrice { get; set; }
 
-        [Required]
-        [Display(Name = "Coffee size")]
-        public String  Size { get; set; }
+        public decimal ProductionPrice { get; set; }
 
         [Display(Name = "Coffee image")]
         public String ImgUrl { get; set; }
@@ -33,13 +30,13 @@
         
         public virtual List<IngredientModel> Ingredients { get; set; }
 
-        [Display(Name = "Quantity of coffee in stock")]
+        [Display(Name = "Coffee in stock")]
         public int QuantityInStock { get; set; }
 
-        [Display(Name = "Quantity of coffee sold this week")]
+        [Display(Name = "Coffee sold this week")]
         public int QuantitySoldLastWeek { get; set; }
 
-        [Display(Name = "Total quantity of coffee sold throughout time")]
+        [Display(Name = "Total coffee sold")]
         public int TotalQuantitySold { get; set; }
 
         [Required]

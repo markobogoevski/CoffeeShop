@@ -1,14 +1,21 @@
-﻿.back-img {
-    background-image: url(/Content/Images/Logo/back-cofee.jpg);
-    min-height: 50px;
-    min-width: 50px;
-    background-repeat: no-repeat;
+﻿
+.jumbotron {
+    background: linear-gradient(rgba(0, 0, 0, .4), rgba(52, 58, 64, 1)), url(/Content/Images/Logo/jumbo-img.jpg) no-repeat center center;
     background-size: cover;
+    min-height: 400px;
 }
 
-.logo-coffee{
-    margin-left:-110%;
-    margin-top:5.8%;
+.dataTable > thead > tr > th[class*="sorting"].no-sort::before,
+.dataTable > thead > tr > th[class*="sorting"].no-sort::after,
+.dataTable > thead > tr > th[class*="sorting_asc"].no-sort::before,
+.dataTable > thead > tr > th[class*="sorting_desc"].no-sort::before 
+{
+    display: none
+}
+
+.logo-coffee {
+    margin-left: -110%;
+    margin-top: 5.8%;
 }
 .navbar-brand {
     align-self:center
@@ -59,7 +66,55 @@
     border-top: 1px solid rgb(161, 160, 160);
 }
 
-.img-field.hidden-img > img{
+.img-field.hidden-img > * img{
     width: 150px;
     max-height: 100px;
 }
+
+.hoverable {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3)
+}
+
+    .hoverable:hover {
+        box-shadow: 0px 0px 0px 6px rgba(255, 140, 0, 0.5)
+    }
+
+a.custom-card-link,
+a.custom-card-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+    a.custom-card-link:hover {
+        color: #f3ad58
+    }
+.card-footer > *.btn {
+    margin-right: 10px
+}
+.card-columns.contact {
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    column-count: 2;
+}
+.card-text {
+    font-size: 15px;
+}
+
+.buttonsDown {
+    width: 72px;
+    height: 48px;
+    margin: auto;
+    text-align: center;
+}
+
+.text-orange {
+    color: rgb(255, 140, 0)
+}
+
+hr.red {
+    border-top: darkred 5px solid;
+    width: 25%;
+}
+

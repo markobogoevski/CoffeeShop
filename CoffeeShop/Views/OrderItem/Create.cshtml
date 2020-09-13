@@ -4,66 +4,122 @@
 @{
     ViewBag.Title = "Create";
 }
-<br /><br />
-<h2>Create</h2>
+    <div class="container">
+        <br /><br />
+        <h2 class="mt-3">Ordering...</h2>
 
-    @Html.AntiForgeryToken()
-    <input type="hidden" name="id" value="@Model.Coffee.CoffeeId" />
-        <h4>OrderItemModel</h4>
-        <hr />
+        @{ if (ViewBag.MaxUp != 0)
+            {
+                <input type="hidden" name="id" value="@Model.Coffee.CoffeeId" />
+                <hr />
+                <div class="container">
+                    <div class="card bg-dark">
+                        <div class="card-header bg-dark">
+                            <span class="text-orange text-uppercase">Order item details</span>
+                        </div>
+                        <div class="card-body pr-5">
+                            <div class="row">
+                                <div class="col-5 align-middle my-auto h-100 text-center">
+                                    <img class="img-fluid d-inline-block" src="@Model.Coffee.ImgUrl" />
+                                </div>
+                                <div class="col text-white">
+                                    <h1 class="text-orange">@Model.Coffee.Name <span class="float-right">@Model.Coffee.TotalPrice mkd. (small)</span></h1>
+                                    <hr class="red ml-0" />
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <h4>Ingredients:</h4>
+                                            <p>
+                                                @{
+                                                    foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
+                                                    {
+                                                        <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity</strong>
+                                                        <br />
+                                                    }
+                                                }<br />
+                                            </p>
+                                        </div>
+                                        <div class="col">
+                                            <h4>Description:</h4>
+                                            <p class="text-justify">
+                                                @if (Model.Coffee.Description != null)
+                                                {
+                                                    @Model.Coffee.Description
+                                                }
+                                                else
+                                                {
+                                                    <span>Currently there is no available description...</span>
+                                                }
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <h4 class="text-orange">Choose a size:</h4>
+                                            @{
+                                                var first = true;
+                                            }
 
-        <div style="margin:auto; width:50%; border:3px solid gray; padding:10px" class="bg-primary card text-center">
-            Currently ordering: <br /><br />
+                                            @foreach (var coffeeSize in (List<string>)ViewBag.CoffeeSizes)
+                                            {
+                                                <div class="form-check form-check-inline">
+                                                    @{
+                                                        var multiplier = 1m;
+                                                        switch (coffeeSize)
+                                                        {
+                                                            case "Medium":
+                                                                multiplier = 1.3m;
+                                                                break;
+                                                            case "Big":
+                                                                multiplier = 1.5m;
+                                                                break;
+                                                            default:
+                                                                break;
+                                                        }
+                                                        var price = multiplier * Model.Coffee.TotalPrice;
+                                                        if (price % 10 != 0)
+                                                        {
+                                                            price = (int)(price / 10);
+                                                            price += 1;
+                                                            price *= 10;
+                                                        }
+                                                    }
+                                                    <input type="radio" class="form-check-input" value="@coffeeSize : @String.Format("{0:0.##} mkd.", price)" id="@coffeeSize" name="size" @(first ? Html.Raw("checked") : Html.Raw(""))>
+                                                    <label class="form-check-label" for="@coffeeSize">@coffeeSize : @String.Format("{0:0.##} mkd.", price)</label>
+                                                </div>
+                                                first = false;
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-dark">
+                            <div class="row mr-auto">
+                                <div class="container col-md-6 float-left">
+                                    @Html.LabelFor(model => model.Quantity, htmlAttributes: new { @class = "control-label text-orange m-2" })
+                                    @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { max = ViewBag.MaxUp, min = "1", @Value = "1", @class = "form-control quantity-order" } })
+                                    @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="container col-md-6 float-right">
+                                    <input data-button-id="@Model.Coffee.CoffeeId" type="submit" value="Order" class="btn add-order-item btn-block btn-outline-warning" style="width:100%; max-width:none" />
+                                    @Html.ActionLink("Back to List", "Index", "Coffee", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-outline-light btn-block" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="hr"><hr /></div>
+                <h4 class="mt-3"> We are sorry. The item is no longer in stock...</h4>
+                <div class="container mt-3">
+                    @Html.ActionLink("Back to List", "Index", "Coffee", routeValues: null, htmlAttributes: new { @class = "btn btn-info w-25 mt-3" })
+                </div>
+            }
+        }
 
-            <img class="card-img-top" src="@Model.Coffee.ImgUrl" alt="Coffee" style="max-height: 300px; max-width: 500px;">
-            <br />
-            <div class="card-body">
-                <br />
-                <h5 class="card-title">Ingredients: </h5>
-                @{
-                    if (ViewBag.IngredientsForCoffee.Count == 0)
-                    {
-                        <p class="card-text">Basic coffee (no ingredients)</p>
-                        <br />
-                    }
-                    else
-                    {
-                        <p class="card-text">
-                            @{
-                                foreach (IngredientInCoffeeModel ingredientQuantity in (List<IngredientInCoffeeModel>)ViewBag.IngredientsForCoffee)
-                                {
-                                    <strong>@ingredientQuantity.Ingredient.Name x @ingredientQuantity.Quantity, Price: @(ingredientQuantity.Ingredient.Price * ingredientQuantity.Quantity) </strong>
-                                    <br />
-                                }
-                            }<br />
-                        </p>
-                    }
-                }
-            </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item bg-danger">Name: @Model.Coffee.Name</li>
-                    <li class="list-group-item bg-danger">Price on discount: @Model.Coffee.TotalPrice denars.</li>
-                    <li class="list-group-item bg-danger">Size: @Model.Coffee.Size</li>
-                    <li class="list-group-item bg-danger">Description: @Model.Coffee.Description</li>
-                </ul><br />
-                     <div class="card-body">
-                         <div class="form-group col-md-6" style="float:left">
-                             @Html.LabelFor(model => model.Quantity, htmlAttributes: new { @class = "control-label" })
-                                 @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { min = "1", @Value = "1", @class = "form-control quantity-order" } })
-                                 @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
-                         </div>
-                         <div class="form-group col-md-6" style="float:right; padding-top:3%">
-                             <input data-button-id="@Model.Coffee.CoffeeId" type="submit" value="Order" class="btn btn-success add-order-item" />
-                             @Html.ActionLink("Back to List", "Index", "Coffee", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info" })
-                         </div>
-                         <div class="form-group" style="padding-top:10%">
-                         </div>
-                     </div>
-        </div>
-
-@section Styles{
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-}
+    </div>
 
 @section scripts{
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
@@ -71,33 +127,39 @@
     $(document).ready(function () {
         $(".add-order-item").click(function () {
             var button = $(this);
-            console.log("test");
             var quantity = $(".quantity-order").val();
             var title = "";
             if (quantity >= 2) {
-                title = "Дали сакате да го додадете ова кафе " + quantity + " пати во вашата нарачка?";
+                title = "Do you want to add this coffee " + quantity + " times in your order?";
             }
             else {
-                title = "Дали сакате да го додадете ова кафе само еднаш во вашата нарачка?";
+                title = "Do you want to add only a single quantity of this coffee in your order?";
             }
+            var radioValue = $("input[name='size']:checked").val();
+            var parts = radioValue.split(":")
+            var size = parts[0].trim()
+            var price = parts[1].substring(1,4).trim()
             bootbox.confirm(title
                 , function (result) {
+                    console.log(result)
                     if (result) {
                         $.ajax({
                             method: "POST",
-                            data: { "id": button.attr("data-button-id"), "quantity": quantity, "daily":@ViewBag.Daily },
+                            data: { "id": button.attr("data-button-id"), "quantity": quantity, "daily":@ViewBag.Daily, "size":size,"price":price },
                             url: "/OrderItem/Create/",
-                            error: function () {
+                            complete: function () {
                                 bootbox.alert({
-                                    message: "Успешно додадовте " + quantity+" артикли!",
-                                    backdrop: true
-                                });
-                            },
+                                    message: "Successfully placed order item in shopping cart!",
+                                    backdrop: true,
+                                    function: function(){
+                                        window.location.reload();
+                                    }
+                                })},
                             dataType: 'json'
                         });
                     }
                 });
         });
     })
-    </script>     
+    </script>
 }

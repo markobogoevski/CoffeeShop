@@ -3,149 +3,210 @@
 @{
     ViewBag.Title = "CoffeeStatistics";
 }
+<div class="container" style="width:100%; max-width:80%">
+    <h2 class="text-center mt-3">Coffee Statistics</h2>
+    <div class="hr"><hr /></div>
+    <div class="container align-btns text-center d-inline-block" style="width:100%; max-width:100%">
+        <div class="container col-md-4 float-left">
+            <h4>
+                All time
+            </h4>
+            <div>
+                @Html.ActionLink("Most sold", "MostSold", null, new { @class = "btn btn-info m-1" })
 
-<h2>CoffeeStatistics</h2>
-<div style="padding-bottom:10%">
-    <div class="col-md-6" style="float:left">
-        <div>
-            @Html.ActionLink("Check out the most sold coffee", "MostSold", null, new { @class = "btn btn-info" })
+                @Html.ActionLink("Least sold", "LeastSold", null, new { @class = "btn btn-info m-1" })
+            </div>
         </div>
-        <br />
-        <div>
-            @Html.ActionLink("Check out the least sold coffee!", "LeastSold", null, new { @class = "btn btn-info" })
+        <div class="container col-md-4 float-left">
+            <a class="text-info fa fa-image fa-3x m-3" id="toggle-img">
+                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true">Toggle coffee image</span>
+            </a>
+        </div>
+        <div class="container col-md-4 float-left">
+            <h4>
+                This week
+            </h4>
+            <div>
+                @Html.ActionLink("Most sold", "MostSoldWeek", null, new { @class = "btn btn-info m-1" })
+
+                @Html.ActionLink("Least sold", "LeastSoldWeek", null, new { @class = "btn btn-info m-1" })
+            </div>
         </div>
     </div>
-    <div class="col-md-6" style="float:right">
-        <div>
-            @Html.ActionLink("Check out the most sold coffee this week", "MostSoldWeek", null, new { @class = "btn btn-info" })
-        </div>
-        <br />
-        <div>
-            @Html.ActionLink("Check out the least sold coffee this week!", "LeastSoldWeek", null, new { @class = "btn btn-info" })
-        </div>
-    </div>
-</div>
-
-    <table class="table" id="table_coffee_statistics">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Coffee.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Coffee.ImgUrl)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Coffee.QuantityInStock)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Coffee.QuantitySoldLastWeek)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Coffee.TotalQuantitySold)
-                </th>
-                <th>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+    <div class="hr"><hr /></div>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped dt-responsive display nowrap" id="table_coffee_statistics" style="width:100%">
+            <thead class="bg-dark text-orange">
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Coffee.Name)
-                    </td>
-                    <td>
-                        <img alt="@item.Coffee.Name" src="@Url.Content(item.Coffee.ImgUrl)" width="300px" />
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Coffee.QuantityInStock)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Coffee.QuantitySoldLastWeek)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Coffee.TotalQuantitySold)
-                    </td>
-                    <td>
-                        <button data-button-id=@item.Coffee.CoffeeId data-max-decrease=@item.Coffee.QuantityInStock data-max-increase="@item.MaxIncreaseStock" class="btn btn-success btn_increase">Increase quantity in stock</button>|
-                        <button data-button-id=@item.Coffee.CoffeeId data-max-decrease=@item.Coffee.QuantityInStock data-max-increase="@item.MaxIncreaseStock" class="btn btn-danger btn_decrease">Decrease quantity in stock</button>
-                    </td>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Coffee.Name)
+                    </th>
+                    <th class="hidden-img">
+                        @Html.DisplayNameFor(model => model.Coffee.ImgUrl)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Coffee.QuantityInStock)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Coffee.QuantitySoldLastWeek)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Coffee.TotalQuantitySold)
+                    </th>
+                    <th>
+                        Total profit
+                    </th>
+                    <th>
+                        Total profit, week
+                    </th>
+                    <th>
+                        Stock Quantity
+                    </th>
                 </tr>
-
-            }
-        </tbody>
-    </table>
-
-<div>
-    @Html.ActionLink("Back to list", "Index", null, new { @class = "btn btn-info" })
+            </thead>
+            <tbody>
+                @{ 
+                    var count = 0;
+                    IEnumerable<decimal> coffeeProfit = (IEnumerable<decimal>)ViewBag.TotalCoffeeProfit;
+                    IEnumerable<decimal> coffeeProfitWeek = (IEnumerable<decimal>)ViewBag.TotalCoffeeProfitWeek;
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Coffee.Name)
+                        </td>
+                        <td class="img-field hidden-img">
+                            <a href="/Coffee/StatisticsDetails/@item.Coffee.CoffeeId">
+                                <img alt="@item.Coffee.Name" src="@Url.Content(item.Coffee.ImgUrl)" />
+                            </a>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Coffee.QuantityInStock)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Coffee.QuantitySoldLastWeek)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Coffee.TotalQuantitySold)
+                        </td>
+                        <td>
+                            @String.Format("{0:0.##} mkd.",@coffeeProfit.ElementAt(count))
+                        </td>
+                        <td>
+                            @String.Format("{0:0.##} mkd.",@coffeeProfitWeek.ElementAt(count))
+                        </td>
+                        <td class="text-center">
+                            <a data-button-id=@item.Coffee.CoffeeId data-max-decrease=@item.Coffee.QuantityInStock data-max-increase="@item.MaxIncreaseStock" class="fa fa-chevron-up fa-2x text-success btn_increase"></a><br />
+                            <a data-button-id=@item.Coffee.CoffeeId data-max-decrease=@item.Coffee.QuantityInStock data-max-increase="@item.MaxIncreaseStock" class="fa fa-chevron-down fa-2x text-danger btn_decrease"></a>
+                        </td>
+                    </tr>
+                    count+=1;
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="m-3">
+        @Html.ActionLink("Back to list", "Index", null, new { @class = "btn btn-info" })
+    </div>
 </div>
+
+@section Styles {
+    <link href="@Url.Content("~/Styles/Checkbox.css")" rel="stylesheet" type="text/css" />
+    <style>
+        a {
+            text-decoration: none;
+            height: 100%;
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+
+            a span {
+                color: black;
+                font-size: 10px;
+                padding: 5px 0 10px 0;
+                display: block;
+                text-transform: uppercase;
+                font-weight: bolder;
+                font-family: 'Josefin Sans';
+            }
+    </style>
+}
 
 @section scripts{
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
     <script type="text/javascript">
-            var table = $("#table_coffee_statistics").DataTable();
-            $("#table_coffee_statistics .btn_increase").click(function () {
-                var button = $(this);
-                bootbox.prompt({
-                    title: "Внесете колку сакате да зголемите залиха",
-                    inputType: 'number',
-                    max: button.attr("data-max-increase"),
-                    min: 0,
-                    value: 1,
-                    callback: function (result) {
-                        if (result) {
-                            $.ajax({
-                                method: "POST",
-                                data: { "id":button.attr("data-button-id"), "quantity": result },
-                                url: "/Coffee/UpdateCoffeeQuantity",
-                                dataType: 'json',
-                                error: function () {
-                                    var row_index = table.row(button.parents("tr")).index()
-                                    var cell_data = table.cell({ row: row_index, column: 2 }).data()
-                                    table.draw()
-                                    bootbox.alert({
-                                        message: "Successfully updated stock!",
-                                        backdrop: true
-                                    });
-                                    location.reload()
-                                }
-                            });
-                        }
+        var table = $("#table_coffee_statistics").DataTable();
+        $('#toggle-img').on("click", function () {
+            if ($('.hidden-img').is(':hidden')) {
+                $('.hidden-img').toggle('slow');
+            }
+            else {
+                $('.hidden-img').toggle();
+            }
+        });
+        $("#table_coffee_statistics .btn_increase").click(function () {
+            var button = $(this);
+            bootbox.prompt({
+                title: "Внесете колку сакате да зголемите залиха",
+                inputType: 'number',
+                max: button.attr("data-max-increase"),
+                min: 0,
+                value: 1,
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            method: "POST",
+                            data: { "id": button.attr("data-button-id"), "quantity": result },
+                            url: "/Coffee/UpdateCoffeeQuantity",
+                            dataType: 'json',
+                            error: function () {
+                                var row_index = table.row(button.parents("tr")).index()
+                                var cell_data = table.cell({ row: row_index, column: 2 }).data()
+                                table.draw()
+                                bootbox.alert({
+                                    message: "Successfully updated stock!",
+                                    backdrop: true
+                                });
+                                location.reload()
+                            }
+                        });
                     }
-                });
-                });
-
-            $("#table_coffee_statistics .btn_decrease").click(function () {
-                var button = $(this);
-                bootbox.prompt({
-                    title: "Внесете колку сакате да намалите залиха",
-                    inputType: 'number',
-                    max: button.attr("data-max-decrease"),
-                    min: 0,
-                    value: 1,
-                    callback: function (result) {
-                        if (result) {
-                            $.ajax({
-                                method: "POST",
-                                data: { "id": button.attr("data-button-id"), "quantity": -result },
-                                url: "/Coffee/UpdateCoffeeQuantity",
-                                error: function () {
-                                    var row_index = table.row(button.parents("tr")).index()
-                                    var cell_data = table.cell({ row: row_index, column: 2 }).data()
-                                    table.cell({ row: row_index, column: 2 }).data(parseInt(cell_data) + parseInt(-result))
-                                    table.draw()
-                                    bootbox.alert({
-                                        message: "Successfully updated stock!",
-                                        backdrop: true
-                                    });
-                                    location.reload();
-                                },
-                                dataType: 'json'
-                            });
-                        }
-                    }
-                });
+                }
             });
+        });
+
+        $("#table_coffee_statistics .btn_decrease").click(function () {
+            var button = $(this);
+            bootbox.prompt({
+                title: "Внесете колку сакате да намалите залиха",
+                inputType: 'number',
+                max: button.attr("data-max-decrease"),
+                min: 0,
+                value: 1,
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            method: "POST",
+                            data: { "id": button.attr("data-button-id"), "quantity": -result },
+                            url: "/Coffee/UpdateCoffeeQuantity",
+                            error: function () {
+                                var row_index = table.row(button.parents("tr")).index()
+                                var cell_data = table.cell({ row: row_index, column: 2 }).data()
+                                table.cell({ row: row_index, column: 2 }).data(parseInt(cell_data) + parseInt(-result))
+                                table.draw()
+                                bootbox.alert({
+                                    message: "Successfully updated stock!",
+                                    backdrop: true
+                                });
+                                location.reload();
+                            },
+                            dataType: 'json'
+                        });
+                    }
+                }
+            });
+        });
     </script>
 }

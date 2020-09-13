@@ -221,6 +221,36 @@
             }
         }
 
+        // GET: Order/Filter
+        public ActionResult Filter()
+        {
+            try
+            {
+                var orders = _repository.GetOrdersForUser(null)
+                                        .ToList();
+                foreach(var order in orders)
+                {
+                    if (order.OrderStatus == OrderStatus.INACTIVE)
+                    {
+                        _repository.DeleteOrder(order.OrderId, null);
+                    }
+                }
+
+                orders = _repository.GetOrdersForUser(null)
+                                        .ToList();
+                if (orders.Count() == 0)
+                    ViewBag.Empty = true;
+                ViewBag.OrderStatus = _repository.GetAllOrderStatuses().ToList();
+                var cancellables = _repository.GetOrderCancels(orders).ToList();
+                ViewBag.Cancellable = cancellables;
+                return RedirectToAction("Index", "Order", orders);
+            }
+            catch (Exception)
+            {
+                return HttpNotFound();
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

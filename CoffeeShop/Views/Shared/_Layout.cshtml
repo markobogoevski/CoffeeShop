@@ -10,51 +10,140 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
-
-
 </head>
 
-<body class="back-img" style="overflow hidden; padding: 0px" ;>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top" style="margin-bottom: 20px;">
+
+<body style="padding: 0px" ;>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                <img src="~/Content/Images/Logo/coffee-logo.png" alt="" width="30" height="30">
+
+            <a class="navbar-brand" href=@Url.Action("Index", "Home")>
+                <i class="fa fa-coffee fa-2x"></i>
             </a>
-            <a class="navbar-brand" href="#">
-                <p>Coffee shop</p>
+            <a class="navbar-brand" href=@Url.Action("Index", "Home")>
+                Coffee Shop
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">
-                            Home
-                            <span class="sr-only">(current)</span>
-                        </a>
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        @Html.ActionLink("Coffees", "Index", "Coffee", new { }, new { @class = "nav-link" })
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
+                        @Html.ActionLink("Ingredients", "Index", "Ingredient", new { }, new { @class = "nav-link" })
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Services</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
-                    </li>
+
                 </ul>
+                @Html.Partial("_LoginPartial")
             </div>
         </div>
+
     </nav>
-    
-    <div class="container jumbotron transparent-card" style="border-radius: 20px;">
+
+    <div class="d-flex flex-column min-vh-100">
         @RenderBody()
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
-    @RenderSection("Styles", required: false)
+
+
+    <footer class="font-small blue bg-light pt-4 mt-5">
+
+        <!-- Footer Links -->
+        <div class="container text-center text-md-left">
+
+            <!-- Grid row -->
+            <div class="row">
+                <div class="col col-md-2 my-auto">
+                    <div>
+                        <i class="fa fa-instagram fa-2x pr-2"> </i>
+                        <i class="fa fa-twitter fa-2x pr-2"> </i>
+                        <i class="fa fa-facebook fa-2x pr-2"> </i>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-2 my-auto">
+
+                    <!-- Links -->
+                    <h5 class="text-uppercase">Skopje</h5>
+
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#!">coffeeshop@skopje.com</a>
+                        </li>
+                        <li>
+                            <a href="#!">+389 73 737 737</a>
+                        </li>
+                        <li>
+                            <a href="#!">+02 30 33 453</a>
+                        </li>
+                    </ul>
+
+                </div>
+                <!-- Grid column -->
+                <!-- Grid column -->
+                <div class="col-md-2 my-auto">
+
+                    <!-- Links -->
+                    <h5 class="text-uppercase">Bitola</h5>
+
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#!">coffeeshop@bitola.com</a>
+                        </li>
+                        <li>
+                            <a href="#!">+389 73 737 737</a>
+                        </li>
+                        <li>
+                            <a href="#!">+02 30 33 453</a>
+                        </li>
+                    </ul>
+
+                </div>
+
+                <div class="col-md-2 my-auto">
+
+                    <!-- Links -->
+                    <h5 class="text-uppercase">Ohrid</h5>
+
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#!">coffeeshop@ohrid.com</a>
+                        </li>
+                        <li>
+                            <a href="#!">+389 73 737 737</a>
+                        </li>
+                        <li>
+                            <a href="#!">+02 30 33 453</a>
+                        </li>
+                    </ul>
+
+                </div>
+                <!-- Grid column -->
+
+                @Scripts.Render("~/bundles/jquery")
+                @Scripts.Render("~/bundles/bootstrap")
+                @RenderSection("scripts", required: false)
+                @RenderSection("Styles", required: false)
+                <!-- Grid column -->
+                <div class="col my-auto">
+                    <div class="mapouter">
+                        <div class="gmap_canvas"><iframe width="300" height="150" id="gmap_canvas" src="https://maps.google.com/maps?q=Finki&t=&z=15&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe></div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+        </div>
+        <!-- Footer Links -->
+
+    </footer>
+
+    
 </body>
 </html>

@@ -173,6 +173,8 @@
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
+                if(!result.Succeeded)
+                    return View(model);
                 UserManager.AddToRole(user.Id, UserRoles.User);
                 if (result.Succeeded)
                 {

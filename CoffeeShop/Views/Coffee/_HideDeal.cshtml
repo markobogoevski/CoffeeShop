@@ -1,12 +1,13 @@
-﻿<div id="dailydeal" style="float:left;">
-    @Ajax.ActionLink("Check out the coffee of the day",
-                         "CoffeeDay",
-                         null,
-                         new AjaxOptions
-                         {
-                             UpdateTargetId = "dailydeal",
-                             InsertionMode = InsertionMode.Replace,
-                             HttpMethod = "GET"
-                         },
-                         new { @class = "btn btn-danger" })
+﻿<div class="container pb-2" id="dailydeal">
+    @Ajax.ActionLink("‎",
+           "CoffeeDay",
+           null,
+           new AjaxOptions
+           {
+               UpdateTargetId = "dailydeal",
+               InsertionMode = InsertionMode.Replace,
+               HttpMethod = "GET"
+           },
+           new { @class = "text-danger fa fa-calendar-check-o fa-3x m-3 ", style = "display:block" })
+    <span>See the daily deal!</span>
 </div>

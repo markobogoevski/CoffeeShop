@@ -2,37 +2,169 @@
     ViewBag.Title = "Home Page";
 }
 
-<div class="">
-    <div class="text-center text-capitalize">
-        <h2>Coffee Shop</h2>
+<div class="jumbotron jumbotron-fluid mb-0">
+    <div class="text-center text-white">
+        <h1 class="display-4">Specialty coffee made by real baristas.</h1>
+        <p class="lead">Our coffee meets the highest expectations</p>
+        <hr class="my-4">
     </div>
 </div>
 
-<div class="">
-    <div>
-        <ul style="font-size: 20px;">
-            <li>Sourcing the finest fresh-roasted beans.</li>
-            <li>Using only the highest quality espresso machine and related equipment such as grinders, water filtration systems, etc.</li>
-            <li>Serving fresh pastries and snacks.</li>
-            <li>All coffees prepared by a skilled barista, we think that is essential to the craft of coffee.</li>
-            <li>We offer a mix of customer favorites (frappés, chai lattes, etc.) and your own unique creations.</li>
-        </ul>
+<section id="menu" class="full-row bg-dark py-4 mb-5">
+    <div class="container text-right">
+        <div class="row">
+            <div class="col-6 align-self-center">
+                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        @{
+                            var first = true;
+                        }
+                        @{
+                            for (int i = 0; i < ViewBag.TopCoffee.Count; i++)
+                            {
+                                <li data-target="#carouselExampleIndicators" data-slide-to="@i" class=@(first?Html.Raw("active"):Html.Raw(""))></li>
+                                first = false;
+                            }
+                        }
+                    </ol>
+                    <div class="carousel-inner">
+                        @{ 
+                            first = true;
+                        }
+                        @foreach (CoffeeShop.Models.CoffeeModel coffee in (IEnumerable<CoffeeShop.Models.CoffeeModel>)ViewBag.TopCoffee)
+                            {
+                            <div class="carousel-item @(first?Html.Raw("active"):Html.Raw(""))">
+                                <img class="d-block w-100" src="@coffee.ImgUrl" alt=@coffee.Name>
+                                <div class="carousel-caption d-none d-md-block mb-4" style="background-color:rgba(0, 0, 0, 0.7)">
+                                    <h5 class="text-white">@coffee.Name</h5>
+                                    <p class="text-white">Price: @coffee.TotalPrice</p>
+                                </div>
+                            </div>
+                            first = false;
+                        }
+                    </div>
+                  
+                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                </div>
+            </div>
+            <div class="col-6">
+                <h1 class="text-uppercase text-orange">Our top sellers</h1>
+                <hr class="red my-2 mr-0" />
+                <p class="text-justify text-white">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tempus tempus iaculis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque scelerisque sem id risus interdum, id molestie nisi bibendum.
+                </p>
+                <p class="text-justify text-white">
+                    We're sure this info helped if you haven't made your mind and will lead to you having the perfect cup of coffee for the day!
+                </p>
+            </div>
+        </div>
     </div>
-</div>
+    <div class="row text-center align-content-center">
+        <div class="col-2 mx-auto">
+            <a class="btn bg-orange text-white mt-4 font-weight-bold btn-block" href="@Url.Action("Index", "Coffee")">Menu &#187;</a>
+        </div>
+    </div>
+</section>
 
-<div class="row">
-    <div class="col-md-6 text-center" style="float:left">
-        <h2>About</h2>
-        <p>
-            About blabla
-        </p>
-        @Html.ActionLink("About", "About", "Home", new { @class = "btn btn-default" })
+<section id="customersValues" class="container">
+    <h1 class="text-uppercase text-center">What our costumers value</h1>
+    <hr class="red mx-auto mb-5" />
+    <div class="row text-center">
+        <div class="col">
+            <i class="fa fa-coffee fa-3x circle-icon"></i>
+            <h4>Product quality</h4>
+            <p class="text-justify">
+                We've gained a reputation for never cutting corners and working with the finest quality ingredients no matter what.
+            </p>
+        </div>
+        <div class="col">
+            <i class="fa fa-hourglass-half fa-3x"></i>
+            <h4>Always on time</h4>
+            <p class="text-justify">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla mollis eros cursus eros pharetra volutpat. Nunc commodo justo iaculis, elementum leo ac, sagittis purus. Nam congue magna egestas ex tincidunt, nec vehicula odio malesuada. Nullam placerat libero eu diam pellentesque convallis at id odio. 
+            </p>
+        </div>
+        <div class="col">
+            <i class="fa fa-3x fa-truck"></i>
+            <h4>Doorstep delivery</h4>
+            <p class="text-justify">
+                Integer rutrum dictum diam, at ornare erat laoreet varius. Donec eleifend consectetur finibus. Sed laoreet nisi non volutpat congue. Maecenas sed diam libero. Suspendisse potenti. Proin tempor tempus ante ac facilisis.
+            </p>
+        </div>
+        <div class="col">
+            <i class="fa fa-3x fa-lightbulb-o"></i>
+            <h4>Customize your taste</h4>
+            <p class="text-justify">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eget porttitor massa. Donec luctus, nisl non cursus dignissim, velit libero gravida orci, vitae pharetra libero mauris vel libero.
+            </p>
+        </div>
     </div>
-    <div class="col-md-6 text-center" style="float:right">
-        <h2>Contact</h2>
-        <p>
-            Contact blabla
-        </p>
-        @Html.ActionLink("Contact", "Contact", "Home", new { @class = "btn btn-default" })
+</section>
+
+
+<section id="About" class="container mt-5">
+    <div class="row">
+        <div class="col-7">
+            <h1 class="text-uppercase">About us</h1>
+            <hr class="red my-2 ml-0" />
+            <p class="text-justify">
+                Nullam vestibulum vestibulum ligula vel molestie. Cras quis pretium quam. Mauris sed faucibus lacus. Phasellus imperdiet arcu id nibh tristique, sit amet placerat eros tincidunt. Cras id nulla erat. In mattis, augue nec rutrum condimentum, dui nibh tincidunt nisi, vitae facilisis purus est ac lorem. Nullam nunc dolor, rhoncus vitae maximus ut, luctus ac lacus. Duis mattis nunc nisl.
+            </p>
+            <p class="text-justify">
+                Maecenas sagittis purus ac auctor tempor. Proin imperdiet, ligula non faucibus sollicitudin, ligula erat condimentum felis, eu pharetra odio justo eget sem.
+                Morbi viverra tristique rutrum.
+            </p>
+        </div>
+        <div class="col-5">
+            <img class="mt-5 pt-4 img-fluid" src="~/Content/Images/Coffee/machiatto.jpg" />
+        </div>
     </div>
-</div>
+</section>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            if ($("#totalRat").text() != "0") {
+                var totalRat = parseInt($("#totalRat").html());
+                $(".ratingStar").each(function () {
+                    if (parseInt($(this).attr("rating")) <= totalRat) {
+                        $(this).removeClass("fa-star-o").addClass("fa-star");
+                    }
+                })
+            }
+            $("#contact").on('click', function () {
+                var obj = {
+                    Name: $("#Name").val(),
+                    LastName: $("#LastName").val(),
+                    Email: $("#Email").val(),
+                    Message: $("#Message").val()
+                };
+                $("#Name").val("");
+                $("#LastName").val("");
+                $("#Email").val("");
+                $("#Message").val("");
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/Contact",
+                    data: obj,
+                    success: function (res) {
+                        bootbox.alert(JSON.parse(res.responseText).responseText)
+                    },
+                    error: function (res) {
+                        bootbox.alert(JSON.parse(res.responseText).responseText)
+                    },
+                    dataType: "application/json"
+                })
+            })
+        })
+    </script>
+}
+

@@ -12,6 +12,8 @@ namespace CoffeeShop.Services
     using System.Reflection;
     using System.Web.UI.WebControls;
     using System.Data.Entity;
+    using CoffeeShop.Extensions;
+    using System.Drawing.Printing;
 
     public class Repository
     {
@@ -47,6 +49,7 @@ namespace CoffeeShop.Services
             if (userId == null || _userManager.IsInRole(userId, UserRoles.User))
             {
                 coffee = coffee.Where(cof => cof.User == null || cof.User.Id == userId).ToList();
+                coffee = coffee.Where(cof => cof.QuantityInStock >= 1).ToList();
             }
 
             if (coffee != null)
@@ -123,12 +126,30 @@ namespace CoffeeShop.Services
                 BasePrice = coffeeViewModel.BasePrice,
                 TotalPrice = coffeeViewModel.BasePrice + ingredientPrice,
                 ImgUrl = coffeeViewModel.ImgUrl,
-                Size = coffeeViewModel.Size,
                 QuantityInStock = 1,
                 TotalQuantitySold = 0,
                 QuantitySoldLastWeek = 0,
                 IncomeCoef = coffeeViewModel.IncomeCoef
             };
+
+            if (userId != null)
+            {
+                newCoffee.IncomeCoef = 1.5m;
+            }
+
+            newCoffee.ProductionPrice = newCoffee.TotalPrice;
+
+            newCoffee.TotalPrice *= newCoffee.IncomeCoef;
+            int remainder = (int)(Math.Floor(newCoffee.TotalPrice)) % 10;
+            if (remainder != 0)
+            {
+                int newMultiplier = ((int)newCoffee.TotalPrice / 10) + 1;
+                newCoffee.TotalPrice = newMultiplier * 10; 
+            }
+            else
+            {
+                newCoffee.TotalPrice = (int)Math.Floor(newCoffee.TotalPrice);
+            }
 
             if (userId != null)
             {
@@ -181,7 +202,6 @@ namespace CoffeeShop.Services
                 coffee.IncomeCoef = coffeeViewModel.IncomeCoef;
                 coffee.QuantityInStock = coffeeViewModel.QuantityInStock;
                 coffee.ImgUrl = coffeeViewModel.ImgUrl;
-                coffee.Size = coffeeViewModel.Size;
                 coffee.BasePrice = coffeeViewModel.BasePrice;
                 _db.Entry(coffee).Collection(c => c.Ingredients).Load();
                 // Get the new ingredients selected for the coffee
@@ -209,10 +229,23 @@ namespace CoffeeShop.Services
                     // Calculating the new total price of the coffee
                     var ingredientPrice = GetIngredientPrice(coffeeViewModel);
                     coffee.TotalPrice = coffeeViewModel.BasePrice + ingredientPrice;
+
                 }
                 catch (Exception)
                 {
                     throw new Exception();
+                }
+                coffee.ProductionPrice = coffee.TotalPrice;
+                coffee.TotalPrice *= coffee.IncomeCoef;
+                int remainder = (int)(Math.Floor(coffee.TotalPrice)) % 10;
+                if (remainder != 0)
+                {
+                    int newMultiplier = ((int)coffee.TotalPrice / 10) + 1;
+                    coffee.TotalPrice = newMultiplier * 10;
+                }
+                else
+                {
+                    coffee.TotalPrice = (int)Math.Floor(coffee.TotalPrice);
                 }
 
                 // Deleting ingredient in coffee relations for the edited coffee
@@ -301,7 +334,35 @@ namespace CoffeeShop.Services
             }
         }
 
-        // Updates the coffee quantity in stock 
+        // Updates coffee quantity when order is created
+        public void UpdateCoffeeStockOrder(Guid? coffeeId, int quantity)
+        {
+            try
+            {
+                var coffee = FindCoffee(coffeeId);
+                var ingredientsInCoffee = _db.IngredientInCoffee.Where(ingc => ingc.CoffeeId == coffee.CoffeeId).ToList();
+                if (ingredientsInCoffee == null)
+                    throw new Exception();
+
+                // After getting all the used ingredients, updating their stock quantity also according to the
+                // updated coffee quantity in stock
+
+                for (int i = 0; i < ingredientsInCoffee.Count; i++)
+                {
+                    var ingredientId = ingredientsInCoffee.ElementAt(i).IngredientId;
+                    var ingredient = _db.Ingredients.Find(ingredientId);
+                    var ingQuantity = ingredientsInCoffee.ElementAt(i).Quantity;
+                    ingredient.QuantityInStock -= ingQuantity * Convert.ToInt32(-quantity);
+                }
+                coffee.QuantityInStock += Convert.ToInt32(quantity);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        // Updates the coffee quantity in stock by admin/owner
         public void UpdateCoffeeStock(Guid? coffeeId, string quantity)
         {
             try
@@ -322,18 +383,6 @@ namespace CoffeeShop.Services
                     ingredient.QuantityInStock -= ingQuantity * Convert.ToInt32(quantity);
                 }
                 coffee.QuantityInStock += Convert.ToInt32(quantity);
-                if (coffee.QuantityInStock == 0)
-                {
-                    try
-                    {
-                        DeleteCoffee(coffee.CoffeeId);
-                    }
-                    catch (Exception)
-                    {
-                        throw new Exception();
-                    }
-                }
-
                 _db.SaveChanges();
             }
             catch (Exception)
@@ -425,6 +474,10 @@ namespace CoffeeShop.Services
             {
                 var randomCoffee = GetRandomCoffee();
                 randomCoffee.TotalPrice *= 0.7m;
+                if (Math.Ceiling(randomCoffee.TotalPrice) % 10 != 0)
+                {
+                    randomCoffee.TotalPrice = (((int)randomCoffee.TotalPrice / 10) + 1) * 10;
+                }
                 return randomCoffee;
             }
             catch (Exception)
@@ -436,8 +489,7 @@ namespace CoffeeShop.Services
         // Gets the overall most sold coffee which exists in database which is not custom made
         public CoffeeModel GetMostSoldCoffee()
         {
-            var coffeeOrdered = _db.Coffee.Where(cof => cof.User == null)
-                                          .OrderBy(cof => cof.TotalQuantitySold)
+            var coffeeOrdered = _db.Coffee.OrderBy(cof => cof.TotalQuantitySold)
                                           .ToList();
             if (coffeeOrdered != null)
             {
@@ -452,8 +504,7 @@ namespace CoffeeShop.Services
         // Gets the overall least sold coffee which exists in database which is not custom made
         public CoffeeModel GetLeastSoldCoffee()
         {
-            var leastSold = _db.Coffee.Where(cof=>cof.User == null)
-                                      .OrderBy(cof => cof.TotalQuantitySold)
+            var leastSold = _db.Coffee.OrderBy(cof => cof.TotalQuantitySold)
                                       .First();
             if (leastSold != null)
             {
@@ -468,8 +519,7 @@ namespace CoffeeShop.Services
         // Gets the most sold coffee this week which exists in database and is not custom made
         public CoffeeModel GetMostSoldCoffeeWeek()
         {
-            var coffeeOrdered = _db.Coffee.Where(cof=>cof.User == null)
-                                          .OrderBy(cof => cof.QuantitySoldLastWeek)
+            var coffeeOrdered = _db.Coffee.OrderBy(cof => cof.QuantitySoldLastWeek)
                                           .ToList();
             if (coffeeOrdered != null)
             {
@@ -484,8 +534,7 @@ namespace CoffeeShop.Services
         // Gets the least sold coffee this week which exists in database and is not custom made
         public CoffeeModel GetLeastSoldCoffeeWeek()
         {
-            var leastSoldWeek = _db.Coffee.Where(cof=>cof.User == null)
-                                          .OrderBy(cof => cof.QuantitySoldLastWeek)
+            var leastSoldWeek = _db.Coffee.OrderBy(cof => cof.QuantitySoldLastWeek)
                                           .First();
             if (leastSoldWeek != null)
             {
@@ -500,13 +549,72 @@ namespace CoffeeShop.Services
         // Gets the profit made this week from the coffee provided according to its income coefficient
         public decimal GetTotalProfitWeekCoffee(CoffeeModel coffee)
         {
-            return coffee.TotalPrice * coffee.QuantitySoldLastWeek * coffee.IncomeCoef;
+            var thisMonday = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
+            var neededOrders = _db.Orders.Where(ord => ord.OrderStatus == OrderStatus.FINISHED && ord.OrderFinishTime.CompareTo(thisMonday) > 0)
+                                         .SelectMany(ord => ord.OrderItems)
+                                         .Where(ordI => ordI.Coffee.CoffeeId == coffee.CoffeeId).ToList();
+            if (neededOrders.Count() != 0)
+            {
+                decimal profit = 0;
+                foreach (var orderItem in neededOrders)
+                {
+                    var productionPrice = orderItem.Coffee.ProductionPrice * GetPriceMultiplierForCoffeeSize(orderItem.CoffeeSize);
+                    var priceSold = orderItem.Coffee.TotalPrice * GetPriceMultiplierForCoffeeSize(orderItem.CoffeeSize);
+                    int remainder = (int)(Math.Floor(priceSold)) % 10;
+                    if (remainder != 0)
+                    {
+                        int newMultiplier = ((int)priceSold / 10) + 1;
+                        priceSold = newMultiplier * 10;
+                    }
+                    else
+                    {
+                        priceSold = (int)Math.Floor(priceSold);
+                    }
+                    profit += orderItem.Quantity * (priceSold - productionPrice); return profit;
+                }
+                return profit;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         // Gets the total profit made from the coffee provided according to its income coefficient
         public decimal GetTotalProfitCoffee(CoffeeModel coffee)
         {
-            return coffee.TotalPrice * coffee.TotalQuantitySold * coffee.IncomeCoef;
+            var neededOrders = _db.Orders.Where(ord => ord.OrderStatus == OrderStatus.FINISHED)
+                                        .SelectMany(ord => ord.OrderItems)
+                                        .Where(ordI => ordI.Coffee.CoffeeId == coffee.CoffeeId)
+                                        .ToList();
+
+            if(neededOrders.Count() !=0)
+            {
+                decimal profit = 0;
+                foreach(var orderItem in neededOrders)
+                {
+                    var productionPrice = orderItem.Coffee.ProductionPrice * GetPriceMultiplierForCoffeeSize(orderItem.CoffeeSize);
+                    var priceSold = orderItem.Coffee.TotalPrice * GetPriceMultiplierForCoffeeSize(orderItem.CoffeeSize);
+                    int remainder = (int)(Math.Floor(priceSold)) % 10;
+                    if (remainder != 0)
+                    {
+                        int newMultiplier = ((int)priceSold / 10) + 1;
+                        priceSold = newMultiplier * 10;
+                    }
+                    else
+                    {
+                        priceSold = (int)Math.Floor(priceSold);
+                    }
+
+                    profit += orderItem.Quantity*(priceSold - productionPrice);
+
+                }
+                return profit;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         // Gets statistics for the provided coffee
@@ -515,6 +623,13 @@ namespace CoffeeShop.Services
             List<CoffeeStatisticViewModel> coffeeStatistics = new List<CoffeeStatisticViewModel>();
             foreach (var coffeeUnit in coffee)
             {
+                try
+                {
+                    FixCoffeeQuantity(coffeeUnit.CoffeeId);
+                }catch(Exception e)
+                {
+                    throw e;
+                } 
                 coffeeStatistics.Add(new CoffeeStatisticViewModel
                 {
                     Coffee = coffeeUnit,
@@ -522,6 +637,20 @@ namespace CoffeeShop.Services
                 });
             }
             return coffeeStatistics;
+        }
+
+        // Gets 5 or less top coffees(most overall sold)
+        public IEnumerable<CoffeeModel> GetTopCoffee()
+        {
+            List<CoffeeModel> coffees = _db.Coffee.OrderByDescending(cof => cof.TotalQuantitySold).Take(5).ToList();
+            if (coffees != null)
+            {
+                return coffees;
+            }
+            else
+            {
+                throw new Exception();
+            }
         }
 
         // Returns price multipler for coffee size (used for price for ingredients in coffee)
@@ -533,6 +662,74 @@ namespace CoffeeShop.Services
                 return CoffeeSizeMultiplier.MediumMultipler;
             else
                 return CoffeeSizeMultiplier.BigMultipler;
+        }
+
+        // Updates coffee weekly stock
+        private void UpdateCoffeeStockWeekly(Guid? coffeeId, int orderQuantity)
+        {
+            try
+            {
+                DateTime thisMonday = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
+                DateTime lastSold = GetTimeLastSoldCoffee(coffeeId);
+                var coffee = _db.Coffee.Find(coffeeId);
+                if (lastSold.CompareTo(thisMonday) < 0)
+                {
+                    coffee.QuantitySoldLastWeek = orderQuantity;
+                }
+                else
+                { 
+                    coffee.QuantitySoldLastWeek += orderQuantity;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        // Gets date when the coffee was last sold
+        private DateTime GetTimeLastSoldCoffee(Guid? coffeeId)
+        {
+            try
+            {
+                var finishedOrders = _db.Orders.Where(ord => ord.OrderFinishTime != null).ToList();
+                var orderItems = _db.OrderItems.Where(ordI => ordI.Order.OrderFinishTime != null).ToList();
+                var orderOrderItems = finishedOrders.Join(orderItems,
+                                                    order => order.OrderId,
+                                                    orderItem => orderItem.Order.OrderId,
+                                                    (order, orderItem) => new
+                                                    {
+                                                        OrderTime = order.OrderFinishTime,
+                                                        orderItem.Coffee.CoffeeId
+                                                    }).ToList();
+                var lastDate = orderOrderItems.Where(ord => ord.CoffeeId == coffeeId)
+                                                .OrderByDescending(ord => ord.OrderTime)
+                                                .Select(ord => ord.OrderTime)
+                                                .FirstOrDefault();
+                if (lastDate != null)
+                {
+                    return lastDate;
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }catch(Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public void FixCoffeeQuantity(Guid? coffeeId)
+        {
+            var myCoffee = FindCoffee(coffeeId);
+            DateTime thisMonday = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
+            DateTime lastSold = GetTimeLastSoldCoffee(myCoffee.CoffeeId);
+            if (lastSold.CompareTo(thisMonday) < 0)
+            {
+                myCoffee.QuantitySoldLastWeek = 0;
+            }
+            _db.SaveChanges();
         }
         #endregion
 
@@ -774,8 +971,7 @@ namespace CoffeeShop.Services
                 try
                 {
                     var ingredient = FindIngredient(Guid.Parse(coffeeViewModel.selectedIngredients.ElementAt(i)));
-                    ingredientPrice += ingredient.Price * GetPriceMultiplierForCoffeeSize(coffeeViewModel.Size)
-                                                    * coffeeViewModel.selectedIngredientsQuantity.ElementAt(i);
+                    ingredientPrice += ingredient.Price * coffeeViewModel.selectedIngredientsQuantity.ElementAt(i);
                 }
                 catch (Exception)
                 {
@@ -866,6 +1062,109 @@ namespace CoffeeShop.Services
                 throw new Exception();
             }
         }
+
+        // Updates the ingredients weekly stock
+        private void UpdateIngredientsStockWeekly(IEnumerable<IngredientInCoffeeModel> ingredients, int orderQuantity)
+        {
+            try
+            {
+                DateTime thisMonday = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
+                foreach (var ing in ingredients)
+                {
+                    UpdateIngredientStockWeekly(ing, orderQuantity, thisMonday);
+                }
+            }catch(Exception e)
+            {
+                throw e;
+            }
+        }
+
+        // Updates the weekly stock for an ingredient
+        private void UpdateIngredientStockWeekly(IngredientInCoffeeModel ingredient, int orderQuantity, DateTime thisMonday)
+        {
+            try
+            {
+                DateTime lastSold = GetTimeLastSoldIngredient(ingredient.IngredientId);
+                var ingDb = _db.Ingredients.Find(ingredient.IngredientId);
+
+                if (lastSold.CompareTo(thisMonday) < 0)
+                {
+                    ingDb.QuantityUsedLastWeek = ingredient.Quantity * orderQuantity;
+                }
+                else
+                {
+                    ingDb.QuantityUsedLastWeek += ingredient.Quantity * orderQuantity;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        // Gets the time when the ingredient was last sold
+        private DateTime GetTimeLastSoldIngredient(Guid? ingredientId)
+        {
+            try
+            {
+                var finishedOrders = _db.Orders.Where(ord => ord.OrderFinishTime != null).ToList();
+                var coffeeForIngredient = GetCoffeeForUserByIngredients(new List<string>() { ingredientId.ToString() }, null)
+                                          .Select(cof=>cof.CoffeeId).ToList();
+                var orderItems = _db.OrderItems.Where(ordI => ordI.Order.OrderFinishTime != null).ToList();
+
+                var orderOrderItems = finishedOrders.Join(orderItems,
+                                                   order => order.OrderId,
+                                                   orderItem => orderItem.Order.OrderId,
+                                                   (order, orderItem) => new
+                                                   {
+                                                       OrderTime = order.OrderFinishTime,
+                                                       orderItem.Coffee.CoffeeId
+                                                   }).ToList();
+
+                var lastDate = orderOrderItems.Where(ord => coffeeForIngredient.Contains(ord.CoffeeId))
+                                              .OrderByDescending(ord => ord.OrderTime)
+                                              .Select(ord=>ord.OrderTime)
+                                              .FirstOrDefault();
+                if (lastDate != null)
+                {
+                    return lastDate;
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }catch(Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public void FixIngredientsQuantity(IEnumerable<Guid> ingredientIds)
+        {
+            try
+            {
+                foreach (Guid ingredientId in ingredientIds)
+                {
+                    FixIngredientQuantity(ingredientId);
+                }
+                _db.SaveChanges();
+            }catch(Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public void FixIngredientQuantity(Guid? ingredientId)
+        {
+            var ingredient = _db.Ingredients.Find(ingredientId);
+            DateTime thisMonday = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
+            DateTime lastSold = GetTimeLastSoldIngredient(ingredientId);
+            if (lastSold.CompareTo(thisMonday) < 0)
+            {
+                ingredient.QuantityUsedLastWeek = 0;
+            }
+        }
+
         #endregion
 
         #region OrderItem
@@ -912,7 +1211,7 @@ namespace CoffeeShop.Services
         {
             var orders = _db.Orders.ToList();
 
-            if (_userManager.IsInRole(userId, UserRoles.User))
+            if(userId!=null && _userManager.IsInRole(userId, UserRoles.User))
                 orders = orders.Where(ord => ord.User != null && ord.User.Id == userId).ToList();
 
             if (orders != null)
@@ -951,8 +1250,16 @@ namespace CoffeeShop.Services
                     newOrderItem.Quantity = item.Quantity;
                     newOrderItem.Order = newOrder;
                     newOrderItem.Coffee = coffee;
+                    newOrderItem.CoffeeSize = item.CoffeeSize;
                     _db.OrderItems.Add(newOrderItem);
                     newOrder.OrderItems.Add(newOrderItem);
+                    try
+                    {
+                        UpdateCoffeeStockOrder(coffee.CoffeeId, -item.Quantity);
+                    }catch(Exception e)
+                    {
+                        throw e;
+                    }
                 }
                 else
                 {
@@ -972,6 +1279,15 @@ namespace CoffeeShop.Services
             {
                 if (order != null)
                 {
+                    if (userId != null || (userId==null && order.OrderStatus == OrderStatus.INACTIVE))
+                    {
+                        var orderItems = _db.OrderItems.Where(ordI => ordI.Order.OrderId == orderId).ToList();
+                        foreach(var orderItem in orderItems)
+                        {
+                            UpdateCoffeeStockOrder(orderItem.Coffee.CoffeeId, orderItem.Quantity);
+                        }
+                    }
+                   
                     // Also removes every order item in it
                     _db.OrderItems.RemoveRange(order.OrderItems);
                     _db.Orders.Remove(order);
@@ -1054,6 +1370,15 @@ namespace CoffeeShop.Services
                         var ing = FindIngredient(ingredientInCoffee.IngredientId);
                         ing.TotalQuantityUsed += ingredientInCoffee.Quantity;
                     }
+                    try
+                    {
+                        
+                        UpdateIngredientsStockWeekly(ingredientsInCoffee, orderItem.Quantity);
+                        UpdateCoffeeStockWeekly(coffee.CoffeeId, orderItem.Quantity);
+                    }catch(Exception e)
+                    {
+                        throw e;
+                    }
                 }
                 _db.SaveChanges();
             }
@@ -1070,6 +1395,11 @@ namespace CoffeeShop.Services
             if (order != null)
             {
                 order.OrderStatus = OrderStatus.CANCELLED;
+                var orderItems = _db.OrderItems.Where(ordI => ordI.Order.OrderId == orderId).ToList();
+                foreach (var orderItem in orderItems)
+                {
+                    UpdateCoffeeStockOrder(orderItem.Coffee.CoffeeId, orderItem.Quantity);
+                }
                 _db.SaveChanges();
             }
             else

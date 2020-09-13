@@ -44,6 +44,10 @@
                 var coffee = _repository.FindCoffee(Guid.Parse(id));
                 if (daily.HasValue && daily.Value==true)
                     coffee.TotalPrice *= 0.7m;
+                if (Math.Ceiling(coffee.TotalPrice) % 10 != 0)
+                {
+                    coffee.TotalPrice = (((int)coffee.TotalPrice / 10) + 1) * 10;
+                }
 
                 OrderItemModel newOrderItemModel = new OrderItemModel()
                 {
@@ -61,6 +65,31 @@
                     ViewBag.Daily = "false";
                 }
 
+                var Sizes = _repository.GetAllCoffeeSizes().ToList();
+                ViewBag.CoffeeSizes = Sizes;
+                object sessionCart = Session["cart"];
+                ViewBag.MaxUp = coffee.QuantityInStock;
+
+                if (sessionCart != null)
+                {
+                    var cart = (OrderModel)sessionCart;
+                    var orderCart = cart.OrderItems.Where(item => item.Coffee.CoffeeId == Guid.Parse(id)).ToList();
+                    int sumQuantity = 0;
+                    foreach(var orderItem in orderCart)
+                    {
+                        sumQuantity += orderItem.Quantity;
+                    }
+
+                    if (orderCart.Count!=0)
+                    {
+                        ViewBag.MaxUp = orderCart.FirstOrDefault().Coffee.QuantityInStock - sumQuantity;
+                    }
+                    else
+                    {
+                        ViewBag.MaxUp = coffee.QuantityInStock;
+                    }
+                }
+
                 return View(newOrderItemModel);
             }
             catch (Exception)
@@ -71,9 +100,9 @@
 
         [HttpPost]
         [Authorize(Roles = UserRoles.User)]
-        public ActionResult Create(string id, string quantity, string daily)
+        public ActionResult Create(string id, string quantity, string daily, string size, string price)
         {
-            return RedirectToAction("AddToCart", "Cart", new { coffeeId = id, quantity, daily });
+            return RedirectToAction("AddToCart", "Cart", new { coffeeId = id, quantity, daily, size, price });
         }
 
         protected override void Dispose(bool disposing)

@@ -4,149 +4,154 @@
 @{
     ViewBag.Title = "Details";
 }
+<div class="container text-center">
 
-<h2>Details</h2>
+    <h2 class="mt-3">Order details</h2>
+    <div class="hr"><hr /></div>
+    <div>
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Address) :
+            </dt>
 
-<div>
-    <h4>OrderModel</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Address)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Address)
-        </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.OrderStatus) :
+            </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.OrderStatus)
-        </dt>
+            <dd>
+                @Html.DisplayFor(model => model.OrderStatus)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.OrderStatus)
-        </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.OrderTime) :
+            </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.OrderTime)
-        </dt>
-
-        <dd>
-            @{
-                if (Model.OrderStatus != OrderStatus.INACTIVE)
-                {
-                    @Html.DisplayFor(model => model.OrderTime);
-                }
-                else
-                {
-                    <em>Order is still not activated...</em>
-                }
-            }
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.OrderFinishTime)
-        </dt>
-
-        <dd>
-            @{
-                if (Model.OrderStatus == OrderStatus.FINISHED)
-                {
-                    @Html.DisplayFor(model => model.OrderFinishTime);
-                }
-                else
-                {
-                    if (Model.OrderStatus != OrderStatus.CANCELLED)
+            <dd>
+                @{
+                    if (Model.OrderStatus != OrderStatus.INACTIVE)
                     {
-                        <em>Order is still not finished...</em>
+                        @Html.DisplayFor(model => model.OrderTime);
                     }
                     else
                     {
-                        if (User.IsInRole(UserRoles.User))
-                        {
-                            <em>I am sorry. Your order has been cancelled...</em>
-                        }
-                        else
-                        {
-                            <em>Cancelled</em>
-                        }
+                        <em>Order is still not activated...</em>
                     }
                 }
-            }
-        </dd>
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.OrderRating)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.OrderFinishTime) :
+            </dt>
 
-        <dd>
-            @{
-                if (Model.OrderStatus == OrderStatus.FINISHED)
-                {
-                    @Html.DisplayFor(model => model.OrderRating);
-                }
-                else
-                {
-                    if (Model.OrderStatus != OrderStatus.CANCELLED)
+            <dd>
+                @{
+                    if (Model.OrderStatus == OrderStatus.FINISHED)
                     {
-                        <em>Order is still not finished...</em>
+                        @Html.DisplayFor(model => model.OrderFinishTime);
                     }
                     else
                     {
-                        if (User.IsInRole(UserRoles.User))
+                        if (Model.OrderStatus != OrderStatus.CANCELLED)
                         {
-                            <em>I am sorry. Your order has been cancelled...</em>
+                            <em>Order is still not finished...</em>
                         }
                         else
                         {
-                            <em>Cancelled</em>
+                            if (User.IsInRole(UserRoles.User))
+                            {
+                                <em>I am sorry. Your order has been cancelled...</em>
+                            }
+                            else
+                            {
+                                <em>Cancelled</em>
+                            }
                         }
                     }
                 }
-            }
-        </dd>
+            </dd>
 
-    </dl>
-</div>
-<div>
-    <ul>
-        @{
-            decimal totalPrice = 0;
-            var j = 1;
-            foreach (var orderItem in Model.OrderItems)
-            {
-                <strong>Order item: @j</strong>
-                j++;
-                <li>Coffee: @orderItem.Coffee.Name</li>
-               
-                    if (orderItem.Coffee.Ingredients.Count != 0)
+            <dt>
+                @Html.DisplayNameFor(model => model.OrderRating) :
+            </dt>
+
+            <dd>
+                @{
+                    if (Model.OrderStatus == OrderStatus.FINISHED)
                     {
-                        <li>
-                            <ul>
-                                @{
-                                    <em>Ingredients: </em>
-                                    foreach (var ingredientItem in orderItem.Coffee.Ingredients)
-                                    {
-                                        <li>@ingredientItem.Name</li>
-                                    }
-                                }
-                            </ul>
-                        </li>
-                     }
-                <li>Quantity: @orderItem.Quantity</li>
-                var price = orderItem.Coffee.TotalPrice * orderItem.Quantity;
-                totalPrice += price;
-                <li>Order item price: @price</li>
-            }
-        }
-    </ul>
-    @{ 
+                        @Html.DisplayFor(model => model.OrderRating);
+                    }
+                    else
+                    {
+                        if (Model.OrderStatus != OrderStatus.CANCELLED)
+                        {
+                            <em>Order is still not finished...</em>
+                        }
+                        else
+                        {
+                            if (User.IsInRole(UserRoles.User))
+                            {
+                                <em>I am sorry. Your order has been cancelled...</em>
+                            }
+                            else
+                            {
+                                <em>Cancelled</em>
+                            }
+                        }
+                    }
+                }
+            </dd>
 
-    }
-    <em><strong>Total order price: @totalPrice</strong></em><br /><br />
+        </dl>
+        <strong>Order items : </strong><br /><br />
+        <div class="list-group w-50 text-center m-0 m-auto mt-5">
+            @{
+                decimal totalPrice = 0;
+                foreach (var orderItem in Model.OrderItems)
+                {
+                        <a href="~/Coffee/Details/@orderItem.Coffee.CoffeeId" class="list-group-item list-group-item-action flex-column align-items-start text-left">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-4"><strong>Coffee name:</strong> @orderItem.Coffee.Name</h5>
+                            </div>
+                            @if (orderItem.Coffee.Ingredients.Count != 0)
+                            {
+                                <p class="mb-1"><strong>Ingredients:</strong> @String.Join(", ", orderItem.Coffee.Ingredients.Select(ing => ing.Name))</p>
+
+                            }
+                            <p class="mb-1">
+                                <strong>Size:</strong> @orderItem.CoffeeSize
+                            </p>
+                            <p class="mb-1">
+                                <strong>Quantity:</strong> @orderItem.Quantity
+                            </p>
+                            @{ 
+                                var price = orderItem.Coffee.TotalPrice * orderItem.Quantity;
+                                totalPrice += price;
+                            }
+                        <p class="mb-1"><strong>Order item price: </strong>@price</p>
+                        </a>
+                }
+            }
+        </div><br />
+
+        <em><strong>Total order price: @totalPrice</strong></em><br /><br />
+    
 </div>
 
 
 <p>
-    @Html.ActionLink("Back to orders", "Index", null, new { @class = "btn btn-info" })
+    @Html.ActionLink("Back to orders", "Index", null, new { @class = "btn btn-outline-dark" })
 </p>
+
+</div>
+
+@section Styles{
+    <style>
+        .list-group a:nth-child(odd) {
+            background-color: rgb(255, 201, 153);
+        }
+    </style>
+}

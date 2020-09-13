@@ -4,87 +4,127 @@
 @{
     ViewBag.Title = "Index";
 }
+<div class="container" style="width:100%; max-width:80%">
+    <h2 class="text-center mt-3">Ingredients</h2>
+    <div class="hr"><hr /></div>
+    <div hidden data-ingredient-count="@Model.Count()" id="div-count"></div>
 
-<h2 class="text-center">Состојки</h2>
-<div class="hr"><hr /></div>
-<div hidden data-ingredient-count="@Model.Count()" id="div-count"></div>
-
-<div class="container align-btns" >
-    @{ if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
-        {
-            @Html.ActionLink("Create a new ingredient", "Create", null, new { @class = "inline-btn btn btn-primary" })
-            if (Model.Count() != 0)
+    <div class="container align-btns text-center">
+        @{ if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
             {
-                @Html.ActionLink("Check out ingredient statistics", "IngredientStatistics", null, new { @class = "inline-btn btn btn-primary" })
-
+                <a href="@Url.Action("Create", "Ingredient",null)" class="text-success fa fa-plus fa-3x m-3">
+                    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true">Create a new ingredient</span>
+                </a>
+                if (Model.Count() != 0)
+                {
+                    <a href="@Url.Action("IngredientStatistics", "Ingredient",null)" class="text-dark fa fa-bar-chart fa-3x m-3">
+                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true">Check out ingredient statistics</span>
+                    </a>
+                }
             }
         }
-    }
+        @{
+            if (Model.Count() != 0)
+            {
+                <a class="text-info fa fa-image fa-3x m-3" id="toggle-img">
+                    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true">Toggle ingredient image</span>
+                </a>
+            }
+        }
+
+    </div>
     @{
-        if (Model.Count() != 0)
+        if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner) || Model.Count() != 0)
         {
-            <button class="inline-btn btn btn-info" id="toggle-img">Toggle ingredient image</button>
-
+            <div class="hr"><hr /></div>
         }
     }
-
-</div>
-@{
-    if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner) || Model.Count() != 0)
-    {
-        <div class="hr"><hr /></div>
-    }
-}
-<table class="table" id="table1">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th class="img-field hidden-img">
-                @Html.DisplayNameFor(model => model.ImgUrl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div class="table-responsive">
+    <table class="table table-hover table-striped dt-responsive display" id="table1" style="width:100%;">
+        <thead class="bg-dark text-orange">
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Price)
-                </td>
-                <td class="img-field hidden-img">
-                    <img src="@item.ImgUrl" alt="@item.Name" />
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @{
-                        if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
-                        {
-                            @Html.ActionLink("Edit", "Edit", new { id = item.IngredientId }, new { @class = "btn btn-info" })
-                            <button data-ingredient-id="@item.IngredientId" class="btn btn-danger js-delete">Delete</button>
-                        }
-                    }
-                    @Html.ActionLink("Details", "Details", new { id = item.IngredientId }, new { @class = "btn btn-info" })
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Price)
+                </th>
+                <th class="img-field hidden-img no-sort">
+                    @Html.DisplayNameFor(model => model.ImgUrl)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th class="no-sort">
+                    Actions
+                </th>
             </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @String.Format("{0:0.##} mkd.",item.Price)
+                    </td>
+                    <td class="img-field hidden-img">
+                        <a href="/Ingredient/Details/@item.IngredientId">
+                            <img alt="@item.Name" src="@Url.Content(item.ImgUrl)" />
+                        </a>
+                    </td>
+                    <td style="word-break:break-all">
+                        @if (item.Description != null && item.Description!="")
+                        {
+                            @Html.DisplayFor(modelItem => item.Description)
+                        }
+                        else
+                        {
+                            <p>Currently there is no available description...</p>
+                        }
+                    </td>
+                    <td>
+                        @{
+                            if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))
+                            {
+                                @Html.ActionLink("‎", "Edit", new { id = item.IngredientId }, new { @class = "fa fa-edit fa-2x text-warning", @title = "Edit ingredient" })
+                                <a data-ingredient-id="@item.IngredientId" class="fa fa-remove js-delete fa-2x text-danger" title="Delete ingredient"></a>
+                            }
+                        }
+                        @Html.ActionLink("‎", "Details", new { id = item.IngredientId }, new { @class = "fa fa-info-circle fa-2x text-success", @title = "Ingredient details" })
+                </tr>
 
+            }
+        </tbody>
+
+    </table>
+    </div>
+</div>
+
+@section Styles {
+    <link href="@Url.Content("~/Styles/Checkbox.css")" rel="stylesheet" type="text/css" />
+    <style>
+        a {
+            text-decoration: none;
+            height: 100%;
+            display: block;
+            margin: 0;
+            padding: 0;
         }
-    </tbody>
 
-</table>
+            a span {
+                color: black;
+                font-size: 10px;
+                padding: 5px 0 10px 0;
+                display: block;
+                text-transform: uppercase;
+                font-weight: bolder;
+                font-family: 'Josefin Sans';
+            }
+    </style>
+}
 
 @section scripts{
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
@@ -92,12 +132,17 @@
         $(document).ready(function () {
             var table = $("#table1").DataTable();
             $('#toggle-img').on("click", function () {
-                $('.hidden-img').toggle('slow');
+                if ($('.hidden-img').is(':hidden')) {
+                    $('.hidden-img').toggle('slow');
+                }
+                else {
+                    $('.hidden-img').toggle();
+                }
             });
 
             $(".js-delete").click(function () {
                 var button = $(this);
-                bootbox.confirm("Дали сигурна сакате да ја избришете состојката?", function (result) {
+                bootbox.confirm("Дали сигурно сакате да ја избришете состојката?", function (result) {
                     if (result) {
                         $.ajax({
                             method: "POST",
