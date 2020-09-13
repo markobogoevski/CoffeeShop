@@ -198,17 +198,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HtmlHelpers.cs" />
-    <Compile Include="Migrations\202009121422493_initial.cs" />
-    <Compile Include="Migrations\202009121422493_initial.designer.cs">
-      <DependentUpon>202009121422493_initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202009121449366_init2.cs" />
-    <Compile Include="Migrations\202009121449366_init2.designer.cs">
-      <DependentUpon>202009121449366_init2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202009121739533_SIZE.cs" />
-    <Compile Include="Migrations\202009121739533_SIZE.designer.cs">
-      <DependentUpon>202009121739533_SIZE.cs</DependentUpon>
+    <Compile Include="Migrations\202009131354144_initial.cs" />
+    <Compile Include="Migrations\202009131354144_initial.designer.cs">
+      <DependentUpon>202009131354144_initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -684,14 +676,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202009121422493_initial.resx">
-      <DependentUpon>202009121422493_initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009121449366_init2.resx">
-      <DependentUpon>202009121449366_init2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009121739533_SIZE.resx">
-      <DependentUpon>202009121739533_SIZE.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202009131354144_initial.resx">
+      <DependentUpon>202009131354144_initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
