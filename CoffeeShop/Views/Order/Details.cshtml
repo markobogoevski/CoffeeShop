@@ -110,7 +110,6 @@
         <div class="list-group w-50 text-center m-0 m-auto mt-5">
             @{
                 decimal totalPrice = 0;
-                var j = 1;
                 foreach (var orderItem in Model.OrderItems)
                 {
                         <a href="~/Coffee/Details/@orderItem.Coffee.CoffeeId" class="list-group-item list-group-item-action flex-column align-items-start text-left">
