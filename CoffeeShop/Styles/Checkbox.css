@@ -36,9 +36,10 @@
     background-color: #ccc;
 }
 
-/* When the checkbox is checked, add a blue background */
+/* When the checkbox is checked, add an darkorange background */
 .container_new input:checked ~ .checkmark {
-    background-color: #2196F3;
+    background-color: orange;
+    color: orange;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */

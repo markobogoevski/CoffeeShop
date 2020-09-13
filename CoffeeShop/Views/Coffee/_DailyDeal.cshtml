@@ -16,7 +16,7 @@
                                                                                                InsertionMode = InsertionMode.Replace,
                                                                                                HttpMethod = "GET"
                                                                                            },
-                                                                                           new { @class = "btn btn-info btn-block", style="margin: 0 auto; width:30%" })
+                                                                                           new { @class = "btn btn-info btn-block", style = "margin: 0 auto; width:30%" })
         </div>
     }
     else
@@ -30,13 +30,13 @@
                 <div class="card-body pr-5">
                     <div class="row">
                         <div class="col-5 align-middle my-auto h-100 text-center">
-                            <img class="img-fluid d-inline-block" src="@Model.ImgUrl" style="width:80%"/>
+                            <img class="img-fluid d-inline-block" src="@Model.ImgUrl" style="width:80%" />
                         </div>
                         <div class="col text-white">
                             <h1 class="text-orange">
                                 Coffee : @Model.Name
                             </h1>
-                      
+
                             <span class="text-orange">Price on discount:  @String.Format("{0:F}", Model.TotalPrice)</span>
                             <hr class="red ml-0 w-100" />
                             <div class="row">
@@ -69,11 +69,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer bg-dark">
+                <div class="card-footer bg-secondary">
                     <div class="row mr-auto">
                         @if (User.IsInRole(UserRoles.User))
                         {
-                            @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = @Model.CoffeeId, daily = true }, new { @class = "btn btn-primary btn-block" })
+                            @Html.ActionLink("Add to shopping cart", "Create", "OrderItem", new { id = @Model.CoffeeId, daily = true }, new { @class = "btn btn-block m-2", style="background-color:orange" })
                         }
                         @Ajax.ActionLink("Hide",
                                                                                                        "HideDeal",
@@ -84,7 +84,7 @@
                                                                                                            InsertionMode = InsertionMode.Replace,
                                                                                                            HttpMethod = "GET"
                                                                                                        },
-                                                                                                       new { @class = "btn btn-info btn-block" })
+                                                                                                       new { @class = "btn btn-light btn-block m-2" })
                     </div>
                 </div>
             </div>

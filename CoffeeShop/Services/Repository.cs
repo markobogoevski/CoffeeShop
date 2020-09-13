@@ -146,6 +146,10 @@ namespace CoffeeShop.Services
                 int newMultiplier = ((int)newCoffee.TotalPrice / 10) + 1;
                 newCoffee.TotalPrice = newMultiplier * 10; 
             }
+            else
+            {
+                newCoffee.TotalPrice = (int)Math.Floor(newCoffee.TotalPrice);
+            }
 
             if (userId != null)
             {
@@ -238,6 +242,10 @@ namespace CoffeeShop.Services
                 {
                     int newMultiplier = ((int)coffee.TotalPrice / 10) + 1;
                     coffee.TotalPrice = newMultiplier * 10;
+                }
+                else
+                {
+                    coffee.TotalPrice = (int)Math.Floor(coffee.TotalPrice);
                 }
 
                 // Deleting ingredient in coffee relations for the edited coffee
@@ -541,13 +549,72 @@ namespace CoffeeShop.Services
         // Gets the profit made this week from the coffee provided according to its income coefficient
         public decimal GetTotalProfitWeekCoffee(CoffeeModel coffee)
         {
-            return (coffee.TotalPrice-coffee.ProductionPrice) * coffee.QuantitySoldLastWeek;
+            var thisMonday = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
+            var neededOrders = _db.Orders.Where(ord => ord.OrderStatus == OrderStatus.FINISHED && ord.OrderFinishTime.CompareTo(thisMonday) > 0)
+                                         .SelectMany(ord => ord.OrderItems)
+                                         .Where(ordI => ordI.Coffee.CoffeeId == coffee.CoffeeId).ToList();
+            if (neededOrders.Count() != 0)
+            {
+                decimal profit = 0;
+                foreach (var orderItem in neededOrders)
+                {
+                    var productionPrice = orderItem.Coffee.ProductionPrice * GetPriceMultiplierForCoffeeSize(orderItem.CoffeeSize);
+                    var priceSold = orderItem.Coffee.TotalPrice * GetPriceMultiplierForCoffeeSize(orderItem.CoffeeSize);
+                    int remainder = (int)(Math.Floor(priceSold)) % 10;
+                    if (remainder != 0)
+                    {
+                        int newMultiplier = ((int)priceSold / 10) + 1;
+                        priceSold = newMultiplier * 10;
+                    }
+                    else
+                    {
+                        priceSold = (int)Math.Floor(priceSold);
+                    }
+                    profit += orderItem.Quantity * (priceSold - productionPrice); return profit;
+                }
+                return profit;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         // Gets the total profit made from the coffee provided according to its income coefficient
         public decimal GetTotalProfitCoffee(CoffeeModel coffee)
         {
-            return (coffee.TotalPrice - coffee.ProductionPrice) * coffee.TotalQuantitySold;
+            var neededOrders = _db.Orders.Where(ord => ord.OrderStatus == OrderStatus.FINISHED)
+                                        .SelectMany(ord => ord.OrderItems)
+                                        .Where(ordI => ordI.Coffee.CoffeeId == coffee.CoffeeId)
+                                        .ToList();
+
+            if(neededOrders.Count() !=0)
+            {
+                decimal profit = 0;
+                foreach(var orderItem in neededOrders)
+                {
+                    var productionPrice = orderItem.Coffee.ProductionPrice * GetPriceMultiplierForCoffeeSize(orderItem.CoffeeSize);
+                    var priceSold = orderItem.Coffee.TotalPrice * GetPriceMultiplierForCoffeeSize(orderItem.CoffeeSize);
+                    int remainder = (int)(Math.Floor(priceSold)) % 10;
+                    if (remainder != 0)
+                    {
+                        int newMultiplier = ((int)priceSold / 10) + 1;
+                        priceSold = newMultiplier * 10;
+                    }
+                    else
+                    {
+                        priceSold = (int)Math.Floor(priceSold);
+                    }
+
+                    profit += orderItem.Quantity*(priceSold - productionPrice);
+
+                }
+                return profit;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         // Gets statistics for the provided coffee
@@ -1183,6 +1250,7 @@ namespace CoffeeShop.Services
                     newOrderItem.Quantity = item.Quantity;
                     newOrderItem.Order = newOrder;
                     newOrderItem.Coffee = coffee;
+                    newOrderItem.CoffeeSize = item.CoffeeSize;
                     _db.OrderItems.Add(newOrderItem);
                     newOrder.OrderItems.Add(newOrderItem);
                     try

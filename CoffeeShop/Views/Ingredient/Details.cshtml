@@ -34,7 +34,7 @@
                         <div class="col">
                             <h4>Description:</h4>
                             <p class="text-justify">
-                                @if (Model.Description != null)
+                                @if (Model.Description != null && Model.Description!="")
                                 {
                                     @Model.Description
                                 }
@@ -48,7 +48,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-footer bg-dark">
+        <div class="card-footer bg-secondary">
             <div class="row mr-auto">
                 @if (ViewBag.Statistics != null)
                 {
@@ -57,7 +57,7 @@
                 }
                 else
                 {
-                    @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "btn btn-info btn-block col-2  m-2" })
+                    @Html.ActionLink("Back to List", "Index", routeValues: null, htmlAttributes: new { @class = "btn btn-light btn-block col-2  m-2" })
                 }
                 @{
                     if (User.IsInRole(UserRoles.Admin) || User.IsInRole(UserRoles.Owner))

@@ -35,7 +35,7 @@
                                 <th>
                                     Total per item
                                 </th>
-                                <th></th>
+                                <th class="no-sort text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -43,6 +43,8 @@
                                 int j = 1;
                                 foreach (var item in Model.OrderItems)
                                 {
+                                    int maxQuantity = ((List<int>)ViewBag.MaxQuantities).ElementAt(j - 1);
+
                                     <tr>
                                         <td>
                                             <span>@j</span>
@@ -68,7 +70,7 @@
                                             <span class="removeFromCart deleteOrder" cart-id="@item.OrderItemId">
                                                 <i class="fa btn fa-remove fa-lg delete text-danger" title="Remove item"></i>
                                             </span>|
-                                            <span data-max-increase="@item.Coffee.QuantityInStock" class="increaseCoffee" cart-id="@item.Coffee.CoffeeId">
+                                            <span data-max-increase="@maxQuantity" class="increaseCoffee" cart-id="@item.Coffee.CoffeeId">
                                                 <i class="fa btn fa-cart-plus fa-lg text-dark" title="Increase item quantity"></i>
                                             </span>|
                                             <span class="decreaseCoffee" cart-id="@item.Coffee.CoffeeId">
@@ -83,7 +85,7 @@
                         <tfoot class="bg-dark text-white p-0 m-0 font-weight-bold">
                             <tr>
                                 <td>Total:</td>
-                                <td>@Model.OrderItems.Select(x => x.Coffee.TotalPrice * x.Quantity).Sum() den.</td>
+                                <td id="total">@Model.OrderItems.Select(x => x.Coffee.TotalPrice * x.Quantity).Sum() den.</td>
 
                             </tr>
                         </tfoot>
@@ -91,8 +93,7 @@
                 </div>
                 <hr class="mt-5" />
                 <div class="row pr-3">
-
-                    <div class="form-group container">
+                    <div class="form-group container col-6 float-left">
                         <label for="Address" class="font-weight-bold my-0">Delivery address</label><br /><br />
                         <div class="row px-3 my-0">
                             <input name="Address" id="address" class="form-control mr-1 w-75 " /><br />
@@ -101,6 +102,11 @@
                             </button>
                         </div><br />
                         <div id="valid" class="text-danger d-none">Enter delivery address</div>
+                    </div>
+                    <div class="form-group col-6 align-items-baseline justify-content-end" style="display:flex">
+                        <div class="wrapper" style="display:inline-block">
+                            <button class="btn btn-outline-danger w-100" id="clearBtn">Clear cart</button>
+                        </div><br />
                     </div>
                 </div>
             }
@@ -129,8 +135,10 @@
     @{
         var data = (OrderModel)Session["cart"];
     }
-    <script>
+<script>
         $(document).ready(function () {
+            var table = $("#cartTable").DataTable();
+
             var message = "";
             $("#makeOrderButton").on('click', function () {
                 let address = $("#address").val();
@@ -156,8 +164,26 @@
                     },
                     dataType: "application/json"
                 })
+            });
+
+            $("#clearBtn").click(function () {
+                bootbox.confirm("Are you sure you want to clear the cart?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            method: "POST",
+                            url: "/Cart/ClearCart",
+                            complete: function () {
+                                table.clear().draw();
+                                bootbox.alert("Successfully cleared cart!",
+                                    function () {
+                                        window.location.reload();
+                                    })
+                            }
+                        });
+                    }
+                })
             })
-            var table = $("#cartTable");
+
             $(".removeFromCart").click(function () {
                 var button = $(this);
                 bootbox.confirm("Are you sure you want to remove this item from the cart?", function (result) {
@@ -166,23 +192,28 @@
                             method: "POST",
                             url: "/Cart/RemoveOrderItemFromCart",
                             data: { id: button.attr("cart-id") },
-                                success: function () {
-                            },
                             complete: function () {
-                                window.location.reload();
+                                table.row(button.parents("tr")).remove().draw();
+                                bootbox.alert({
+                                    message: "Successfully updated cart!",
+                                    backdrop: true
+                                });
+                                location.reload();
                             },
                             type: "application/json"
                         });
                     }
                 })
             });
+
             $(".decreaseCoffee").click(function () {
                 var button = $(this);
                 var row = button.parentsUntil("#cartTable tr").parent();
                 var cell = $(row).find(" td:nth-child(3) span");
                 var cell_data = cell.html();
+                var size = $(row).find(" td:nth-child(4) span").html();
                 bootbox.prompt({
-                    title: "Внесете колку сакате да намалите",
+                    title: "Decrease coffee quantity",
                     inputType: 'number',
                     max: parseInt(cell_data),
                     min: 0,
@@ -191,15 +222,15 @@
                         if (result) {
                             $.ajax({
                                 method: "POST",
-                                data: { "id": button.attr("cart-id"), "quantity": -result },
+                                data: { "id": button.attr("cart-id"), "quantity": -result, "size": size },
                                 url: "/Cart/ChangeCoffeeQuantityFromOrder",
-                                error: function () {
+                                complete: function () {
                                     cell.html(parseInt(cell_data) - parseInt(result))
                                     bootbox.alert({
                                         message: "Successfully updated cart!",
                                         backdrop: true
                                     });
-                                    location.reload();
+                                    window.location.reload();
                                 },
                                 dataType: 'json'
                             });
@@ -212,28 +243,28 @@
                 var row = button.parentsUntil("#cartTable tr").parent();
                 var cell = $(row).find(" td:nth-child(3) span");
                 var cell_data = cell.html();
-                var max_inc = button.attr("data-max-increase")
-                var maxEnd = parseInt(max_inc) - parseInt(cell_data);
-                if (maxEnd > 0) {
+                var size = $(row).find(" td:nth-child(4) span").html()
+                var max_inc = parseInt(button.attr("data-max-increase"))
+                if (max_inc > 0) {
                     bootbox.prompt({
-                        title: "Внесете колку сакате да зголемите",
+                        title: "Increase coffee quantity",
                         inputType: 'number',
-                        max: parseInt(max_inc) - parseInt(cell_data),
+                        max: max_inc,
                         min: 0,
-                        value: 0,
+                        value: 1,
                         callback: function (result) {
                             if (result) {
                                 $.ajax({
                                     method: "POST",
-                                    data: { "id": button.attr("cart-id"), "quantity": result },
+                                    data: { "id": button.attr("cart-id"), "quantity": result, "size":size },
                                     url: "/Cart/ChangeCoffeeQuantityFromOrder",
-                                    error: function () {
+                                    complete: function () {
                                         cell.html(parseInt(cell_data) + parseInt(result))
                                         bootbox.alert({
                                             message: "Successfully updated cart!",
                                             backdrop: true
                                         });
-                                        location.reload();
+                                        window.location.reload();
                                     },
                                     dataType: 'json'
                                 });
@@ -250,5 +281,5 @@
         })
 
 
-    </script>
+</script>
 }

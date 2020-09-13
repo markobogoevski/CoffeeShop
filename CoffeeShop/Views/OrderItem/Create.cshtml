@@ -101,8 +101,8 @@
                                     @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="container col-md-6 float-right">
-                                    <input data-button-id="@Model.Coffee.CoffeeId" type="submit" value="Order" class="btn btn-success add-order-item btn-block" style="width:100%; max-width:none" />
-                                    @Html.ActionLink("Back to List", "Index", "Coffee", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-info btn-block" })
+                                    <input data-button-id="@Model.Coffee.CoffeeId" type="submit" value="Order" class="btn add-order-item btn-block btn-outline-warning" style="width:100%; max-width:none" />
+                                    @Html.ActionLink("Back to List", "Index", "Coffee", routeValues: null, htmlAttributes: new { @class = "card-link btn btn-outline-light btn-block" })
                                 </div>
                             </div>
                         </div>
@@ -130,10 +130,10 @@
             var quantity = $(".quantity-order").val();
             var title = "";
             if (quantity >= 2) {
-                title = "Дали сакате да го додадете ова кафе " + quantity + " пати во вашата нарачка?";
+                title = "Do you want to add this coffee " + quantity + " times in your order?";
             }
             else {
-                title = "Дали сакате да го додадете ова кафе само еднаш во вашата нарачка?";
+                title = "Do you want to add only a single quantity of this coffee in your order?";
             }
             var radioValue = $("input[name='size']:checked").val();
             var parts = radioValue.split(":")
@@ -147,9 +147,14 @@
                             method: "POST",
                             data: { "id": button.attr("data-button-id"), "quantity": quantity, "daily":@ViewBag.Daily, "size":size,"price":price },
                             url: "/OrderItem/Create/",
-                            error: function () {
-                                location.reload()
-                            },
+                            complete: function () {
+                                bootbox.alert({
+                                    message: "Successfully placed order item in shopping cart!",
+                                    backdrop: true,
+                                    function: function(){
+                                        window.location.reload();
+                                    }
+                                })},
                             dataType: 'json'
                         });
                     }

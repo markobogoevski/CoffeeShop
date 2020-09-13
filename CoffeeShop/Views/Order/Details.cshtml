@@ -106,7 +106,7 @@
             </dd>
 
         </dl>
-        <strong>Order items: </strong><br /><br />
+        <strong>Order items : </strong><br /><br />
         <div class="list-group w-50 text-center m-0 m-auto mt-5">
             @{
                 decimal totalPrice = 0;
@@ -122,6 +122,9 @@
                                 <p class="mb-1"><strong>Ingredients:</strong> @String.Join(", ", orderItem.Coffee.Ingredients.Select(ing => ing.Name))</p>
 
                             }
+                            <p class="mb-1">
+                                <strong>Size:</strong> @orderItem.CoffeeSize
+                            </p>
                             <p class="mb-1">
                                 <strong>Quantity:</strong> @orderItem.Quantity
                             </p>
@@ -141,7 +144,7 @@
 
 
 <p>
-    @Html.ActionLink("Back to orders", "Index", null, new { @class = "btn btn-info" })
+    @Html.ActionLink("Back to orders", "Index", null, new { @class = "btn btn-outline-dark" })
 </p>
 
 </div>
@@ -149,7 +152,7 @@
 @section Styles{
     <style>
         .list-group a:nth-child(odd) {
-            background-color: lightgray;
+            background-color: rgb(255, 201, 153);
         }
     </style>
 }
