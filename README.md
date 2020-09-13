@@ -55,6 +55,9 @@ git clone https://github.com/markobogoevski/CoffeeShop
 ```
 2. Run update-database in the NuGet package manager
 3.  Start the project
+* The project has a seed method which initializes a starting database.
+*** Important. If any problems arise with the .mdf file -> Delete database, delete the .mdf file, delete every migration in the Migrations folder EXCEPT the Configuration.cs file, remove the connection from the server view explorer. Then enable-migrations from the nuget package manager console; create an initial migration
+with create migration "migrationName" then update database.
 
 <!-- USAGE EXAMPLES -->
 ## Usage
