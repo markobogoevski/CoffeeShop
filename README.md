@@ -65,6 +65,11 @@ with create migration "migrationName" then update database.
 * On the homepage we have a carousel which automatically lists our top most sold coffees. 
 * There are ingredient and coffee views which can be viewed by everyone even unauthorized. 
 * In the datatables you can toggle the images if there are some
+* Accounts: 
+ Administrator role: Email: admin@test.com; 
+ Owner role: Email: owner@test.com
+ User role: Email: user@test.com
+ All share the same password: Password1!
 
 ### Up next are some role specific features
 
