@@ -1,6 +1,8 @@
 ﻿namespace CoffeeShop.Migrations
 {
     using CoffeeShop.Models;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
     using System;
     using System.Collections.Generic;
     using System.Data.Entity.Migrations;
@@ -21,63 +23,63 @@
             //  to avoid creating duplicate seed data.
 
             // Adding Roles to DB
-            //if (!context.Roles.Any(r => r.Name == "Administrator"))
-            //{
-            //    var store = new RoleStore<IdentityRole>(context);
-            //    var manager = new RoleManager<IdentityRole>(store);
-            //    var role = new IdentityRole { Name = "Administrator" };
+            if (!context.Roles.Any(r => r.Name == "Administrator"))
+            {
+                var store = new RoleStore<IdentityRole>(context);
+                var manager = new RoleManager<IdentityRole>(store);
+                var role = new IdentityRole { Name = "Administrator" };
 
-            //    manager.Create(role);
-            //}
-            //if (!context.Roles.Any(r => r.Name == "User"))
-            //{
-            //    var store = new RoleStore<IdentityRole>(context);
-            //    var manager = new RoleManager<IdentityRole>(store);
-            //    var role = new IdentityRole { Name = "User" };
+                manager.Create(role);
+            }
+            if (!context.Roles.Any(r => r.Name == "User"))
+            {
+                var store = new RoleStore<IdentityRole>(context);
+                var manager = new RoleManager<IdentityRole>(store);
+                var role = new IdentityRole { Name = "User" };
 
-            //    manager.Create(role);
-            //}
-            //if (!context.Roles.Any(r => r.Name == "Owner"))
-            //{
-            //    var store = new RoleStore<IdentityRole>(context);
-            //    var manager = new RoleManager<IdentityRole>(store);
-            //    var role = new IdentityRole { Name = "Owner" };
+                manager.Create(role);
+            }
+            if (!context.Roles.Any(r => r.Name == "Owner"))
+            {
+                var store = new RoleStore<IdentityRole>(context);
+                var manager = new RoleManager<IdentityRole>(store);
+                var role = new IdentityRole { Name = "Owner" };
 
-            //    manager.Create(role);
-            //}
+                manager.Create(role);
+            }
 
-            //// Adding Users to DB
+            // Adding Users to DB
 
-            //if (!context.Users.Any(u => u.UserName == "admin@test.com"))
-            //{
-            //    var store = new UserStore<ApplicationUser>(context);
-            //    var manager = new UserManager<ApplicationUser>(store);
-            //    var user = new ApplicationUser { UserName = "admin@test.com" };
+            if (!context.Users.Any(u => u.UserName == "admin@test.com"))
+            {
+                var store = new UserStore<ApplicationUser>(context);
+                var manager = new UserManager<ApplicationUser>(store);
+                var user = new ApplicationUser { UserName = "admin@test.com" };
 
-            //    manager.Create(user, "Password1!");
-            //    manager.AddToRole(user.Id, "Administrator");
-            //}
+                manager.Create(user, "Password1!");
+                manager.AddToRole(user.Id, "Administrator");
+            }
 
 
-            //if (!context.Users.Any(u => u.UserName == "user@test.com"))
-            //{
-            //    var store = new UserStore<ApplicationUser>(context);
-            //    var manager = new UserManager<ApplicationUser>(store);
-            //    var user = new ApplicationUser { UserName = "user@test.com" };
+            if (!context.Users.Any(u => u.UserName == "user@test.com"))
+            {
+                var store = new UserStore<ApplicationUser>(context);
+                var manager = new UserManager<ApplicationUser>(store);
+                var user = new ApplicationUser { UserName = "user@test.com" };
 
-            //    manager.Create(user, "Password1!");
-            //    manager.AddToRole(user.Id, "User");
-            //}
+                manager.Create(user, "Password1!");
+                manager.AddToRole(user.Id, "User");
+            }
 
-            //if (!context.Users.Any(u => u.UserName == "owner@test.com"))
-            //{
-            //    var store = new UserStore<ApplicationUser>(context);
-            //    var manager = new UserManager<ApplicationUser>(store);
-            //    var user = new ApplicationUser { UserName = "owner@test.com" };
+            if (!context.Users.Any(u => u.UserName == "owner@test.com"))
+            {
+                var store = new UserStore<ApplicationUser>(context);
+                var manager = new UserManager<ApplicationUser>(store);
+                var user = new ApplicationUser { UserName = "owner@test.com" };
 
-            //    manager.Create(user, "Password1!");
-            //    manager.AddToRole(user.Id, "Owner");
-            //}
+                manager.Create(user, "Password1!");
+                manager.AddToRole(user.Id, "Owner");
+            }
 
 
             // Adding Ingredients to DB
